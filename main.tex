@@ -26,7 +26,7 @@
 \newcommand{\comment}[1]{}
 
 \author{Ann Atwater\footnote{Department of Economics, University of Florida.}}
-\title{Understanding JetBlue's Anticompetitive Conduct \footnote{This is a preliminary draft. Please do not distribute without permission of the author. The author would like to thank the participants of the University of Florida Applied Microeconomics working group and of the Southern Economics Association 2024 conference for helpful feedback. Furthermore, the author would like to thank Brad Shrago for alerting her to important aspects of the ultra low-price carrier pricing strategy}}
+\title{Understanding JetBlue's Anticompetitive Conduct \footnote{This is a preliminary draft. Please do not distribute without permission of the author. The author would like to thank the participants of the University of Florida Applied Microeconomics working group and of the Southern Economics Association 2024 conference for helpful feedback. Furthermore, the author would like to thank Brad Shrago for alerting her to the reliance on usage fees for auxilary income by ultra-low cost carriers. }}
 
 \graphicspath{{05.Figures/}}
 
@@ -239,12 +239,26 @@
 	
 	\subsubsection{Merger Simulation}
 	\label{sec:Analysis_Merger}
-	I can now turn my attention to simulation of the Spirit-JetBlue merger. For each of the pre-pandemic and post-pandemic periods, I estimate four counterfactuals: one which represents the scenario in which product characteristics remain unchanged following the merger (a "basic" simulation) and three in which various levels of efficiencies are realized following the merger (the "best case", "average case", and "worst case" simulations).
-	
-	 Should the merger have been approved, there would have been a period of time in which JetBlue would be operating the Spirit fleet largely as is, due to factors such as the time needed to renovate aircraft from the Spirit seating configuration to the JetBlue configuration and legal delays relating to the change in ownership of permits. As such, the basic simulation provides an insight into the "short-run" pricing impacts resulting from the merger. Furthermore, in this time period, the key possible pricing effects are reflected in JetBlue's ability to internalize the price externalities from the Spirit products. As Spirit had a reputation as a maverick firm, these are able to be significant to consumer welfare, even if they make up a distinct minority of tickets in the market.
+	I can now turn my attention to simulation of the Spirit-JetBlue merger. For each of the pre-pandemic and post-pandemic periods, I estimate three counterfactuals mergers. These are respectively, a best case merger (where the merged product takes the lowest marginal cost and best unobservables of the two products), an average case merger (where the merged product takes the average of the two firms marginal costs and the average of the estimated unobservables), and a worst case scenario (where the merged product takes the greater of the marginal costs of the two firms and the lowest unobservable characteristics).\footnote{An additional simulation, not reported in this paper, solely reassigns the Spirit products to JetBlue, to capture short run pricing impacts of JetBlue internalizing Spirit's pricing decisions. However, simulation resulted in very little changes to prices and quantities. This is not altogether unsurprising, as the effects of Spirit on competition has generally been to promote the introduction of more varied fares \citep{shrago_spirit_2024}, which my data construction methodology abstracts from.}
 	 
-	 Tables \ref{tab:Simulation_Pre_Basic} and \ref{tab:Simulation_Post_Basic} contain the results from this simulation. As would be expected, 
-	
+	 Tables  \ref{tab:Simulation_Pre} and \ref{tab:Simulation_Post} contain the results from these simulations for the pre-pandemic and post-pandemic periods respectively for markets in which both Spirit and JetBlue operate within. As would be expected, 
+
+
+    \begin{table}
+        \caption{Merger Simulation Product Level Results - Pre-Pandemic}
+        \label{tab:Simulation_Pre}
+        \begin{center} \include{06.Tables/PrePandemic_Merger_Results}
+        \end{center}
+    \end{table}
+
+    \begin{table}
+        \caption{Merger Simulation Product Level Results - Post-Pandemic}
+        \label{tab:Simulation_Post}
+        \begin{center}
+         \include{06.Tables/Merger_Results}
+        \end{center}
+    \end{table}
+    
 	With the First, using the demand estimates and the assumptions on firm conduct described above, I estimate the marginal cost of each product. Following this, I reconstruct the product data by assigning all Spirit itineraries to JetBlue, and then assuming that the combined firm's connecting products will take on the more efficient routing available, reducing the average miles flown to the lower of the two firm's within a given market. Following this, I assign these merged products the lowest, average, and greater of the marginal costs of the original products, creating three separate data sets for the examination of different levels of efficiencies resulting from the merger. These scenarios are, respectively, the best-case, average-case, and worst-case scenarios for the post-merger firm's cost structure.  
 
     
@@ -682,22 +696,6 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 		\footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$ Products are defined as a Carrier-Nonstop pair within an Origin-Destination-Year-Quarter market. Origin Service Ratio is the fraction of direct routes out of the originating airport operated by the carrier divided by the number of distinct direct routes out fo that airport. Extra Miles is the average additional miles flown with a connecting itinerary minus the minimum miles flown within a market.  A tourist product is one that serves the Las Vegas metropolitan statistical area or an airport in Florida.}
 	\end{table}
 	
-	\begin{table}
-		\caption{Pre-Pandemic Merger Simulation (Basic)}
-		\label{tab:Simulation_Pre_Basic}
-		\include{06.Tables/PrePandemicMerger_Basic.tex}
-		\footnotesize{Merger simulation results for the "basic" merger simulation are reported. Only markets with both firms included are present in these estimates. This simulation assumes that product offerings do not change following the merger, and serves to capture effects resulting from the internalization of the pricing externality following the merger. Cells are market average product characteristics across firms within a category, weighted by product shares.}
-	\end{table}
-	
-	\begin{landscape}
-		\begin{table}
-			\caption{Pre-Pandemic Merger Simulation, Joint Markets}
-			\label{tab:Simulation_Pre}
-			\include{06.Tables/PrePandemic_Merger_Results}
-			\footnotesize{Merger simulation results for the post-pandemic sample are reported. The "Other" category consists of the average other product in each market, constructed by a weighted average on the basis of estimated passengers. Then, this is averaged across all markets. The "Low-Cost Merger" ("Mean Cost Merger") ["High Cost Merger"] refers to the counterfactual scenario where the merged firm has the lowest (average) [highest] marginal cost of the two merged firms for each product.}
-		\end{table}
-	\end{landscape}
-
 	
 	\begin{figure}
 		\caption{Change in Lowest Market Fare, Pre-Pandemic}
@@ -727,22 +725,6 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 			\caption{Instrument Comparison Table - Post-Pandemic}
 			\label{tab:Instrument_Compare}
 			\include{06.Tables/Instrument_Compare_Table}
-		\end{table}
-	\end{landscape}
-	
-\begin{table}
-	\caption{Post-Pandemic Merger Simulation (Basic)}
-	\label{tab:Simulation_Post_Basic}
-	\include{06.Tables/Merger_Basic.tex}
-	\footnotesize{Merger simulation results for the "basic" merger simulation are reported. This simulation assumes that product offerings do not change following the merger, and serves to capture effects resulting from the internalization of the pricing externality following the merger. Cells are market average product characteristics across firms within a category, weighted by product shares.}
-\end{table}
-	
-	\begin{landscape}
-		\begin{table}
-			\caption{Post-Pandemic Merger Simulation, Joint Markets}
-			\label{tab:Simulation_Post}
-			\include{06.Tables/Merger_Results}
-			\footnotesize{Merger simulation results for the post-pandemic sample are reported. The "Other" category consists of the average other product in each market, constructed by a weighted average on the basis of estimated passengers. Then, this is averaged across all markets. The "Low-Cost Merger" ("Mean Cost Merger") ["High Cost Merger"] refers to the counterfactual scenario where the merged firm has the lowest (average) [highest] marginal cost of the two merged firms for each product.}
 		\end{table}
 	\end{landscape}
 
