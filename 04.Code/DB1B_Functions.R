@@ -250,7 +250,7 @@ condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000){
   DB1B[, Product_Name := factor(Product_Name)]
   
   # TESTING: CAPTURING SPIRIT USAGE FEE
- # DB1B[Carrier == "Spirit Air Lines", Avg.Fare := Avg.Fare + 22.99 * MktCoupons]
+ DB1B[Carrier == "Spirit Air Lines" & Year < 2020, Avg.Fare := Avg.Fare + 22.99 * MktCoupons]
   
   DB1B <- DB1B %>% select(Year, Quarter, Origin, Origin.City, Dest, Destination.City, 
                                           Carrier, MktMilesFlown, NonStop,

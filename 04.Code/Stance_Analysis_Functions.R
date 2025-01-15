@@ -84,102 +84,32 @@ comment_submitted_graph <- function(input = "02.Intermediate/CleanedComments.rds
 }
 
 stance_summary_statistics <- function(input = "02.Intermediate/CleanedComments.rds",
-                                      stance_table = "06.Tables/Stance_Taken_Summary.tex"){
-  mean_sd <- function(var){
-    mean <- signif(mean(var, na.rm = TRUE), digits = 2);
-    sd <- paste("(", signif(sd(var, na.rm = TRUE), digits = 2), ")", sep = "")
-    return(paste(mean, sd))
+                                      output = "06.Tables/Stance_Taken_Summary.tex"){
+  comments_data <- as.data.table(readRDS(input))
+  
+  process_data <- function(comments){
+    approve_score <- five_statistic_row_make("P(Approves)", comments$Approve_Score)
+    approve_approve <- five_statistic_row_make("Approving Comment P(Approves)", 
+                                               comments[Stance == "approves"]$Approve_Score)
+    approve_disapprove <- five_statistic_row_make("Disapproving Comment P(Approves)",
+                                                  comments[Stance == "disagrees"]$Approve_Score)
+    ny <- five_statistic_row_make("New York Comment", comments$`State/Province` == "NY")
+    fl <- five_statistic_row_make("Florida Comment", comments$`State/Province` == "FL")
+    ma <- five_statistic_row_make("Massachusetts Comment", comments$`State/Province` == "MA")
+    pr <- five_statistic_row_make("Puerto Rico Comment", comments$`State/Province` == "PR")
+    obs <- c("Observations", nrow(comments), "", "", "", "")
+    return(rbind(approve_score, approve_approve, approve_disapprove, ny, fl, ma, pr, obs))
   }
   
-  comment_data <- readRDS(input)
-  comment_app <- comment_data[Stance == "approves",]
-  comment_dis <- comment_data[Stance == "disapproves",]
-  
-  duplicate_less <- comment_data[!(duplicated(Comment) | duplicated(Comment,
-                                                                    fromLast = TRUE)),]
-  duplicate_less_app <- duplicate_less[Stance == "approves",]
-  duplicate_less_dis <- duplicate_less[Stance == "disapproves",]
-  
-  # Column Names
-  colNames <- c("Variable", "Approve", "Disapprove", "Approve", "Disapprove")
-  
-  # First - Information On Stance  
-  stance.prob <- c("Stance Probability", mean_sd(comment_app$Approve_Score),
-                   mean_sd(comment_dis$Disapprove_Score),
-                   mean_sd(duplicate_less_app$Approve_Score),
-                   mean_sd(duplicate_less_dis$Disapprove_Score))
-  # Length
-  length.min <- c("Min", min(nchar(comment_app$Comment)),
-                  min(nchar(comment_dis$Comment)),
-                  min(nchar(duplicate_less_app$Comment)),
-                  min(nchar(duplicate_less_dis$Comment)))
-  length.mean <- c("Mean (SD)", mean_sd(nchar(comment_app$Comment)),
-                   mean_sd(nchar(comment_dis$Comment)),
-                   mean_sd(nchar(duplicate_less_app$Comment)),
-                   mean_sd(nchar(duplicate_less_dis$Comment)))
-  length.max <- c("Max", max(nchar(comment_app$Comment)),
-                  max(nchar(comment_dis$Comment)),
-                  max(nchar(duplicate_less_app$Comment)),
-                  max(nchar(duplicate_less_dis$Comment)))
-  
-  # Sentiment
-  sent.pos <- c("Positive", sum(comment_app$Sentiment == "positive"),
-                sum(comment_dis$Sentiment == "positive"),
-                sum(duplicate_less_app$Sentiment == "positive"),
-                sum(duplicate_less_dis$Sentiment == "positive"))
-  sent.neg <- c("Negative", sum(comment_app$Sentiment == "negative"),
-                sum(comment_dis$Sentiment == "negative"),
-                sum(duplicate_less_app$Sentiment == "negative"),
-                sum(duplicate_less_dis$Sentiment == "negative"))
-  sent.neu <- c("Neutral", sum(comment_app$Sentiment == "neutral"),
-                sum(comment_dis$Sentiment == "neutral"),
-                sum(duplicate_less_app$Sentiment == "neutral"),
-                sum(duplicate_less_dis$Sentiment == "neutral"))
-  sent.maxP <- c("Sentiment Assigned Probability", mean_sd(comment_app$Sentiment_Score),
-                 mean_sd(comment_dis$Sentiment_Score), 
-                 mean_sd(duplicate_less_app$Sentiment_Score),
-                 mean_sd(duplicate_less_dis$Sentiment_Score))
-  
-  # State Sent
-  state.FL <- c("Florida", sum(comment_app$`State/Province` == "FL"),
-               sum(comment_dis$`State/Province` == "FL"),
-               sum(duplicate_less_app$`State/Province` == "FL"),
-               sum(duplicate_less_dis$`State/Province` == "FL"))
-  state.NY <- c("New York", sum(comment_app$`State/Province` == "NY"),
-               sum(comment_dis$`State/Province` == "NY"),
-               sum(duplicate_less_app$`State/Province` == "NY"),
-               sum(duplicate_less_dis$`State/Province` == "NY"))
-  state.MA <- c("Massachusetts", sum(comment_app$`State/Province` == "MA"),
-               sum(comment_dis$`State/Province` == "MA"),
-               sum(duplicate_less_app$`State/Province` == "MA"),
-               sum(duplicate_less_dis$`State/Province` == "MA"))
-  state.PR <- c("Puerto Rico", sum(comment_app$`State/Province` == "PR"),
-               sum(comment_dis$`State/Province` == "PR"),
-               sum(duplicate_less_app$`State/Province` == "PR"),
-               sum(duplicate_less_dis$`State/Province` == "PR"))
-  
-  # Number of Observations
-  numObs <- c("Number of Comments", nrow(comment_app),
-              nrow(comment_dis),
-              nrow(duplicate_less_app),
-              nrow(duplicate_less_dis))
-
-  out_tab <- rbind(stance.prob, sent.pos, sent.neu, sent.neg, sent.maxP,
-                   length.min, length.mean, length.max,
-                   state.FL, state.PR, state.NY, state.MA,
-                   numObs)
-  rownames(out_tab) <- NULL
+  output_table <- process_data(comments_data)
+  title_row <- c("", "Mean", "(SD)", "Minimum", "Median", "Maximum")
+  rownames(output_table) <- NULL
   
   # Make Table
-  kbl(out_tab, 
-      format = "latex", col.names = colNames,
-      escape = FALSE, booktabs = TRUE,
-      keep_tex = TRUE) %>%
-    add_header_above(c(" " = 1, "All Comments" = 2, "Unique Comments" = 2)) %>%
-    row_spec(row = 12, hline_after = TRUE) %>% 
-    pack_rows(group_label = "Sentiment", start_row = 2, end_row = 5) %>%
-    pack_rows(group_label = "Comment Length", start_row = 6, end_row = 8) %>%
-    pack_rows(group_label = "State Submitted From", start_row = 9, end_row = 12) %>%
-    pack_rows(group_label = "Summary Statistics", start_row = 13, end_row = 13) %>%
-    save_kable(file = stance_table)
+  kbl(output_table,
+      format = "latex", col.names = title_row,
+      escape = TRUE, booktabs = TRUE) %>%
+    row_spec(row = 7, hline_after = TRUE) %>%
+  save_kable(file = output)
+  
 }

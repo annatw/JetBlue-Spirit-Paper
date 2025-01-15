@@ -1,6 +1,6 @@
 five_statistic_row_make <- function(name, vector){
   new_row <- c(name, round(mean(vector, na.rm = TRUE), digits = 2),
-               paste("(", round(sd(vector, na.rm = TRUE), digits = 2), ")", sep = ),
+               paste("(", round(sd(vector, na.rm = TRUE), digits = 2), ")", sep = ""),
                round(min(vector, na.rm = TRUE), digits = 2),
                round(median(vector,na.rm = TRUE), digits = 2),
                round(max(vector, na.rm = TRUE), digits = 2))
@@ -810,7 +810,7 @@ summary_statistics_product_two_period <- function(post_pandemic_in = "02.Interme
   nonstop_row <- five_statistic_row_make(name = "Nonstop", product_data$NonStop)
   origin_dest <- five_statistic_row_make(name = "Origin Destinations",
                                          product_data$Origin_Firm_Destinations)
-  origin_prescence <- five_statistic_row_make(name = "Origin Prescence (\\%)",
+  origin_prescence <- five_statistic_row_make(name = "Origin Prescence (%)",
                                               product_data$Origin_Firm_Service_Ratio)
   delta <- five_statistic_row_make(name = "Delta", product_data$Carrier == "Delta Air Lines Inc.")
   american <- five_statistic_row_make(name = "American", product_data$Carrier == "American Airlines Inc.")
@@ -840,6 +840,9 @@ summary_statistics_product_two_period <- function(post_pandemic_in = "02.Interme
      escape = TRUE, booktabs = TRUE) %>%
    pack_rows(group_label = "Pre-Pandemic", 1, 15) %>%
    pack_rows(group_label = "Post-Pandemic", 16, 30) %>%
+   row_spec(row = 14, hline_after = TRUE) %>%
+   row_spec(row = 15, hline_after = TRUE) %>%
+   row_spec(row = 29, hline_after = TRUE) %>%
    save_kable(file = output)
 }
 
@@ -1268,6 +1271,56 @@ summary_statistics_market_level_slim <- function(input = "02.Intermediate/Produc
     save_kable(file = output)
 }
 
+summary_statistics_market_two_period <- function(post_pandemic_in = "02.Intermediate/Product_Data.rds",
+                                                 pre_pandemic_in = "02.Intermediate/prepandemic.rds",
+                                                 output = "06.Tables/SummaryStatistics_Market_TwoPeriod.tex"){
+  period_rows <- function(input){
+    product_data <- readRDS(input)
+    
+    market_data <- product_data %>% group_by(market_ids) %>%
+      summarize(Spirit = max(Carrier == "Spirit Air Lines"),
+                JetBlue = max(Carrier == "JetBlue Airways"),
+                MinMiles = min(MktMilesFlown), 
+                AvgMiles = sum(MktMilesFlown * Passengers.Product) / sum(Passengers.Product), 
+              Firms = mean(Num_Firms_In_Market),
+               Products = mean(Num_Products_In_Market),
+                Customers = sum(Passengers.Product),
+                HHI = mean(Market_HHI)) %>%
+      mutate(Spirit_JetBlue = Spirit * JetBlue)
+    
+    min_miles <- five_statistic_row_make(name = "Minimum Miles (1000s)", market_data$MinMiles)
+    mean_miles <- five_statistic_row_make(name = "Average Miles (1000s)", market_data$AvgMiles)
+    number_of_firms <- five_statistic_row_make(name = "Number of Firms", market_data$Firms)
+    number_of_products <- five_statistic_row_make(name = "Number of Products", market_data$Products)
+    number_of_passengers <- five_statistic_row_make(name = "Number of Customers", market_data$Customers)
+    hhi <- five_statistic_row_make(name = "HHI", market_data$HHI)
+    
+    obs_row <- c("Observations", nrow(market_data), "", "", "", "")
+    spirit_row <- c("Spirit Markets", sum(market_data$Spirit), "", "", "", "")
+    jetblue_row <- c("JetBlue Markets", sum(market_data$JetBlue), "", "", "", "")
+    sp_jb_row <- c("Spirit & JetBlue", sum(market_data$Spirit_JetBlue), "", "", "", "")
+    
+    return(rbind(min_miles, mean_miles, number_of_firms, number_of_products, number_of_passengers, hhi, obs_row,
+                 jetblue_row, spirit_row, sp_jb_row))
+  }
+  
+  title_row <- c("", "Mean", "(SD)", "Minimum", "Median", "Maximum")
+  post_pandemic <- period_rows(post_pandemic_in)
+  pre_pandemic <- period_rows(pre_pandemic_in)
+  
+  output_table <- rbind(pre_pandemic, post_pandemic)
+  rownames(output_table) <- NULL
+  
+  kbl(output_table,
+      format = "latex", col.names = title_row,
+      escape = TRUE, booktabs = TRUE) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 10) %>%
+    pack_rows(group_label = "Post-Pandemic", 11, 20) %>%
+    row_spec(row = 6, hline_after = TRUE) %>%
+    row_spec(row = 10, hline_after = TRUE) %>%
+    row_spec(row = 16, hline_after = TRUE) %>%
+    save_kable(file = output)
+}
 
 summary_statistics_firm_type <- function(input = "02.Intermediate/Product_Data.rds",
                                          output_product = "06.Tables/SummaryStatistics_Firm_Type_Product.tex",

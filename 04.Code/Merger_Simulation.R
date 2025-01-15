@@ -569,7 +569,6 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
               costs.min = min(cost),
               costs.mean = mean(cost),
               costs.max = max(cost),
-              original.fare = mean(prices),
               Potential_Passengers = mean(Potential_Passengers)) %>%
     mutate(Extra_Miles = MktMilesFlown - market_min_miles,
            MktMilesFlown_Sq = MktMilesFlown * MktMilesFlown,
@@ -578,6 +577,19 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
            Carrier = merger_carrier,
            UCC = as.numeric(Carrier %in% c("Spirit Air Lines", "Allegiant Air", "Frontier Airlines Inc."))) %>%
     as.data.table()
+  
+  data.price <- data %>% select(Origin, Dest, Year, Quarter, Year_Quarter_Effect, 
+                                NonStop, market_ids, Carrier, merger_carrier,prices, shares) %>% 
+    filter(!Carrier == "Spirit Air Lines") %>%
+    mutate(Fare.Original = prices,
+           Share.Original = shares,
+           prices = NULL,
+           shares = NULL) %>% as.data.table()
+  
+  data.price[, Share.WithinMarket.Original := Share.Original / sum(Share.Original),
+             by = market_ids]
+  
+  data.new <- merge(data.new, data.price)
   
   remove(data); gc();
   
@@ -619,6 +631,15 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
   data.new[, Prices.MeanCost.Sim := py_to_r(simulation.mean$product_data$prices)]
   data.new[, Prices.MaxCost.Sim := py_to_r(simulation.max$product_data$prices)]
   
+  data.new[, Shares.WithinMarket.MinCost := Shares.MinCost.Sim / sum(Shares.MinCost.Sim),
+           by = c("market_ids")]
+  data.new[, Shares.WithinMarket.MeanCost := Shares.MeanCost.Sim / sum(Shares.MinCost.Sim),
+           by = c("market_ids")]
+  data.new[, Shares.WithinMarket.MaxCost := Shares.MaxCost.Sim / sum(Shares.MinCost.Sim),
+           by = c("market_ids")]
+  
+  
+  
   # Add each markets Consumer Surplus
   # markets <- unique(data.new$market_ids)
   # data.new[, CS.Original := 0]
@@ -648,6 +669,60 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
 }
 
 merger_results_table <- function(merger_data = "03.Output/Adv_Merger_Sim_Data.rds",
+                                 observed_data = "02.Intermediate/Product_Data.rds", 
+                                 table_out = "06.Tables/Merger_Results.tex"){
+  merger <- readRDS(merger_data)
+  observed <- readRDS(observed_data)
+
+  # Identify markets which merger impacted
+  impactedMarkets <- observed %>% group_by(market_ids) %>%
+    summarize(Spirit = max(Spirit),
+              JetBlue = max(JetBlue)) %>% 
+    filter(Spirit == 1, JetBlue == 1); impactedMarkets <- impactedMarkets$market_ids
+  
+  # Restrict
+  merger <- merger[market_ids %in% impactedMarkets,]
+  
+  # Cluster 1: Prices 
+  price.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim)
+  price.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim)
+  price.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim)
+  
+  # Cluster 2: Price Change
+  priceChange.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim - merger$Fare.Original)
+  priceChange.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim - merger$Fare.Original)
+  priceChange.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim - merger$Fare.Original)
+  
+  # Cluster 3: Shares
+  shares.best <- five_statistic_row_make("Best Case", merger$Shares.WithinMarket.MinCost)
+  shares.avg <- five_statistic_row_make("Average Case", merger$Shares.WithinMarket.MeanCost)
+  shares.worst <- five_statistic_row_make("Worst Case", merger$Shares.WithinMarket.MaxCost)
+  
+  # Cluster 4: Shares Change
+  shavesChange.best <- five_statistic_row_make("Best Case", merger$Shares.WithinMarket.MinCost - merger$Share.WithinMarket.Original)
+  sharesChange.avg <- five_statistic_row_make("Average Case", merger$Shares.WithinMarket.MeanCost - merger$Share.WithinMarket.Original)
+  sharesChange.worst <- five_statistic_row_make("Average Case", merger$Shares.WithinMarket.MaxCost - merger$Share.WithinMarket.Original)
+  
+  table <- rbind(price.best, price.avg, price.worst,
+                 priceChange.best, priceChange.avg, priceChange.worst,
+                 shares.best, shares.avg, shares.worst,
+                 shavesChange.best, sharesChange.avg, sharesChange.worst)
+  rownames(table) <- NULL
+  
+  title_row <- c("", "Mean", "(SD)", "Minimum", "Median", "Maximum")
+  
+  kbl(table,
+      format = "latex", col.names = title_row,
+      escape = TRUE, booktabs = TRUE) %>%
+  pack_rows(group_label = "Prices", 1, 3) %>%
+    pack_rows(group_label = "Price Change", 4, 6) %>%
+    pack_rows(group_label = "Within Market Shares", 7, 9) %>%
+    pack_rows(group_label = "Within Market Shares Change", 10, 12) %>%
+  save_kable(file = table_out)
+}
+
+
+merger_results_table.old <- function(merger_data = "03.Output/Adv_Merger_Sim_Data.rds",
                                  observed_data = "02.Intermediate/Product_Data.rds", 
                                  table_out = "06.Tables/Merger_Results.tex",
                                  rcl = "03.Output/random_coeff_nested_logit_results.pickle"){
@@ -944,4 +1019,21 @@ elasticity_compare_table <- function(postPand_input = "03.Output/random_coeff_ne
     pack_rows("New Results", start_row = 9, end_row = 10) %>%
     save_kable(file = table_out)
   
+}
+
+merger_market_structures_table <- function(data_post = "02.Intermediate/Product_Data.rds",
+                                           data_pre = "02.Intermediate/prepandemic.rds",
+                                           table_out = "06.Tables/Merger_Market_Structures.tex"){
+  market_make <- function(file_in){
+    output <- readRDS(file_in) %>% group_by(Year, Quarter, Origin, Dest) %>%
+      summarize(Delta = max(Delta),
+                AmericanAir = max(AmericanAir),
+                United = max(United),
+                Southwest = max(Southwest),
+                Spirit = max(Spirit),
+                JetBlue = max(JetBlue),
+                Other_Carrier = max(Other_Carrier))
+    return(output)
+  }
+
 }

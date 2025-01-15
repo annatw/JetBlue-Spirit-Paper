@@ -404,7 +404,7 @@ export_rcl_output_to_latex <- function(rcl_in = "03.Output/nested_rcl_optimal.pi
     row_spec(row = 9, hline_after = TRUE) %>%
     row_spec(row = 17, hline_after = TRUE) %>%
     pack_rows(group_label = "Linear Coefficients", 1,6) %>%
-    pack_rows(group_label = "Nonlinear Standard Deviations", 7, 9) %>%
+    pack_rows(group_label = "Nonlinear Coefficients", 7, 9) %>%
     pack_rows(group_label = "Summary Statistics", 10, 13) %>%
     save_kable(file = output_table)
 }
@@ -579,7 +579,7 @@ logit_two_period_table_present <- function(model.post.in = "03.Output/nested_log
     save_kable(file = output)
 }
 
-rcl_two_period_table <- function(post_in = "03.Output/random_coeff_nested_logit_fs_results.pickle",
+rcl_two_period_table <- function(post_in = "03.Output/random_coeff_nested_logit_results.pickle",
                                  post_data_in = "02.Intermediate/Product_Data.rds",
                                  pre_in = "03.Output/prepandemic_random_coeff_nested_logit.pickle",
                                  pre_data_in = "02.Intermediate/prepandemic.rds",
@@ -634,7 +634,7 @@ rcl_two_period_table <- function(post_in = "03.Output/random_coeff_nested_logit_
   spirit_jb_elasticity_post <- sp_jb_elasticity_mean(model.post, product_post)
   spirit_jb_elasticity_pre <- sp_jb_elasticity_mean(model.pre, product_pre)
   
-  summary_statistics1 <- c("Period", "2017Q1-2019Q4", "2021Q2-2023Q2")
+  summary_statistics1 <- c("Period",  "2021Q2-2023Q2", "2017Q1-2019Q4")
   summary_statistics2 <- c("N Products", nrow(product_post), nrow(product_pre))
   summary_statistics3 <- c("N Markets", length(unique(product_post$market_ids)),
                            length(unique(product_pre$market_ids)))
@@ -666,7 +666,7 @@ rcl_two_period_table <- function(post_in = "03.Output/random_coeff_nested_logit_
     row_spec(row = 24, hline_after = TRUE) %>%
     row_spec(row = 31, hline_after = TRUE) %>%
     pack_rows(group_label = "Linear Coefficients", 1,16) %>%
-    pack_rows(group_label = "Nonlinear Coefficient", 17, 22) %>%
+    pack_rows(group_label = "Nonlinear Coefficients", 17, 22) %>%
     pack_rows(group_label = "Nesting Coefficient", 23, 24) %>%
     pack_rows(group_label = "Summary Statistics", 25, 31) %>%
     save_kable(file = output_table)
