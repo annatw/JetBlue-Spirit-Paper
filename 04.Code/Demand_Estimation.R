@@ -473,59 +473,58 @@ logit_two_period_table <- function(model.post.in = "03.Output/nested_logit_iv.pi
    product.pre <- readRDS(product.pre.in)
   
   # First Group - Logit Means
-  price <- two_model_make(label = "Price", model_a = model.post$beta,
-                          model_b = model.pre$beta, se_a = model.post$beta_se,
-                          se_b = model.pre$beta_se, id = 1)
-  nonstop <- two_model_make(label = "Nonstop", model_a = model.post$beta,
-                            model_b = model.pre$beta, se_a = model.post$beta_se,
-                            se_b = model.pre$beta_se, id = 2)
-  miles <- two_model_make(label = "Miles Flown", model_a = model.post$beta,
-                          model_b = model.pre$beta, se_a = model.post$beta_se,
-                          se_b = model.pre$beta_se, id = 3)
-  miles_sq <- two_model_make(label = "Miles Flown$^2$", model_a = model.post$beta,
-                          model_b = model.pre$beta, se_a = model.post$beta_se,
-                          se_b = model.pre$beta_se, id = 4)
-  serviceRatio <- two_model_make(label = "Origin Prescence", model_a = model.post$beta,
-                                 model_b = model.pre$beta, se_a = model.post$beta_se,
-                                 se_b = model.pre$beta_se, id = 5)
-  extraMiles <- two_model_make(label = "Extra Miles", model_a = model.post$beta,
-                               model_b = model.pre$beta, se_a = model.post$beta_se,
-                               se_b = model.pre$beta_se, id = 6)
-  extraMiles_sq <- two_model_make(label = "Extra Miles$^2$", model_a = model.post$beta,
-                               model_b = model.pre$beta, se_a = model.post$beta_se,
-                               se_b = model.pre$beta_se, id = 7)
-  tourist <- two_model_make(label = "Tourist Route", model_a = model.post$beta,
-                            model_b = model.pre$beta, se_a = model.post$beta_se,
-                            se_b = model.pre$beta_se, id = 8)
-  rho <- two_model_make(label = "Nesting Parameter", model_a = model.post$rho,
-                        model_b = model.pre$rho, se_a = model.post$rho_se,
-                        se_b = model.pre$rho_se,
+  price <- two_model_make(label = "Price", model_a = model.pre$beta,
+                          model_b = model.post$beta, se_a = model.pre$beta_se,
+                          se_b = model.post$beta_se, id = 1)
+  nonstop <- two_model_make(label = "Nonstop", model_a = model.pre$beta,
+                            model_b = model.post$beta, se_a = model.pre$beta_se,
+                            se_b = model.post$beta_se, id = 2)
+  miles <- two_model_make(label = "Miles Flown", model_a = model.pre$beta,
+                          model_b = model.post$beta, se_a = model.pre$beta_se,
+                          se_b = model.post$beta_se, id = 3)
+  miles_sq <- two_model_make(label = "Miles Flown$^2$", model_a = model.pre$beta,
+                          model_b = model.post$beta, se_a = model.pre$beta_se,
+                          se_b = model.post$beta_se, id = 4)
+  serviceRatio <- two_model_make(label = "Origin Prescence", model_a = model.pre$beta,
+                                 model_b = model.post$beta, se_a = model.pre$beta_se,
+                                 se_b = model.post$beta_se, id = 5)
+  extraMiles <- two_model_make(label = "Extra Miles", model_a = model.pre$beta,
+                               model_b = model.post$beta, se_a = model.pre$beta_se,
+                               se_b = model.post$beta_se, id = 6)
+  extraMiles_sq <- two_model_make(label = "Extra Miles$^2$", model_a = model.pre$beta,
+                               model_b = model.post$beta, se_a = model.pre$beta_se,
+                               se_b = model.post$beta_se, id = 7)
+  tourist <- two_model_make(label = "Tourist Route", model_a = model.pre$beta,
+                            model_b = model.post$beta, se_a = model.pre$beta_se,
+                            se_b = model.post$beta_se, id = 8)
+  rho <- two_model_make(label = "Nesting Parameter", model_a = model.pre$rho,
+                        model_b = model.post$rho, se_a = model.pre$rho_se,
+                        se_b = model.post$rho_se,
                         id = 1)
   
   # Descriptive Statistics
   spirit_jb_elasticity_post <- sp_jb_elasticity_mean(model.post, product.post)
   spirit_jb_elasticity_pre <- sp_jb_elasticity_mean(model.pre, product.pre)
   
-  spirit_e <- c("Mean Spirit Elasticity", spirit_jb_elasticity_post[1], spirit_jb_elasticity_pre[1])
-  jetblue_e <- c("Mean JetBlue Elasticity", spirit_jb_elasticity_post[2],
-                 spirit_jb_elasticity_pre[2])
-  elasticity <- c("Mean Elasticity", round(mean(model.post$extract_diagonal_means(model.post$compute_elasticities())), digits = 3), 
+  spirit_e <- c("Mean Spirit Elasticity", spirit_jb_elasticity_pre[1], spirit_jb_elasticity_post[1],)
+  jetblue_e <- c("Mean JetBlue Elasticity", spirit_jb_elasticity_pre[2], spirit_jb_elasticity_post[2])
+  elasticity <- c("Mean Elasticity", round(mean(model.pre$extract_diagonal_means(model.pre$compute_elasticities())), digits = 3), 
                            round(mean(model.pre$extract_diagonal_means(model.pre$compute_elasticities())), digits = 3))
   
   # Summary Rows:
-  obs <- c("Observations", nrow(product.post), nrow(product.pre))
-  n_products <- c("Products", length(unique(product.post$product_ids)),
-                  length(unique(product.pre$product_ids)))
-  n_markets <- c("Markets", length(unique(product.post$market_ids)),
-                 length(unique(product.pre$market_ids)))
-  period <- c("Period", "2021Q2-2023Q2", "2017Q1-2019Q4")
+  obs <- c("Observations", nrow(product.pre), nrow(product.post))
+  n_products <- c("Products", length(unique(product.pre$product_ids)),
+                  length(unique(product.post$product_ids)))
+  n_markets <- c("Markets", length(unique(product.pre$market_ids)),
+                 length(unique(product.post$market_ids)))
+  period <- c("Period", "2017Q1-2019Q4", "2021Q2-2023Q2")
   
   table <- rbind(price, nonstop, miles, miles_sq, serviceRatio, extraMiles,
                  extraMiles_sq, tourist, rho, spirit_e, 
                  jetblue_e, elasticity, obs, n_products, n_markets, period)
   
   kbl(table, row.names = FALSE, format= "latex",
-      col.names = c("Variable", "Post-Pandemic", "Pre-Pandemic"),
+      col.names = c("Variable", "Pre-Pandemic", "Post-Pandemic"),
       booktabs = TRUE, escape = FALSE, linesep = "") %>%
     row_spec(16, hline_after = TRUE) %>%
     save_kable(file = output)
@@ -591,59 +590,60 @@ rcl_two_period_table <- function(post_in = "03.Output/random_coeff_nested_logit_
   gc();
   
   # First Group - Logit Means
-  price <- two_model_make(label = "Price", model_a = model.post$beta,
-                          model_b = model.pre$beta, se_a = model.post$beta_se,
-                          se_b = model.pre$beta_se, id = 1)
-  nonstop <- two_model_make(label = "Nonstop", model_a = model.post$beta,
-                            model_b = model.pre$beta, se_a = model.post$beta_se,
-                            se_b = model.pre$beta_se, id = 2)
-  miles <- two_model_make(label = "Miles Flown", model_a = model.post$beta,
-                          model_b = model.pre$beta, se_a = model.post$beta_se,
-                          se_b = model.pre$beta_se, id = 3)
-  miles_sq <- two_model_make(label = "Miles Flown$^2$", model_a = model.post$beta,
-                             model_b = model.pre$beta, se_a = model.post$beta_se,
-                             se_b = model.pre$beta_se, id = 4)
-  serviceRatio <- two_model_make(label = "Origin Prescence", model_a = model.post$beta,
-                                 model_b = model.pre$beta, se_a = model.post$beta_se,
-                                 se_b = model.pre$beta_se, id = 5)
-  extraMiles <- two_model_make(label = "Extra Miles", model_a = model.post$beta,
-                               model_b = model.pre$beta, se_a = model.post$beta_se,
-                               se_b = model.pre$beta_se, id = 6)
-  extraMiles_sq <- two_model_make(label = "Extra Miles$^2$", model_a = model.post$beta,
-                                  model_b = model.pre$beta, se_a = model.post$beta_se,
-                                  se_b = model.pre$beta_se, id = 7)
-  tourist <- two_model_make(label = "Tourist Route", model_a = model.post$beta,
-                            model_b = model.pre$beta, se_a = model.post$beta_se,
-                            se_b = model.pre$beta_se, id = 8)
-  rho <- two_model_make(label = "Nesting Parameter", model_a = model.post$rho,
-                        model_b = model.pre$rho, se_a = model.post$rho_se,
-                        se_b = model.pre$rho_se,
+  price <- two_model_make(label = "Price", model_a = model.pre$beta,
+                          model_b = model.post$beta, se_a = model.pre$beta_se,
+                          se_b = model.post$beta_se, id = 1)
+  nonstop <- two_model_make(label = "Nonstop", model_a = model.pre$beta,
+                            model_b = model.post$beta, se_a = model.pre$beta_se,
+                            se_b = model.post$beta_se, id = 2)
+  miles <- two_model_make(label = "Miles Flown", model_a = model.pre$beta,
+                          model_b = model.post$beta, se_a = model.pre$beta_se,
+                          se_b = model.post$beta_se, id = 3)
+  miles_sq <- two_model_make(label = "Miles Flown$^2$", model_a = model.pre$beta,
+                             model_b = model.post$beta, se_a = model.pre$beta_se,
+                             se_b = model.post$beta_se, id = 4)
+  serviceRatio <- two_model_make(label = "Origin Prescence", model_a = model.pre$beta,
+                                 model_b = model.post$beta, se_a = model.pre$beta_se,
+                                 se_b = model.post$beta_se, id = 5)
+  extraMiles <- two_model_make(label = "Extra Miles", model_a = model.pre$beta,
+                               model_b = model.post$beta, se_a = model.pre$beta_se,
+                               se_b = model.post$beta_se, id = 6)
+  extraMiles_sq <- two_model_make(label = "Extra Miles$^2$", model_a = model.pre$beta,
+                                  model_b = model.post$beta, se_a = model.pre$beta_se,
+                                  se_b = model.post$beta_se, id = 7)
+  tourist <- two_model_make(label = "Tourist Route", model_a = model.pre$beta,
+                            model_b = model.post$beta, se_a = model.pre$beta_se,
+                            se_b = model.post$beta_se, id = 8)
+  rho <- two_model_make(label = "Nesting Parameter", model_a = model.pre$rho,
+                        model_b = model.post$rho, se_a = model.pre$rho_se,
+                        se_b = model.post$rho_se,
                         id = 1)  
   
-  prices.nonlinear <- two_model_make(label = "Price", model_a = model.post$sigma,
-                                     model_b = model.pre$sigma, se_a = model.post$sigma_se,
-                                     se_b = model.pre$sigma_se, id = 1)
-  nonstop.nonlinear <- two_model_make(label = "Nonstop", model_a = model.post$sigma,
-                                     model_b = model.pre$sigma, se_a = model.post$sigma_se,
-                                     se_b = model.pre$sigma_se, id = 2)
-  miles.nonlinear <- two_model_make(label = "Miles Flown", model_a = model.post$sigma,
-                                     model_b = model.pre$sigma, se_a = model.post$sigma_se,
-                                     se_b = model.pre$sigma_se, id = 3)
+  prices.nonlinear <- two_model_make(label = "Price", model_a = model.pre$sigma,
+                                     model_b = model.post$sigma, se_a = model.pre$sigma_se,
+                                     se_b = model.post$sigma_se, id = 1)
+  nonstop.nonlinear <- two_model_make(label = "Nonstop", model_a = model.pre$sigma,
+                                     model_b = model.post$sigma, se_a = model.pre$sigma_se,
+                                     se_b = model.post$sigma_se, id = 2)
+  miles.nonlinear <- two_model_make(label = "Miles Flown", model_a = model.pre$sigma,
+                                     model_b = model.post$sigma, se_a = model.pre$sigma_se,
+                                     se_b = model.post$sigma_se, id = 3)
   
   
   spirit_jb_elasticity_post <- sp_jb_elasticity_mean(model.post, product_post)
   spirit_jb_elasticity_pre <- sp_jb_elasticity_mean(model.pre, product_pre)
   
-  summary_statistics1 <- c("Period",  "2021Q2-2023Q2", "2017Q1-2019Q4")
-  summary_statistics2 <- c("N Products", nrow(product_post), nrow(product_pre))
-  summary_statistics3 <- c("N Markets", length(unique(product_post$market_ids)),
-                           length(unique(product_pre$market_ids)))
-  summary_statistics4 <- c("Mean Elasticity", round(mean(model.post$extract_diagonal_means(model.post$compute_elasticities())), digits = 3), 
-                           round(mean(model.pre$extract_diagonal_means(model.pre$compute_elasticities())), digits = 3))
-  summary_statistics5 <- c("Spirit Mean Elasticity", spirit_jb_elasticity_post[1], spirit_jb_elasticity_pre[1])
-  summary_statistics6 <- c("JetBlue Mean Elasticity", spirit_jb_elasticity_post[2], spirit_jb_elasticity_pre[2])
-  summary_statistics7 <- c("Mean Markup", round(mean(model.post$compute_markups(costs = model.post$compute_costs())), digits = 3),
-                           round(mean(model.pre$compute_markups(costs = model.pre$compute_costs())), digits = 3))
+  summary_statistics1 <- c("Period",  "2017Q1-2019Q4", "2021Q2-2023Q2")
+  summary_statistics2 <- c("N Products", nrow(product_pre),  nrow(product_post))
+  summary_statistics3 <- c("N Markets", length(unique(product_pre$market_ids)), 
+                           length(unique(product_post$market_ids)))
+  summary_statistics4 <- c("Mean Elasticity", 
+                           round(mean(model.pre$extract_diagonal_means(model.pre$compute_elasticities())), digits = 3),
+                           round(mean(model.post$extract_diagonal_means(model.post$compute_elasticities())), digits = 3))
+  summary_statistics5 <- c("Spirit Mean Elasticity", spirit_jb_elasticity_pre[1], spirit_jb_elasticity_post[1])
+  summary_statistics6 <- c("JetBlue Mean Elasticity", spirit_jb_elasticity_pre[2],  spirit_jb_elasticity_post[2])
+  summary_statistics7 <- c("Mean Markup", round(mean(model.pre$compute_markups(costs = model.pre$compute_costs())), digits = 3),
+                           round(mean(model.post$compute_markups(costs = model.post$compute_costs())), digits = 3))
   
   table_out <- rbind(price, nonstop, miles, miles_sq, serviceRatio, extraMiles,
                      extraMiles_sq, tourist, prices.nonlinear,
@@ -653,14 +653,14 @@ rcl_two_period_table <- function(post_in = "03.Output/random_coeff_nested_logit_
                      summary_statistics6, summary_statistics7)
   
   rownames(table_out) <- NULL
-  colnames(table_out) <- c("Variable", "Post-Pandemic", "Pre-Pandemic")
+  colnames(table_out) <- c("Variable", "Pre-Pandemic", "Post-Pandemic")
   table_out <- as.data.frame(table_out)
   
   
   kbl(table_out,
       format = "latex", 
       escape = FALSE, booktabs = TRUE,
-      col.names = c("Variable", "Post-Pandemic", "Pre-Pandemic"))  %>%
+      col.names = c("Variable", "Pre-Pandemic",  "Post-Pandemic"))  %>%
     row_spec(row = 16, hline_after = TRUE) %>%
     row_spec(row = 22, hline_after = TRUE) %>%
     row_spec(row = 24, hline_after = TRUE) %>%
@@ -670,7 +670,6 @@ rcl_two_period_table <- function(post_in = "03.Output/random_coeff_nested_logit_
     pack_rows(group_label = "Nesting Coefficient", 23, 24) %>%
     pack_rows(group_label = "Summary Statistics", 25, 31) %>%
     save_kable(file = output_table)
-  
   gc();
 }
 

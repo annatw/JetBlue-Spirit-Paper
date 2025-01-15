@@ -1,9 +1,18 @@
-five_statistic_row_make <- function(name, vector){
-  new_row <- c(name, round(mean(vector, na.rm = TRUE), digits = 2),
-               paste("(", round(sd(vector, na.rm = TRUE), digits = 2), ")", sep = ""),
-               round(min(vector, na.rm = TRUE), digits = 2),
-               round(median(vector,na.rm = TRUE), digits = 2),
-               round(max(vector, na.rm = TRUE), digits = 2))
+five_statistic_row_make <- function(name, vector,
+                                    weight_variable = NULL){
+  if(is.null(weight_variable)){
+    new_row <- c(name, round(mean(vector, na.rm = TRUE), digits = 2),
+                 paste("(", round(sd(vector, na.rm = TRUE), digits = 2), ")", sep = ""),
+                 round(min(vector, na.rm = TRUE), digits = 2),
+                 round(median(vector,na.rm = TRUE), digits = 2),
+                 round(max(vector, na.rm = TRUE), digits = 2))
+  } else {
+    new_row <- c(name, round(sum(vector*weight_variable)/sum(weight_variable), digits = 2),
+                 paste("(", round(sd(vector, na.rm = TRUE), digits = 2), ")", sep = ""),
+                 round(min(vector, na.rm = TRUE), digits = 2),
+                 round(median(vector,na.rm = TRUE), digits = 2),
+                 round(max(vector, na.rm = TRUE), digits = 2))
+  }
   return(new_row)
 }
 

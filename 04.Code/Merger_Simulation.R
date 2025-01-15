@@ -565,7 +565,9 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
               prices = mean(prices),
               Tourism = mean(Tourism),
               market_min_miles = min(market_min_miles),
-              unobserved = min(unobserved),
+              unobserved.best = max(unobserved),
+              unobserved.avg = mean(unobserved),
+              unobserved.worst = min(unobserved),
               costs.min = min(cost),
               costs.mean = mean(cost),
               costs.max = max(cost),
@@ -612,17 +614,37 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
     components <- linear
   }
   
-  simulation <- pyblp$Simulation(product_formulations = components,
+  sigma_vec <- model$sigma; remove(model); gc()
+  
+  simulation.best <- pyblp$Simulation(product_formulations = components,
                                  product_data = data.new,
                                  beta = beta_vec,
-                                 sigma = model$sigma,
+                                 sigma = sigma_vec,
                                  integration = pyblp$Integration('product', 9L,
                                             specification_options = dict("seed" = 97L)),
-                                 xi = data.new$unobserved)
+                                 xi = data.new$unobserved.best)
   
-  simulation.min <- simulation$replace_endogenous(costs = data.new$costs.min); gc(); 
-  simulation.mean <- simulation$replace_endogenous(costs = data.new$costs.mean); gc();
-  simulation.max <- simulation$replace_endogenous(costs = data.new$costs.max); gc()
+  simulation.avg <- pyblp$Simulation(product_formulations = components,
+                                      product_data = data.new,
+                                      beta = beta_vec,
+                                      sigma = sigma_vec,
+                                      integration = pyblp$Integration('product', 9L,
+                                                                      specification_options = dict("seed" = 97L)),
+                                      xi = data.new$unobserved.avg)
+  
+  simulation.worst <- pyblp$Simulation(product_formulations = components,
+                                      product_data = data.new,
+                                      beta = beta_vec,
+                                      sigma = sigma_vec,
+                                      integration = pyblp$Integration('product', 9L,
+                                                                      specification_options = dict("seed" = 97L)),
+                                      xi = data.new$unobserved.worst)
+  
+  
+  
+  simulation.min <- simulation.best$replace_endogenous(costs = data.new$costs.min); gc(); 
+  simulation.mean <- simulation.avg$replace_endogenous(costs = data.new$costs.mean); gc();
+  simulation.max <- simulation.worst$replace_endogenous(costs = data.new$costs.max); gc()
   
   data.new[, Shares.MinCost.Sim := py_to_r(simulation.min$product_data$shares)]
   data.new[, Shares.MeanCost.Sim := py_to_r(simulation.mean$product_data$shares)]
@@ -637,8 +659,6 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
            by = c("market_ids")]
   data.new[, Shares.WithinMarket.MaxCost := Shares.MaxCost.Sim / sum(Shares.MinCost.Sim),
            by = c("market_ids")]
-  
-  
   
   # Add each markets Consumer Surplus
   # markets <- unique(data.new$market_ids)
@@ -684,29 +704,29 @@ merger_results_table <- function(merger_data = "03.Output/Adv_Merger_Sim_Data.rd
   merger <- merger[market_ids %in% impactedMarkets,]
   
   # Cluster 1: Prices 
-  price.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim)
-  price.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim)
-  price.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim)
+  price.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim,
+                                        weight_variable = merger$Potential_Passengers *
+                                          merger$Shares.WithinMarket.MinCost)
+  price.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim,
+                                       weight_variable = merger$Potential_Passengers *
+                                         merger$Shares.WithinMarket.MinCost)
+  price.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim,
+                                         weight_variable = merger$Potential_Passengers *
+                                           merger$Shares.WithinMarket.MinCost)
   
   # Cluster 2: Price Change
-  priceChange.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim - merger$Fare.Original)
-  priceChange.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim - merger$Fare.Original)
-  priceChange.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim - merger$Fare.Original)
-  
-  # Cluster 3: Shares
-  shares.best <- five_statistic_row_make("Best Case", merger$Shares.WithinMarket.MinCost)
-  shares.avg <- five_statistic_row_make("Average Case", merger$Shares.WithinMarket.MeanCost)
-  shares.worst <- five_statistic_row_make("Worst Case", merger$Shares.WithinMarket.MaxCost)
-  
-  # Cluster 4: Shares Change
-  shavesChange.best <- five_statistic_row_make("Best Case", merger$Shares.WithinMarket.MinCost - merger$Share.WithinMarket.Original)
-  sharesChange.avg <- five_statistic_row_make("Average Case", merger$Shares.WithinMarket.MeanCost - merger$Share.WithinMarket.Original)
-  sharesChange.worst <- five_statistic_row_make("Average Case", merger$Shares.WithinMarket.MaxCost - merger$Share.WithinMarket.Original)
+  priceChange.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim - merger$Fare.Original,
+                                              weight_variable = merger$Potential_Passengers *
+                                                merger$Shares.WithinMarket.MinCost)
+  priceChange.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim - merger$Fare.Original,
+                                             weight_variable = merger$Potential_Passengers *
+                                               merger$Shares.WithinMarket.MinCost)
+  priceChange.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim - merger$Fare.Original,
+                                               weight_variable = merger$Potential_Passengers *
+                                                 merger$Shares.WithinMarket.MinCost)
   
   table <- rbind(price.best, price.avg, price.worst,
-                 priceChange.best, priceChange.avg, priceChange.worst,
-                 shares.best, shares.avg, shares.worst,
-                 shavesChange.best, sharesChange.avg, sharesChange.worst)
+                 priceChange.best, priceChange.avg, priceChange.worst)
   rownames(table) <- NULL
   
   title_row <- c("", "Mean", "(SD)", "Minimum", "Median", "Maximum")
@@ -714,279 +734,14 @@ merger_results_table <- function(merger_data = "03.Output/Adv_Merger_Sim_Data.rd
   kbl(table,
       format = "latex", col.names = title_row,
       escape = TRUE, booktabs = TRUE) %>%
-  pack_rows(group_label = "Prices", 1, 3) %>%
+    pack_rows(group_label = "Prices", 1, 3) %>%
     pack_rows(group_label = "Price Change", 4, 6) %>%
-    pack_rows(group_label = "Within Market Shares", 7, 9) %>%
-    pack_rows(group_label = "Within Market Shares Change", 10, 12) %>%
-  save_kable(file = table_out)
-}
-
-
-merger_results_table.old <- function(merger_data = "03.Output/Adv_Merger_Sim_Data.rds",
-                                 observed_data = "02.Intermediate/Product_Data.rds", 
-                                 table_out = "06.Tables/Merger_Results.tex",
-                                 rcl = "03.Output/random_coeff_nested_logit_results.pickle"){
-  merger <- readRDS(merger_data)
-  observed <- readRDS(observed_data)
-  rcl <- py_load_object(rcl)
-  
-  # Compute Costs
-  observed[, cost := rcl$compute_costs()]
-  
-  # First, Identify Markets in Which Both Firms Operated in
-  observed[, Spirit_Prescence := max(Spirit_Prescence), by = c("market_ids")]
-  observed[, JetBlue_Prescence := max(JetBlue_Prescence), by = c("market_ids")]
-  
-  
-  shared_markets <- unique(observed[Spirit_Prescence == 1 & JetBlue_Prescence == 1, market_ids])
-  
-  merger_shared <- merger[market_ids %in% shared_markets,]
-  merger_shared[, Passengers.Product.Min := Shares.MinCost.Sim * Potential_Passengers]
-  merger_shared[, Passengers.Product.Mean := Shares.MeanCost.Sim * Potential_Passengers]
-  merger_shared[, Passengers.Product.Max := Shares.MaxCost.Sim * Potential_Passengers]
-  
-  
-  observed_shared <- observed[market_ids %in% shared_markets,]
-  observed_shared.Sp <- observed_shared[Carrier == "Spirit Air Lines",]
-  observed_shared.Jb <- observed_shared[Carrier == "JetBlue Airways",]
-  observed_shared.Rv <- observed_shared[!Carrier %in% c("Spirit Air Lines",
-                                                        "JetBlue Airways"),]
-    
-  observed_shared.Sp <- observed_shared.Sp %>% group_by(market_ids) %>%
-    summarize(share = sum(shares),
-              Passengers = sum(Passengers.Product),
-              Price = sum(Passengers.Product * prices) / sum(Passengers.Product),
-              Marginal_Cost = sum(Passengers.Product * cost) / sum(Passengers.Product),
-              MilesFlown = sum(Passengers.Product * MktMilesFlown) / sum(Passengers.Product),
-              Origin_Ratio = sum(Passengers.Product * Origin_Firm_Service_Ratio) / sum(Passengers.Product)) %>%
-    as.data.table()
-  
-  
-  observed_shared.Jb <- observed_shared.Jb %>% group_by(market_ids) %>%
-    summarize(share = sum(shares),
-              Passengers = sum(Passengers.Product),
-              Price = sum(Passengers.Product * prices) / sum(Passengers.Product),
-              Marginal_Cost = sum(Passengers.Product * cost) / sum(Passengers.Product),
-              MilesFlown = sum(Passengers.Product * MktMilesFlown) / sum(Passengers.Product),
-              Origin_Ratio = sum(Passengers.Product * Origin_Firm_Service_Ratio) / sum(Passengers.Product)) %>%
-    as.data.table()
-  
-  observed_shared.Rv <- observed_shared.Rv %>% group_by(market_ids) %>%
-    summarize(share = sum(shares),
-              Passengers = sum(Passengers.Product),
-              Price = sum(Passengers.Product * prices) / sum(Passengers.Product),
-              Marginal_Cost = sum(Passengers.Product * cost) / sum(Passengers.Product),
-              MilesFlown = sum(Passengers.Product * MktMilesFlown) / sum(Passengers.Product),
-              Origin_Ratio = sum(Passengers.Product * Origin_Firm_Service_Ratio) / sum(Passengers.Product)) %>%
-    as.data.table()
-  
-  merger_JB <- merger_shared %>% filter(merger_carrier == "JetBlue Airways",
-                                        market_ids %in% shared_markets) %>%
-    group_by(market_ids) %>%
-    summarize(share.MinCost = sum(Shares.MinCost.Sim),
-              share.MeanCost = sum(Shares.MeanCost.Sim),
-              share.MaxCost = sum(Shares.MaxCost.Sim),
-              Passengers.MinCost = sum(Passengers.Product.Min),
-              Passengers.MeanCost = sum(Passengers.Product.Mean),
-              Passengers.MaxCost = sum(Passengers.Product.Max),
-              Price.MinCost = sum(Passengers.Product.Min * Prices.MinCost.Sim) / sum(Passengers.Product.Min),
-              Price.MeanCost = sum(Passengers.Product.Mean * Prices.MeanCost.Sim) / sum(Passengers.Product.Mean),
-              Price.MaxCost = sum(Passengers.Product.Max * Prices.MaxCost.Sim) / sum(Passengers.Product.Max),
-              MC_Min = sum(Passengers.Product.Min * costs.min) / sum(Passengers.Product.Min),
-              MC_Mean = sum(Passengers.Product.Mean * costs.mean) / sum(Passengers.Product.Mean),
-              MC_Max = sum(Passengers.Product.Max * costs.max) / sum(Passengers.Product.Max),
-              MilesFlown.Min = sum(Passengers.Product.Min * MktMilesFlown) / sum(Passengers.Product.Min),
-              MilesFlown.Mean = sum(Passengers.Product.Mean * MktMilesFlown) / sum(Passengers.Product.Mean),
-              MilesFlown.Max = sum(Passengers.Product.Max * MktMilesFlown) / sum(Passengers.Product.Max),
-              Extra_Miles.Min = sum(Passengers.Product.Min * Extra_Miles) / sum(Passengers.Product.Min),
-              Extra_Miles.Mean = sum(Passengers.Product.Mean * Extra_Miles) / sum(Passengers.Product.Mean),
-              Extra_Miles.Max = sum(Passengers.Product.Max * Extra_Miles) / sum(Passengers.Product.Max),
-              Origin_Ratio.Min = sum(Passengers.Product.Min * Origin_Firm_Service_Ratio) / sum(Passengers.Product.Min),
-              Origin_Ratio.Mean = sum(Passengers.Product.Mean * Origin_Firm_Service_Ratio) / sum(Passengers.Product.Mean),
-              Origin_Ratio.Max = sum(Passengers.Product.Max * Origin_Firm_Service_Ratio) / sum(Passengers.Product.Max)) %>%
-    as.data.table()
-  
-  merger_Rv <- merger_shared %>% filter(!merger_carrier == "JetBlue Airways",
-                                        market_ids %in% shared_markets) %>%
-    group_by(market_ids) %>%
-    summarize(share.MinCost = sum(Shares.MinCost.Sim),
-              share.MeanCost = sum(Shares.MeanCost.Sim),
-              share.MaxCost = sum(Shares.MaxCost.Sim),
-              Passengers.MinCost = sum(Passengers.Product.Min),
-              Passengers.MeanCost = sum(Passengers.Product.Mean),
-              Passengers.MaxCost = sum(Passengers.Product.Max),
-              Price.MinCost = sum(Passengers.Product.Min * Prices.MinCost.Sim) / sum(Passengers.Product.Min),
-              Price.MeanCost = sum(Passengers.Product.Mean * Prices.MeanCost.Sim) / sum(Passengers.Product.Mean),
-              Price.MaxCost = sum(Passengers.Product.Max * Prices.MaxCost.Sim) / sum(Passengers.Product.Max),
-              MC_Min = sum(Passengers.Product.Min * costs.min) / sum(Passengers.Product.Min),
-              MC_Mean = sum(Passengers.Product.Mean * costs.mean) / sum(Passengers.Product.Mean),
-              MC_Max = sum(Passengers.Product.Max * costs.max) / sum(Passengers.Product.Max),
-              MilesFlown.Min = sum(Passengers.Product.Min * MktMilesFlown) / sum(Passengers.Product.Min),
-              MilesFlown.Mean = sum(Passengers.Product.Mean * MktMilesFlown) / sum(Passengers.Product.Mean),
-              MilesFlown.Max = sum(Passengers.Product.Max * MktMilesFlown) / sum(Passengers.Product.Max),
-              Extra_Miles.Min = sum(Passengers.Product.Min * Extra_Miles) / sum(Passengers.Product.Min),
-              Extra_Miles.Mean = sum(Passengers.Product.Mean * Extra_Miles) / sum(Passengers.Product.Mean),
-              Extra_Miles.Max = sum(Passengers.Product.Max * Extra_Miles) / sum(Passengers.Product.Max),
-              Origin_Ratio.Min = sum(Passengers.Product.Min * Origin_Firm_Service_Ratio) / sum(Passengers.Product.Min),
-              Origin_Ratio.Mean = sum(Passengers.Product.Mean * Origin_Firm_Service_Ratio) / sum(Passengers.Product.Mean),
-              Origin_Ratio.Max = sum(Passengers.Product.Max * Origin_Firm_Service_Ratio) / sum(Passengers.Product.Max)) %>%
-    as.data.table()
-  
-  pass_min <- c("Minimum", signif(c(min(observed_shared.Sp$Passengers), min(observed_shared.Jb$Passengers),
-                                    min(observed_shared.Rv$Passengers), 
-                                    min(merger_JB$Passengers.MinCost), min(merger_Rv$Passengers.MinCost),
-                                    min(merger_JB$Passengers.MeanCost), min(merger_Rv$Passengers.MeanCost),
-                                    min(merger_JB$Passengers.MaxCost), min(merger_Rv$Passengers.MaxCost)),
-                                  digits = 3))
-  pass_row <- c("Average", signif(c(mean(observed_shared.Sp$Passengers), mean(observed_shared.Jb$Passengers),
-                                              mean(observed_shared.Rv$Passengers), 
-                                              mean(merger_JB$Passengers.MinCost), mean(merger_Rv$Passengers.MinCost),
-                                              mean(merger_JB$Passengers.MeanCost), mean(merger_Rv$Passengers.MeanCost),
-                                              mean(merger_JB$Passengers.MaxCost), mean(merger_Rv$Passengers.MaxCost)),
-                                 digits = 3))
-  pass_max <- c("Maximum", signif(c(max(observed_shared.Sp$Passengers), max(observed_shared.Jb$Passengers),
-                                    max(observed_shared.Rv$Passengers), 
-                                    max(merger_JB$Passengers.MinCost), max(merger_Rv$Passengers.MinCost),
-                                    max(merger_JB$Passengers.MeanCost), max(merger_Rv$Passengers.MeanCost),
-                                    max(merger_JB$Passengers.MaxCost), max(merger_Rv$Passengers.MaxCost)),
-                                  digits = 3))
-  
-  share_min <- c("Minimum", signif(c(min(observed_shared.Sp$share), min(observed_shared.Jb$share),
-                                     min(observed_shared.Rv$share), 
-                                     min(merger_JB$share.MinCost), min(merger_Rv$share.MinCost),
-                                     min(merger_JB$share.MeanCost), min(merger_Rv$share.MeanCost),
-                                     min(merger_JB$share.MaxCost), min(merger_Rv$share.MaxCost)), digits = 3))
-  share_row <- c("Average", signif(c(mean(observed_shared.Sp$share), mean(observed_shared.Jb$share),
-                 mean(observed_shared.Rv$share), 
-                 mean(merger_JB$share.MinCost), mean(merger_Rv$share.MinCost),
-                 mean(merger_JB$share.MeanCost), mean(merger_Rv$share.MeanCost),
-                 mean(merger_JB$share.MaxCost), mean(merger_Rv$share.MaxCost)), digits = 3))
-  share_max <-  c("Maximum", signif(c(max(observed_shared.Sp$share), max(observed_shared.Jb$share),
-                                      max(observed_shared.Rv$share), 
-                                      max(merger_JB$share.MinCost), max(merger_Rv$share.MinCost),
-                                      max(merger_JB$share.MeanCost), max(merger_Rv$share.MeanCost),
-                                      max(merger_JB$share.MaxCost), max(merger_Rv$share.MaxCost)), digits = 3))
-  
-  mc_min <- c("Minimum", signif(c(min(observed_shared.Sp$Marginal_Cost), min(observed_shared.Jb$Marginal_Cost),
-                                  min(observed_shared.Rv$Marginal_Cost), 
-                                  min(merger_JB$MC_Min),  min(merger_Rv$MC_Min),
-                                  min(merger_JB$MC_Mean), min(merger_Rv$MC_Mean),
-                                  min(merger_JB$MC_Max),  min(merger_Rv$MC_Max)), digits = 3))
-  mc_row <- c("Average", signif(c(mean(observed_shared.Sp$Marginal_Cost), mean(observed_shared.Jb$Marginal_Cost),
-                 mean(observed_shared.Rv$Marginal_Cost), 
-                 mean(merger_JB$MC_Min), mean(merger_Rv$MC_Min),
-                 mean(merger_JB$MC_Mean), mean(merger_Rv$MC_Mean),
-                 mean(merger_JB$MC_Max), mean(merger_Rv$MC_Max)), digits = 3))
-  mc_max <- c("Maximum", signif(c(max(observed_shared.Sp$Marginal_Cost), 
-                                  max(observed_shared.Jb$Marginal_Cost),
-                                  max(observed_shared.Rv$Marginal_Cost), 
-                                  max(merger_JB$MC_Min), max(merger_Rv$MC_Min),
-                                  max(merger_JB$MC_Mean), max(merger_Rv$MC_Mean),
-                                  max(merger_JB$MC_Max), max(merger_Rv$MC_Max)), digits = 3))
-  
-  price_min <- c("Minimum", signif(c(min(observed_shared.Sp$Price), min(observed_shared.Jb$Price),
-                                     min(observed_shared.Rv$Price), 
-                                     min(merger_JB$Price.MinCost), min(merger_Rv$Price.MinCost),
-                                     min(merger_JB$Price.MeanCost), min(merger_Rv$Price.MeanCost),
-                                     min(merger_JB$Price.MaxCost), min(merger_Rv$Price.MaxCost)), digits = 3))
-  price_row <- c("Average", signif(c(mean(observed_shared.Sp$Price), mean(observed_shared.Jb$Price),
-              mean(observed_shared.Rv$Price), 
-              mean(merger_JB$Price.MinCost), mean(merger_Rv$Price.MinCost),
-              mean(merger_JB$Price.MeanCost), mean(merger_Rv$Price.MeanCost),
-              mean(merger_JB$Price.MaxCost), mean(merger_Rv$Price.MaxCost)), digits = 3))
-  price_max <- c("Maximum", signif(c(max(observed_shared.Sp$Price), max(observed_shared.Jb$Price),
-                                     max(observed_shared.Rv$Price), 
-                                     max(merger_JB$Price.MinCost), max(merger_Rv$Price.MinCost),
-                                     max(merger_JB$Price.MeanCost), max(merger_Rv$Price.MeanCost),
-                                     max(merger_JB$Price.MaxCost), max(merger_Rv$Price.MaxCost)), digits = 3))
-  
-  miles_min <- c("Minimum", signif(c(min(observed_shared.Sp$MilesFlown),
-                                     min(observed_shared.Jb$MilesFlown), min(observed_shared.Rv$MilesFlown),
-                                     min(merger_JB$MilesFlown.Min), min(merger_Rv$MilesFlown.Min),
-                                     min(merger_JB$MilesFlown.Mean), min(merger_Rv$MilesFlown.Mean),
-                                     min(merger_JB$MilesFlown.Max), min(merger_Rv$MilesFlown.Max)), digits = 3))
-  miles_row <- c("Average", signif(c(mean(observed_shared.Sp$MilesFlown),
-             mean(observed_shared.Jb$MilesFlown), mean(observed_shared.Rv$MilesFlown),
-             mean(merger_JB$MilesFlown.Min), mean(merger_Rv$MilesFlown.Min),
-             mean(merger_JB$MilesFlown.Mean), mean(merger_Rv$MilesFlown.Mean),
-             mean(merger_JB$MilesFlown.Max), mean(merger_Rv$MilesFlown.Max)), digits = 3))
-  miles_max <- c("Maximum", signif(c(max(observed_shared.Sp$MilesFlown),
-                                     max(observed_shared.Jb$MilesFlown), max(observed_shared.Rv$MilesFlown),
-                                     max(merger_JB$MilesFlown.Min), max(merger_Rv$MilesFlown.Min),
-                                     max(merger_JB$MilesFlown.Mean), max(merger_Rv$MilesFlown.Mean),
-                                     max(merger_JB$MilesFlown.Max), max(merger_Rv$MilesFlown.Max)), digits = 3))
-  
-  origin_min <- c("Minimum", signif(c(min(observed_shared.Sp$Origin_Ratio),
-                                      min(observed_shared.Jb$Origin_Ratio), min(observed_shared.Rv$Origin_Ratio),
-                                      min(merger_JB$Origin_Ratio.Min), min(merger_Rv$Origin_Ratio.Min),
-                                      min(merger_JB$Origin_Ratio.Mean), min(merger_Rv$Origin_Ratio.Mean),
-                                      min(merger_JB$Origin_Ratio.Max), min(merger_Rv$Origin_Ratio.Max)), digits = 3))
-  origin_row <- c("Average", signif(c(mean(observed_shared.Sp$Origin_Ratio),
-             mean(observed_shared.Jb$Origin_Ratio), mean(observed_shared.Rv$Origin_Ratio),
-             mean(merger_JB$Origin_Ratio.Min), mean(merger_Rv$Origin_Ratio.Min),
-             mean(merger_JB$Origin_Ratio.Mean), mean(merger_Rv$Origin_Ratio.Mean),
-             mean(merger_JB$Origin_Ratio.Max), mean(merger_Rv$Origin_Ratio.Max)), digits = 3))
-  origin_max <- c("Maximum", signif(c(max(observed_shared.Sp$Origin_Ratio),
-                                      max(observed_shared.Jb$Origin_Ratio), max(observed_shared.Rv$Origin_Ratio),
-                                      max(merger_JB$Origin_Ratio.Min), max(merger_Rv$Origin_Ratio.Min),
-                                      max(merger_JB$Origin_Ratio.Mean), max(merger_Rv$Origin_Ratio.Mean),
-                                      max(merger_JB$Origin_Ratio.Max), max(merger_Rv$Origin_Ratio.Max)), digits = 3))
-  
-  # Estimate Change in Consumer Surplus
-  # merger_shared[, ChangeCS.MinCost := CS.MinCost.Sim - CS.Original]
-  # merger_shared[, ChangeCS.MeanCost := CS.MeanCost.Sim - CS.Original]
-  # merger_shared[, ChangeCS.MaxCost := CS.MaxCost.Sim - CS.Original]
-  
-  # cs_merger_shared <- unique(merger_shared[, .(market_ids, ChangeCS.MinCost, ChangeCS.MeanCost,
-  #                                       ChangeCS.MaxCost)])
-  # 
-  # CS_Change.min <- c("Minimum", "", "", "", "", round(min(merger_shared$ChangeCS.MinCost), digits = 2), "",
-  #                    round(min(merger_shared$ChangeCS.MeanCost), digits = 2),
-  #                    "", round(min(merger_shared$ChangeCS.MaxCost), digits = 2))
-  # CS_Change.mean <- c("Average", "", "", "", "",
-  #                     round(mean(merger_shared$ChangeCS.MinCost), digits = 2), "",
-  #                     round(mean(merger_shared$ChangeCS.MeanCost), digits = 2),
-  #                    "", round(mean(merger_shared$ChangeCS.MaxCost), digits = 2))
-  # CS_Change.max <- c("Maximum", "", "", "", "", round(max(merger_shared$ChangeCS.MinCost), digits = 2),
-  #                    "", round(max(merger_shared$ChangeCS.MeanCost), digits = 2),
-  #                    "", round(max(merger_shared$ChangeCS.MaxCost), digits = 2))
-  # CS_Change.Total <- c("Total", "","","","", round(sum(merger_shared$ChangeCS.MinCost), digits = 2), "", 
-  #                      round(sum(merger_shared$ChangeCS.MeanCost), digits = 2),
-  #                "", round(sum(merger_shared$ChangeCS.MaxCost), digits = 2))
-  #   
-  N_Markets <- c("Number of Markets", length(shared_markets), length(shared_markets), length(shared_markets),
-                 length(shared_markets), length(shared_markets), length(shared_markets), length(shared_markets),
-                 length(shared_markets), length(shared_markets))
-  
-  table <- rbind(pass_min, pass_row, pass_max, share_min, share_row, share_max,
-                 price_min, price_row, price_max, mc_min,  mc_row, mc_max,
-                 miles_min, miles_row, miles_max,
-                 origin_min, origin_row, origin_max,
-                # CS_Change.min, CS_Change.mean, CS_Change.max, CS_Change.Total,
-                 N_Markets)
-  
-  rownames(table) <- NULL
-  
-  kbl(table,
-      format = "latex", 
-      escape = FALSE, booktabs = TRUE,
-      col.names = NULL) %>%
-    add_header_above(c("Variable" = 1, "Spirit" = 1, "JetBlue" = 1, "Other" = 1,
-                       "Merged" = 1, "Other" = 1, "Merged" = 1, "Other" = 1,
-                       "Merged" = 1, "Other" = 1)) %>%
-    add_header_above(c(" " = 1, "Obseved Sample" = 3, "Low-Cost" = 2, 
-                      "Mean-Cost" = 2, "High-Cost" = 2)) %>%
-    pack_rows("Passengers", start_row = 1, end_row = 3) %>%
-    pack_rows("Market Share", start_row = 4, end_row = 6) %>%
-    pack_rows("Prices", start_row = 7, end_row = 9) %>%
-    pack_rows("Marginal Cost", start_row = 10, end_row = 12) %>%
-    pack_rows("Miles Flown", start_row = 13, end_row = 15) %>%
-    pack_rows("Origin Service Ratio", start_row = 16, end_row = 18) %>%
-   # pack_rows("Change in Consumer Surplus", start_row = 19, end_row = 22) %>%
-    row_spec(row = 18, hline_after = TRUE) %>%
     save_kable(file = table_out)
   
+    # pack_rows(group_label = "Within Market Shares", 7, 9) %>%
+    # pack_rows(group_label = "Within Market Shares Change", 10, 12) %>%
 }
+
 
 elasticity_compare_table <- function(postPand_input = "03.Output/random_coeff_nested_logit_results.pickle",
                                      prePand_input = "03.Output/prepandemic_random_coeff_nested_logit.pickle",
