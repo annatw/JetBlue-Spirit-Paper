@@ -4,7 +4,8 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
                                 graph_out.internalize = "05.Figures/Merger_Change_MinimumFare_Internalize.pdf",
                                 graph_out.BestCase = "05.Figures/Merger_Change_MinimumFare_BestCase.pdf",
                                 graph_out.AverageCase = "05.Figures/Merger_Change_MinimumFare_AverageCase.pdf",
-                                graph_out.WorstCase = "05.Figures/Merger_Change_MinimumFare_WorstCase.pdf"){
+                                graph_out.WorstCase = "05.Figures/Merger_Change_MinimumFare_WorstCase.pdf",
+                                graph_out = "05.Figures/Merger_Change_MinimumFare.pdf"){
   merger_internalized <- readRDS(merger_data.basic)
   merger <- readRDS(merger_data.adv)
   observed <- readRDS(observed_data)
@@ -50,7 +51,7 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
   worst_case <- result.melt[variable == "High Cost Merge",]
   
   ggplot(data = best_case, aes(x = value)) + 
-    geom_histogram(binwidth = 1, 
+    geom_histogram(binwidth = 10, 
                    boundary = 0) +
     labs(x = "Change in Minimum Market Price (2017 USD)",
          y = "Count") + 
@@ -65,7 +66,7 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
          units = "in", width = 5, height = 3)
   
   ggplot(data = average_case, aes(x = value)) + 
-    geom_histogram(binwidth = 1, 
+    geom_histogram(binwidth = 10, 
                    boundary = 0) +
     labs(x = "Change in Minimum Market Price (2017 USD)",
          y = "Count") + 
@@ -80,7 +81,7 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
          units = "in", width = 5, height = 3)
   
   ggplot(data = worst_case, aes(x = value)) + 
-    geom_histogram(binwidth = 1, 
+    geom_histogram(binwidth = 10, 
                    boundary = 0) +
     labs(x = "Change in Minimum Market Price (2017 USD)",
          y = "Count") + 
@@ -95,7 +96,7 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
          units = "in", width = 5, height = 3)
   
   ggplot(data = result_internalized, aes(x = Difference)) + 
-    geom_histogram(binwidth = 1, 
+    geom_histogram(binwidth = 10, 
                    boundary = 0) +
     labs(x = "Change in Minimum Market Price (2017 USD)",
          y = "Count") + 
@@ -108,6 +109,27 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
   
   ggsave(filename = graph_out.internalize, 
          units = "in", width = 5, height = 3)
+  
+  # Now, three panel graph
+  result.melt <- result.melt[variable %in% c("Low Cost Merge", "Mean Cost Merge",  "High Cost Merge"),]
+  result.melt <- result.melt[, variable := factor(x = variable,
+                                      levels = c("Low Cost Merge", "Mean Cost Merge",  "High Cost Merge"),
+                                      labels = c("Best Case", "Average Case",  "Worst Case"))]
+  
+  ggplot(data = result.melt, aes(x = value)) + 
+    geom_histogram(binwidth = 20, 
+                   boundary = 0) +
+    labs(x = "Change in Minimum Market Price (2017 USD)",
+         y = "Count") + 
+    facet_grid(rows = "variable") +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") +
+    scale_y_continuous(expand = c(0,0),
+                       labels = comma)
+  ggsave(filename = graph_out, 
+         units = "in", width = 7, height = 5)
 }
 
 # Change in Passengers
