@@ -20,8 +20,7 @@
 
 
 \let\Oldsubsection\subsection
-\renewcommand{\subsection}{\FloatBarrier\Oldsubsection}
-
+% \renewcommand{\subsection}{\FloatBarrier\Oldsubsection}
 \newcommand{\comment}[1]{}
 
 \author{Ann Atwater\footnote{Department of Economics, University of Florida.}}
@@ -148,8 +147,12 @@
     \begin{table}
         \caption{Market Level Summary Statistics}
         \label{tab:Summary_Statistics_Market}
-        \include{06.Tables/SummaryStatistics_Market_TwoPeriod}
-        \footnotesize{A market is defined as a set of origin airport, destination airport, year, and quarter. The average miles reported within a market is weighted by itinerary passengers. The pre-pandemic sample includes all quarters of the years 2017 through 2019. The post-pandemic sample includes data from the second quarter of 2021 through the second quarter of 2023. }
+                \vspace{-15mm}
+\begin{center}
+            \include{06.Tables/SummaryStatistics_Market_TwoPeriod}
+                    \footnotesize{A market is defined as a set of origin airport, destination airport, year, and quarter. The average miles reported within a market is weighted by itinerary passengers. The pre-pandemic sample includes all quarters of the years 2017 through 2019. The post-pandemic sample includes data from the second quarter of 2021 through the second quarter of 2023. }
+
+\end{center}
     \end{table}
 
 	\section{Analysis}
@@ -221,10 +224,12 @@
     \begin{table}
         \caption{Demand Estimation Results}
         \label{tab:DemandEst}
+        \vspace{-15mm}
         \begin{center}
         \include{06.Tables/RCL_Both_Period_Output}
+                \footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$ Products are defined as a Carrier-Nonstop pair within an Origin-Destination-Year-Quarter market. Origin Service Ratio is the fraction of direct routes out of the originating airport operated by the carrier divided by the number of distinct direct routes out fo that airport. Extra Miles is the average additional miles flown with a connecting itinerary minus the minimum miles flown within a market.  A tourist product is one that serves the Las Vegas metropolitan statistical area or an airport in Florida.}
+
         \end{center}
-        \footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$ Products are defined as a Carrier-Nonstop pair within an Origin-Destination-Year-Quarter market. Origin Service Ratio is the fraction of direct routes out of the originating airport operated by the carrier divided by the number of distinct direct routes out fo that airport. Extra Miles is the average additional miles flown with a connecting itinerary minus the minimum miles flown within a market.  A tourist product is one that serves the Las Vegas metropolitan statistical area or an airport in Florida.}
     \end{table}
 	
 	% Finally, I estimate the mean price elasticity of demand in both periods as well as the mean price elasticity of demand for products offered by JetBlue and Spirit in both periods. I estimate that the mean own-price elasticity across all products is approximately -4.73 in the pre-pandemic period and approximately -5.946 in the post-pandemic period. This is consistent with an observed decline in business travel following the pandemic as firms became used to telecommunications software such as Zoom for business meetings. As business travelers are less price sensitive than leisure travelers, it is reasonable for such a change in price elasticity to occur in such a limited time. Furthermore, the pre-pandemic price elasticity is consistent with past estimates of price elasticity, as detailed in Table \ref{tab:ElasticityComparison}.
@@ -243,7 +248,8 @@
 
     \begin{table}
         \caption{Merger Simulation Product Level Results - Pre-Pandemic}
-        \label{tab:Simulation_Pre}
+        \label{tab:Simulation_Pre}      
+        \vspace{-15mm}
         \begin{center} \include{06.Tables/PrePandemic_Merger_Results}
         \end{center}
         Mean values are weighted by within-market shares. 
@@ -252,23 +258,39 @@
     \begin{table}
         \caption{Merger Simulation Product Level Results - Post-Pandemic}
         \label{tab:Simulation_Post}
+                \vspace{-15mm}
         \begin{center}
          \include{06.Tables/Merger_Results}
         \end{center}
         Mean values are weighted by within-market shares. 
      \end{table}
 
-    While my estimated results are consistent with efficiencies from the merger resulting in savings for the average consumers in two of the three scenarios, it is worth noting that in the judge's opinion within the case, the key risk of harm was to low-income consumers who may not be able to fly if the minimum fare within the market increased. The overall change in this fare, in twenty dollar intervals, is expounded upon in Table \ref{tab:MinimumPrice}. Across all of my simulations, at least 14 markets are estimated to have the minimum price within the market increase by over \$80. 
+    While my estimated results are consistent with efficiencies from the merger resulting in savings for the average consumers in two of the three scenarios, it is worth noting that in the judge's opinion within the case, the key risk of harm was to low-income consumers who may not be able to fly if the minimum fare within the market increased. The overall change in this fare, in twenty dollar intervals, is expounded upon in Table \ref{tab:MinimumPrice}. Across all of my simulations, at least 14 markets are estimated to have the minimum price within the market increase by over \$80. Within both periods, these in the best case scenario markets are primarily between airports in the New York and Boston areas and various destinations within the Southern portion of the United States (such as Houston and Dallas). As such, it is consistent with the finding of the key markets of concern within the trial. \footnote{It is worth noting that the judge within the trial used a similar type of route - those between the northeast United States and Puerto Rico - as an example of the routes he viewed as most likely to experience large pricing increases. It is worth noting that my sample excluded markets containing endpoints in Puerto Rico due to concerns about accurate recovering of marginal costs due to subsidies.} 
 
     \begin{table}
         \caption{Change in Minimum Fare Available in Market}
         \label{tab:MinimumPrice}
+                \vspace{-15mm}
         \begin{center}
             \include{06.Tables/MinimumFareChange}
         \end{center}
         \footnotesize{The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars. }
     \end{table}    
 
+    Now that the results on prices have been expounded upon, we can now turn our attention to how the simulations predict market concentration would change. Notably, as ultra-low cost airlines earn a significant amount of their income through axillary fares, which are not included within my dataset, estimation of market shares based on revenue are liable to understate these carriers within the market. As such, for these simulations, I calculate both an HHI calculated using market shares of airfare income as well as an HHI calculated using carrier shares of passengers within the market. These results for the pre- and post-pandemic periods are reported in Tables \ref{tab:HHI_Pre} and \ref{tab:HHI_Post}. 
+
+    \begin{table}
+        \caption{Change in Pre-Pandemic Market Shares}
+        \label{tab:HHI_Pre}
+        \begin{center}
+            \include{06.Tables}
+        \end{center}
+    \end{table}
+    
+      \begin{table}
+        \caption{Change in Post-Pandemic Market Shares}
+        \label{tab:HHI_Post}
+    \end{table}
     
 	\section{Conclusions}
 	\label{sec:Conclusion}
@@ -648,13 +670,6 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 	\end{figure}	
 	
 	\subsection{Estimation Results: JetBlue-Spirit Merger}
-	
-	
-	\begin{table}[h]
-		\caption{Elasticity Comparison Table}
-		\label{tab:ElasticityComparison}
-		\include{06.Tables/Elasticity_Compare_Table}
-	\end{table}
 	
 	\begin{table}
 		\caption{Demand Estimation}
