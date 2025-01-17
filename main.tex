@@ -158,7 +158,7 @@
 	
 	 As documented in Table \ref{tab:NEA_Exposure}, approximately 75\% of JetBlue's routes, passengers, and revenue and 15\% of American's routes, passengers, and revenue were in the markets directly impacted by the four cities within the NEA. As such, the vast majority of JetBlue's fleet was deployed in collaboration with American. The ruling against the agreement indicated concerns that this coordination lessened JetBlue's ability to compete in even markets that were not coordinated within, due to the limited ability of JetBlue to increase its fleet size.\footnote{As noted in the judgment, there is limited ability to fully understand the ramifications of the NEA on JetBlue's route restructuring over this time period as it is coterminous with the changes within the industry caused by demand changes following the coronavirus pandemic.}
 	
-	\subsection{Attempted JetBlue-Spirit Merger}
+	\subsection{JetBlue-Spirit Merger Attempt}
 	\label{sec:Setting_Merger}
 	In February 2022, Spirit announced its intention to merge with fellow ultra-low cost carrier Frontier \citep{schaper_frontier-spirit_2022}. This prompted a counter offer from JetBlue in April for ownership of Spirit, which would lead to the attempted merger between Spirit and Frontier being called off in July amid a lack of support from Spirit shareholders \citep{josephs_jetblue_2022, josephs_spirit_2022}. By mid-October, Spirit shareholders approved the acquisition by JetBlue \citep{koenig_spirit_2022}. The next year would see the United States Department of Justice, the District of Columbia, Massachusetts, and New York file suit to block the merger in March \citep{chokshi_justice_2023}. Following a trial in the winter of 2023, the merger would be blocked on January 16, 2024, and the parties would ultimately decide against appealing the verdict \citep{chapman_jetblue_2024}.  These events are summarized in Table \ref{tab:JetBlue_Spirit_Timeline}. 
 
@@ -191,7 +191,18 @@
 	
 	I now turn my attention to the ruling by Judge Young which ultimately blocked the JetBlue-Spirit merger attempt. The judgment identifies five key cities for his ruling: Orlando, San Juan, Miami and Fort Lauderdale (termed "South Florida"), New York City, and Boston. These cities were identified on the basis that the majority of passengers in markets with competition between JetBlue and Spirit departed from these cities. These largely align with the cities in which the two firms would have the largest share of departing passengers within 2022 (Table \ref{tab:KeyCities}). However, the cities indicates ignores the firms' role in multiple smaller markets within Puerto Rico, namely Ponce and Aguadilla, where the two firms comprise the vast majority of the market. 
 	
-	In section 2.F of the judgment, the potential effects of the merger are listed as decreased airline seats, increased market concentration, increased debt for JetBlue, and increased prices for consumers. Table \ref{tab:JetBlueSpirit_Fleet} documents the aircraft in JetBlue and Spirit's fleets in 2022. Both airlines predominantly fly Airbus manufactured aircraft, with wider variety in JetBlue's fleet than Spirit's, using five different versions of the Airbus A321 aircraft\footnote{Two of these configurations reflect solely different seat configurations. The other three configurations are on the Airbus A321neo, a revision of the earlier aircraft.} Should Spirit's Airbus A320 and Airbus A321 were adjusted to the predominant seat configurations of JetBlue's aircraft, a total of 20 seats would be lost on each Airbus A320 and 69 seats would be lost on each Airbus A321, for a total of 4,799 seats lost. This would reflect a loss of approximately 13\% of the seats on Spirit's aircraft.\footnote{If instead, Spirit's Airbus A321 were adjusted to the 200 seat configuration rather than the 159 configuration, then this would be 3500 seats lost or a loss approximately 9.9\% of Spirit's seat capacity.} These rough calculations closely track the estimate of an 11\% reduction in seats accepted by the trial court in its decision.\footnote{The court further estimates a decline in annual departures of over 6.1 million. As I do not possess data on flight schedules, I am unable to assess this claim.} Beyond the issue of seats, this paper estimates the counterfactual increase in market concentration and increase in prices in Section \ref{sec:Analysis_NEA}. 
+	In section 2.F of the judgment, the potential effects of the merger are listed as decreased airline seats, increased market concentration, increased debt for JetBlue, and increased prices for consumers. Table \ref{tab:JetBlueSpirit_Fleet} documents the aircraft in JetBlue and Spirit's fleets in 2022. Both airlines predominantly fly Airbus manufactured aircraft, with wider variety in JetBlue's fleet than Spirit's, using five different versions of the Airbus A321 aircraft\footnote{Two of these configurations reflect solely different seat configurations. The other three configurations are on the Airbus A321neo, a revision of the earlier aircraft.} Should Spirit's Airbus A320 and Airbus A321 were adjusted to the predominant seat configurations of JetBlue's aircraft, a total of 20 seats would be lost on each Airbus A320 and 69 seats would be lost on each Airbus A321, for a total of 4,799 seats lost. This would reflect a loss of approximately 13\% of the seats on Spirit's aircraft.\footnote{If instead, Spirit's Airbus A321 were adjusted to the 200 seat configuration rather than the 159 configuration, then this would be 3500 seats lost or a loss approximately 9.9\% of Spirit's seat capacity.} These rough calculations closely track the estimate of an 11\% reduction in seats accepted by the trial court in its decision.\footnote{The court further estimates a decline in annual departures of over 6.1 million. As I do not possess data on flight schedules, I am unable to assess this claim.} 
+    
+    \begin{table}
+        \begin{center}
+            \caption{JetBlue, Spirit Fleet Composition - 2022}
+            \label{tab:JetBlueSpirit_Fleet}
+            \include{06.Tables/JetBlue_Spirit_Fleet.tex}
+        \end{center}
+        \footnotesize{Source: B-43 Inventory Data. }
+    \end{table}
+
+    Beyond the issue of seats, this paper estimates the counterfactual increase in market concentration and increase in prices in Section \ref{sec:Analysis_Merger}. 
 
 	\section{Data and Summary Statistics}
 	\label{sec:Data}
@@ -208,8 +219,11 @@
     \begin{table}
     \caption{Product Level Summary Statistics}
     \label{tab:Summary_Statistics_Product}
+                    \vspace{-15mm}
+                    \begin{center}
     \include{06.Tables/SummaryStatistics_Product_TwoPeriod}
     \footnotesize{A product is defined as a set of origin airport, destination airport, year, quarter, firm, and nonstop status. ``Origin Destinations" is the number of airports served from the originating airport across all firms, ``Origin Prescence" is the fraction of these destinations served by the ticketing carrier. The pre-pandemic sample includes all quarters of the years 2017 through 2019. The post-pandemic sample includes data from the second quarter of 2021 through the second quarter of 2023.}
+                    \end{center}
     \end{table}
 
     Summary statistics for product level data are included in Table \ref{tab:Summary_Statistics_Product}. Roughly three-percent of the products included in the final sample belong to each of JetBlue and Spirit, consistent with their smaller network sizes than the legacy carriers and Southwest. There is a slight, roughly \$20 decrease in airfare following the pandemic, however, this is not statistically distinct from the fares in the pre-pandemic period. Product characteristics relating to network structure, such as travel distance and nonstop status and also unchanged between the two periods, consistent with the idea that the observed changes in the customer base between these two periods did not result in firms substantially changing their offerings.  
@@ -459,22 +473,22 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 
 	\FloatBarrier
 	\pagebreak
-	\section{Figures and Tables}	
+	\section{Additional Figures and Tables}	
 	
-	\subsection{Descriptive Figures and Tables: Aviation Industry}
+	% \subsection{Descriptive Figures and Tables: Aviation Industry}
 	
-\begin{figure}
-	\caption{Jet Fuel Price, By Firm}
-	\label{fig:JetFuel}
-	\includegraphics[width = \linewidth]{Fuel_Price_Compare}
-	\footnotesize{Source: Schedule P-12 Financial Filings, Energy Information Administration Jet Fuel Spot Price Time Series. Each line is the difference between the reported quarterly expenditure on fuel for each firm and the national average spot price of oil within the quarter.}
-\end{figure}
+%\begin{figure}
+%	\caption{Jet Fuel Price, By Firm}
+%	\label{fig:JetFuel}
+%	\includegraphics[width = \linewidth]{Fuel_Price_Compare}
+%	\footnotesize{Source: Schedule P-12 Financial Filings, Energy Information Administration Jet Fuel Spot Price Time Series. Each line is the difference between the reported quarterly expenditure on fuel for each firm and the national average spot price of oil within the quarter.}
+%\end{figure}
 
 
 
-\FloatBarrier
+%\FloatBarrier
 
-	\subsection{Descriptive Figures and Tables: Northeast Alliance}
+	\subsection{Additional Descriptive Figures and Tables: Northeast Alliance}
 
 	
 	
@@ -547,27 +561,12 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 \end{figure}
 
 \begin{figure}
-	\caption{JetBlue, Spirit Airports - 2012}
-	\label{fig:JBSpirit_Airports_2012}
-	\includegraphics[width = \linewidth]{Map_Mainland_Both_2012.pdf}
-	\footnotesize{Derived from DB1B Data. Beyond the United States mainland, both carriers operated in Puerto Rico.}
-\end{figure}
-
-\begin{figure}
 	\caption{JetBlue, Spirit Airports - 2022}
 	\label{fig:JBSpirit_Airports_2022}
 	\includegraphics[width = \linewidth]{Map_Mainland_Both_2022.pdf}
 	\footnotesize{Derived from DB1B Data. Beyond the United States mainland, both carriers operated in Puerto Rico.}
 \end{figure}
 
-\begin{table}
-	\begin{center}
-		\caption{JetBlue, Spirit Fleet Composition - 2022}
-		\label{tab:JetBlueSpirit_Fleet}
-		\include{06.Tables/JetBlue_Spirit_Fleet.tex}
-	\end{center}
-	\footnotesize{Source: B-43 Inventory Data. }
-\end{table}
 
 	\begin{table}
 		\caption{JetBlue and Spirit: Overlap Cities - 2022}
