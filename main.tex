@@ -170,8 +170,14 @@
     \begin{figure}
         \caption{Northeast Alliance Passenger Uptake}
         \label{fig:NEA_Uptake}
-        \includegraphics[width = \linewidth]{05.Figures/NEA_OperationsGraph}
+        \begin{center}
+            \includegraphics[width = \linewidth]{05.Figures/NEA_OperationsGraph}
+        \end{center}
+        \vspace{-8mm}
+        \footnotesize{A joint itinerary is one in which both JetBlue and American Airlines operated flights on one or more legs of the unidirectional trip. The ticketing carrier collects fares and issues tickets, the operating carrier operates the flights. Itineraries are classified as an "AA Ticket, JB Opeator" if the entire itinerary was issued by American Airlines and JetBlue operated at least one leg of the trip. The vertical line reflects the start of the alliance. }
     \end{figure}
+
+    Figure \ref{fig:NEA_Uptake} plots three measures of the implementation of the NEA: those of passengers on joint itineraries taking flights operated by both firm over the course of a unidirectional trip and those on itineraries ticketed to one carrier but operated by the other on at least one leg of the trip. This figure indicates that the vast majority of customers who used the NEA used it to book tickets with one carrier for flights operated, at least partially, by the other carrier. Interestingly, relatively few customers booked connecting fares with legs operated by different carriers. Furthermore, this plot is consistent with the notion that the NEA would not come into full effect until around the fourth quarter of 2021.\footnote{This reinforces the value of the replication exercises in this paper when compared to \citet{zou_assessing_2023} which only had access to data through ...} 
     
 	\subsection{JetBlue-Spirit Merger Attempt}
 	\label{sec:Setting_Merger}
@@ -513,37 +519,7 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 			\end{minipage}
 		\end{table}
 	\end{landscape}
-	
-		\begin{figure}
-		\caption{American-JetBlue Joint Itinerary}
-		\label{fig:NEA_Joint_Op}
-		\includegraphics[width = \linewidth]{NEA_OPCarrier_Switch_Graph}
-		\begin{minipage}{\textwidth} % choose width suitably
-			{\footnotesize This figure plots ten times the number of passengers recorded in the DB1B who flew on an itinerary with two legs that includes both JetBlue and American as the operating carriers.}
-		\end{minipage}
-	\end{figure}
-	
-	
-	\begin{figure}
-		\caption{American Ticket, JetBlue Operated}
-		\label{fig:NEA_Mix_AAB6}
-		\includegraphics[width = \linewidth]{NEA_AATk_B6Op.pdf}
-		\begin{minipage}{\textwidth} % choose width suitably
-			{\footnotesize This figure plots ten times the number of passengers recorded in the DB1B who flew on an itinerary with American indicated as the ticketing carrier and JetBlue indicated as the operating carrier for at least one leg of the journey. Only itineraries with one layover or fewer are included. }
-		\end{minipage}
-	\end{figure}
-	
-	\begin{figure}
-		\caption{JetBlue Ticket, American Operated}
-		\label{fig:NEA_Mix_B6AA}
-		\includegraphics[width = \linewidth]{NEA_B6TK_AAOp.pdf}
-		\begin{minipage}{\textwidth} % choose width suitably
-			{\footnotesize This figure plots ten times the number of passengers recorded in the DB1B who flew on an itinerary with JetBlue indicated as the ticketing carrier and American indicated as the operating carrier for at least one leg of the journey. Only itineraries with one layover or fewer are included. }
-		\end{minipage}
-	\end{figure}
-	
-\FloatBarrier
-	
+
 	\subsection{Descriptive Figures and Tables: JetBlue, Spirit}
 	\begin{figure}
 	\caption{Spirit Fleet Size Over Time}
