@@ -288,14 +288,8 @@
 
     I model the average airfare $Y_{jt}$ for origin-destination pair $j$ in period $t$ as \[Y_{jt} = \alpha N_{j} + \sum_{T = -8}^{8} \delta_{T} P_{t = T} + \sum_{T = -8, t = 8} \gamma_{T} N_{j} P_{t = T} + \beta X_{jt} + \epsilon_{jt}\] where $N_{j}$ is a dummy variable if the market includes an endpoint covered by the NEA agreement, $P_{t = T}$ is a variable which is 1 if $t = T$ and 0 otherwise, $X_{jt}$ is a vector of additional market level controls which includes the log of the geometric mean income of the origin and destination metropolitan statistical areas, the log of the geometric mean population of the origin and destination metropolitan statistical areas, the lagged HHI for these markets, state coronavirus rates, and the share of flights within each market that are direct. Finally, $\epsilon_{jt}$ is a random error term. 
 
-    These results are plotted in Figure \ref{fig:NEA_Market_Fare}.\footnote{The corresponding yield graph is Figure \ref{fig:NEA_Market_Yield} respectively.} While these coefficients are statistically significant and negative outside of the first two periods of the NEA, it is difficult to draw a conclusion that this is an effect of the NEA as it aligns with average fares in most of the pre-periods. 
+    These results are plotted in Figure \ref{fig:NEA_Market_Fare}.\footnote{The corresponding yield graph is Figure \ref{fig:NEA_Market_Yield} respectively.} As is evident in the figure, the presence of substantial pre-trends suggests that the differences-in-differences inference strategy is invalid to use here. However, adding additional airport interaction terms for the NEA airports removes the pretrends. 
 
-    \begin{figure}
-		\caption{NEA Effect on Market Fare}
-		\label{fig:NEA_Market_Fare}
-		\includegraphics[width = \linewidth]{NEA_Market_Fare_Graph.pdf}
-		\footnotesize{Figure plots the event study coefficients from the second column of Table \ref{tab:NEA_Market_Fare}. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded, and as such, Period -1 is the fourth quarter of 2019. Standard errors clustered at the level of origin-destination pairs are reported.}
-	\end{figure}
     
 	 I now turn my attention to the difference in average fares within markets with itineraries listing both airlines as the ticketing carrier. The results for this estimation are contained in Table \ref{tab:NEA_Fare_Neutral} and graphed in Figure \ref{fig:NEA_Fare_Neutral}.\footnote{ Results for the average market yield are included in Table \ref{tab:NEA_Yield_Neutral} and Figure \ref{fig:NEA_Yield_Neutral} and follow the same trend.} I estimate that after the third quarter of the NEA's operation, this difference was consistently lower by about \$75 dollars within markets impacted by the NEA. This decline is consistent with the collaborating firms' stated desire for consumers to treat products offered by each firm as neutral and the timeline is consistent with my results in Table \ref{tab:NEA_Switch_Prob}. I fail to observe evidence of pretrends, lending credence to the argument that the NEA reduced the price spread between American and JetBlue tickets. However, this result does not clarify if this was caused by American fares becoming less expensive or JetBlue fares becoming more expensive. 
 	
@@ -563,7 +557,14 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 	\include{06.Tables/NEA_Probability_Switches}
 	\footnotesize{Dependent variable is the probability that within a nonstop market, at least one passenger took an itinerary with JetBlue or American as the ticketing carrier and the other firm operated at least one leg of the trip. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded , as such,  Period -1 is the fourth quarter of 2019.Standard errors are clustered at the level of origin, destination airport pairs.}
 \end{table}
-	
+
+        \begin{figure}
+		\caption{NEA Effect on Market Fare}
+		\label{fig:NEA_Market_Fare}
+		\includegraphics[width = \linewidth]{NEA_Market_Fare_Graph.pdf}
+		\footnotesize{Figure plots the event study coefficients from the second column of Table \ref{tab:NEA_Market_Fare}. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded, and as such, Period -1 is the fourth quarter of 2019. Standard errors clustered at the level of origin-destination pairs are reported.}
+	\end{figure}
+
 	
 	\begin{table}
 		\caption{American, JetBlue Fare Difference}
