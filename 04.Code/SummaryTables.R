@@ -1304,13 +1304,11 @@ summary_statistics_market_two_period <- function(post_pandemic_in = "02.Intermed
     number_of_passengers <- five_statistic_row_make(name = "Number of Customers", market_data$Customers)
     hhi <- five_statistic_row_make(name = "HHI", market_data$HHI)
     
-    obs_row <- c("Observations", nrow(market_data), "", "", "", "")
-    spirit_row <- c("Spirit Markets", sum(market_data$Spirit), "", "", "", "")
-    jetblue_row <- c("JetBlue Markets", sum(market_data$JetBlue), "", "", "", "")
-    sp_jb_row <- c("Spirit & JetBlue", sum(market_data$Spirit_JetBlue), "", "", "", "")
-    
+    obs_row <- c("Observations", nrow(market_data), "", "JetBlue Markets", sum(market_data$JetBlue), "")
+    obs_row2 <- c("Spirit & JetBlue", sum(market_data$Spirit_JetBlue), "", "Spirit Markets", sum(market_data$Spirit), "")
+
     return(rbind(min_miles, mean_miles, number_of_firms, number_of_products, number_of_passengers, hhi, obs_row,
-                 jetblue_row, spirit_row, sp_jb_row))
+                 obs_row2))
   }
   
   title_row <- c("", "Mean", "(SD)", "Minimum", "Median", "Maximum")
@@ -1323,11 +1321,11 @@ summary_statistics_market_two_period <- function(post_pandemic_in = "02.Intermed
   kbl(output_table,
       format = "latex", col.names = title_row,
       escape = TRUE, booktabs = TRUE) %>%
-    pack_rows(group_label = "Pre-Pandemic", 1, 10) %>%
-    pack_rows(group_label = "Post-Pandemic", 11, 20) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 8) %>%
+    pack_rows(group_label = "Post-Pandemic", 9, 16) %>%
     row_spec(row = 6, hline_after = TRUE) %>%
-    row_spec(row = 10, hline_after = TRUE) %>%
-    row_spec(row = 16, hline_after = TRUE) %>%
+    row_spec(row = 8, hline_after = TRUE) %>%
+    row_spec(row = 14, hline_after = TRUE) %>%
     save_kable(file = output)
 }
 

@@ -171,40 +171,28 @@ avg_mile_price_evolve_graph_onestop <- function(input = "02.Intermediate/DB1B_Wi
          width = 6, height = 7)
 }
 
-nea_operating_graph <- function(input = "02.Intermediate/DB1B_Operating.rds",
-                                output = "05.Figures/NEA_Graphs/NEA_Operating_Graph.pdf"){
+nea_operating_graph <- function(input = "02.Intermediate/NEA_OPCarrier_Switch.Rds",
+                                output = "05.Figures/NEA_Operating_Graph.pdf"){
   db1b <- readRDS(input)
-  db1b <- db1b[NonStop == TRUE,]
-  db1b[, NEA := grepl(pattern = "BOS",
-                      x = AirportGroup)]
-  db1b[, NEA := max(NEA, grepl(pattern = "JFK",
-                      x = AirportGroup))]
-  db1b[, NEA := max(NEA, grepl(pattern = "EWR",
-                               x = AirportGroup))]
-  db1b[, NEA := max(NEA, grepl(pattern = "LGA",
-                               x = AirportGroup))]
-  db1b <- db1b %>% select(Year, Quarter, Origin, Dest, Carrier, NEA) %>%
+  db1b <- db1b[MktCoupons == 1,]
+  db1b <- db1b %>% select(Year, Quarter, Origin, Dest, OpCarrier) %>%
   unique() %>%  data.table(); gc();
-
+  
   db1b[, Route_ID := paste(Year, Quarter, Origin, Dest)]
   
-  db1b.jb <- db1b[Carrier == "JetBlue Airways",]
-  db1b.aa <- db1b[Carrier == "American Airlines Inc.",]
+  db1b.jb <- db1b[OpCarrier == "B6",]
+  db1b.aa <- db1b[OpCarrier == "AA",]
   
   db1b[, AA_Prescence := Route_ID %in% db1b.aa$Route_ID]
   db1b[, JB_Prescence := Route_ID %in% db1b.jb$Route_ID]
   
-  db1b.summarized <- db1b %>% filter(Carrier %in% c("JetBlue Airways","American Airlines Inc." )) %>%
-    group_by(Year, Quarter, Carrier) %>%
-    summarize(AA_Shared_Routes = sum(AA_Prescence)/n(),
-              JB_Shared_Routes = sum(JB_Prescence)/n()) %>%
-    as.data.table() %>% melt(id.vars = c("Year", "Quarter", "Carrier"), 
-                                         variable.name = "Var", value.name = "Share") %>%
+  db1b.summarized <- db1b %>% filter(OpCarrier %in% c("B6","AA"),
+                                     Origin %in% c("EWR", "BOS", "JFK", "LGA"),
+                                     AA_Prescence == TRUE & JB_Prescence == TRUE) %>%
+    group_by(Year, Quarter, Origin) %>%
+    summarize(Shared_Routes = n()) %>%
     as.data.table()
 
-  db1b.summarized <- db1b.summarized[(Var == "AA_Shared_Routes" & Carrier == "JetBlue Airways") |
-                                       (Var == "JB_Shared_Routes" & Carrier == "American Airlines Inc."),]
-  
   # Need date for line graph
   db1b.summarized[, Month := ""]
   db1b.summarized[Quarter == 1, Month := "February"]
@@ -213,8 +201,9 @@ nea_operating_graph <- function(input = "02.Intermediate/DB1B_Operating.rds",
   db1b.summarized[Quarter == 4, Month := "October"]
   db1b.summarized[, Date := my(paste(Month, Year))]
   
-  ggplot(db1b.summarized, aes(x = Date, y = Share, color = Carrier)) + 
-    geom_line( linewidth = 1) +
+  ggplot(db1b.summarized, aes(x = Date, y = Shared_Routes)) + 
+    geom_line(linewidth = 1) +
+    facet_wrap(~Origin, ncol = 2, nrow = 2) +
     theme(axis.text.x = element_text(angle = 90,
                                      vjust = 0.5, hjust = 1),
           panel.background = element_blank(), 
@@ -222,11 +211,12 @@ nea_operating_graph <- function(input = "02.Intermediate/DB1B_Operating.rds",
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           legend.position = "bottom") +
     scale_color_manual(values = c("darkgrey", "black")) +
-    labs(y = "% Routes Shared") +
+    labs(y = "Number of Shared Operating Routes") +
     scale_y_continuous(expand = c(0,0),
-                       limits = c(0, 1))
+                       limits = c(0, 35)) +
+    geom_vline(xintercept = dmy("1 January 2021"))
   
-  ggsave(output, units = "in", width = 5, height = 3)
+  ggsave(output, units = "in", width = 7, height = 6)
 }
 
 nea_op_carrier_graphs <- function(input  = "02.Intermediate/NEA_OPCarrier_Switch.Rds",
@@ -238,8 +228,8 @@ nea_op_carrier_graphs <- function(input  = "02.Intermediate/NEA_OPCarrier_Switch
   
   # Now, Condense Data
   nea_data.switch <- nea_data %>% group_by(Year, Quarter, Origin, Dest, AA_B6, TkCarrier) %>%
-    summarize(Passengers := 10 * sum(Passengers),
-              NEA_Route := mean(NEA_Route)) %>% data.table()
+    summarize(Passengers := sum(Passengers),
+              NEA_Route := mean(NEA_Market)) %>% data.table()
   nea_data.switch[, Market_Passengers := sum(Passengers), by = c("Year", "Quarter", "Origin",
                                                         "Dest")]
   
@@ -273,14 +263,14 @@ nea_op_carrier_graphs <- function(input  = "02.Intermediate/NEA_OPCarrier_Switch
           legend.position = "bottom") +
     labs(y = "Passengers", x = "Time")
   
-  ggsave(aa_b6_switch, units = "in", width = 5, height = 3)
+  ggsave(aa_b6_switch, units = "in", width = 7, height = 3)
   
   # Now, AA Tk Carriers, with B6 Op
   nea_data.aaB6 <- nea_data %>% filter(TkCarrier == "AA",
                                          JetBlue_Op == TRUE) %>%
     group_by(Year, Quarter, Origin, Dest) %>%
     summarize(Passengers := 10 * sum(Passengers),
-              NEA_Route := mean(NEA_Route)) %>% data.table()
+              NEA_Route := mean(NEA_Market)) %>% data.table()
   
   nea_data.aaB6[, Split_Passengers := sum(Passengers), by = c("Year", "Quarter")]
   nea_data.aaB6 <- unique(nea_data.aaB6[, .(Year, Quarter, Split_Passengers)])
@@ -305,7 +295,7 @@ nea_op_carrier_graphs <- function(input  = "02.Intermediate/NEA_OPCarrier_Switch
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           legend.position = "bottom") +
     labs(y = "Passegners", x = "Time")
-  ggsave(aa_b6op, units = "in", height = 3, width = 5)
+  ggsave(aa_b6op, units = "in", height = 3, width = 7)
   
   nea_data.B6AA <- nea_data %>% filter(TkCarrier == "B6",
                                        American_Op == TRUE) %>%
@@ -334,7 +324,7 @@ nea_op_carrier_graphs <- function(input  = "02.Intermediate/NEA_OPCarrier_Switch
           legend.position = "bottom") +
     labs(y = "Passegners", x = "Time")
   
-  ggsave(b6_aaop, units = "in", width = 5, height = 3)
+  ggsave(b6_aaop, units = "in", width = 7, height = 3)
   
   switch_tk <- nea_data %>% filter(TkCarrierGroup %in% c("AA:B6", "B6:AA"),
                                    Year >= 2017) %>%
@@ -363,14 +353,14 @@ nea_op_carrier_graphs <- function(input  = "02.Intermediate/NEA_OPCarrier_Switch
           legend.position = "bottom") +
     labs(y = "Passegners", x = "Time")
   
-  ggsave(tk_groups, units = "in", width = 5, height = 3)
+  ggsave(tk_groups, units = "in", width = 7, height = 3)
   
   # Print 500,000 divided by total AA, B6 passengers in products in Quarter 2, 2022
   # Impacted by NEA
   # Number of Products in 2022, Q1 NEA
   NEAProd <- nea_data %>% filter(Year == 2022, Quarter == 2,
                                     TkCarrier %in% c("AA", "B6"),
-                                    NEA_Route == TRUE)
+                                 NEA_Market == TRUE)
   switchProd <- nea_data %>% filter(Year == 2022, Quarter == 2,
        (TkCarrier == "AA" & JetBlue_Op == TRUE) | (TkCarrier == "B6" & American_Op),
        NEA_Route == TRUE)
@@ -378,4 +368,44 @@ nea_op_carrier_graphs <- function(input  = "02.Intermediate/NEA_OPCarrier_Switch
                                                   digits = 2)))
 }
 
+nea_op_carrier_graph <- function(input = "02.Intermediate/NEA_OPCarrier_Switch.Rds",
+                                 graph = "05.Figures/NEA_OperationsGraph.pdf"){
+  nea_data <- readRDS(input)
+  
+  neaProd <- nea_data %>% mutate(Joint_Operate = pmin(JetBlue_Op, American_Op) * Passengers,
+                                 AmericanTicket_JBOp = pmin(Carrier == "AA", JetBlue_Op) * Passengers,
+                                 JBTicket_AAOp = pmin(Carrier == "B6", American_Op) * Passengers) %>%
+    group_by(Year, Quarter) %>%
+    summarize(Joint_Operate = sum(Joint_Operate),
+              AmericanTicket_JBOp = sum(AmericanTicket_JBOp),
+              JBTicket_AAOp = sum(JBTicket_AAOp)) %>% as.data.table()
+  
+  neaProd[Quarter == 1, Month := "February"]
+  neaProd[Quarter == 2, Month := "May"]
+  neaProd[Quarter == 3, Month := "August"]
+  neaProd[Quarter == 4, Month := "October"]
+  neaProd[, Date := my(paste(Month, Year))]
+  
+  neaProd <- neaProd[, .(Date, Joint_Operate, AmericanTicket_JBOp, JBTicket_AAOp)]
+  neaProd.melt <- melt(neaProd, id.vars = "Date") %>% as.data.table()
+  neaProd.melt[, variable := factor(x = variable,
+         levels = c("Joint_Operate", "AmericanTicket_JBOp", "JBTicket_AAOp"),
+         labels = c("Joint Itinerary", "AA Ticket, JB Operator", "JB Ticket, AA Operator"))]
+  neaProd.melt <- neaProd.melt[Date > mdy("January 1, 2018"),]
+  
+  ggplot(data = neaProd.melt, aes(x = Date, y = value, linetype = variable)) +
+    geom_line() +
+    scale_y_continuous(expand = c(0,0),
+                       limits = c(0, 225000),
+                       labels = comma) +
+    geom_vline(xintercept = mdy("January 1, 2021")) +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") +
+    labs(x = "Date", y = "Passengers")
 
+  ggsave(filename = graph, units = "in", 
+         height = 3, width = 7)
+  
+}

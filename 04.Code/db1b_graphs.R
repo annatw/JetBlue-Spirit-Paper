@@ -95,20 +95,6 @@ db1b_routes <- function(){
   
 }
 
-firm_ridership <- function(){
-  db1b <- readRDS("02.Intermediate/Construct_DB1B/DB1B_Clarified.Rds");
-  
-  # Keep only major firms 
-  db1b <- db1b %>% 
-    filter(RPCarrier %in% c("Spirit Air Lines", "Allegiant Air", "Frontier Airlines Inc.",
-    "JetBlue Airways", "Alaska Airlines Inc.", "Southwest Airlines Co.", 
-    "Virgin America","Delta Air Lines Inc.", "American Airlines Inc.", "United Air Lines Inc."))
-  
-  db1b <- db1b %>% group_by(Year, Quarter, RPCarrier) %>%
-    summarize(N_Passengers = n())
-}
-
-
 big_four_graph <- function(input = "02.Intermediate/Construct_DB1B/DB1B_Condensed.rds",
                            output.ridership = "05.Figures/BigFour_Ridership_Graph.pdf",
                            output.revenue = "05.Figures/BigFour_Revenue_Graph.pdf"){
@@ -217,3 +203,76 @@ legacy_southwest_other_graph <- function(input = "02.Intermediate/Construct_DB1B
   ggsave(filename = output.revenue, units = "in",
          width = 5, height = 3)
 }
+
+carrier_shares_graph <- function(data_in = "02.Intermediate/DB1B_With_Controls.Rds",
+                                 graph_out = "05.Figures/Carrier_Share.pdf"){
+  db1b <- readRDS(data_in)
+  
+  db1b[, Type := "NA"]
+  db1b[Carrier %in% c("Spirit Air Lines", "Frontier Airlines Inc.",
+                      "Allegiant Air"), Type := "ULCC"] 
+  db1b[Carrier %in% c("Delta Air Lines Inc.", "United Air Lines Inc.", 
+                      "American Airlines Inc.",  "Southwest Airlines Co."), 
+       Type := "Big Four"]
+  
+  db1b.s <- db1b %>% group_by(Year, Quarter, Type) %>%
+    summarize(Passengers := sum(Passengers.Product)) %>%
+    as.data.table()
+  
+  db1b.r <- reshape(db1b.s, direction = "wide",
+                    idvar = c("Year", "Quarter"),
+                    timevar = "Type") %>% as.data.table()
+  
+  db1b.r[, `UCC` := Passengers.ULCC / (Passengers.ULCC + `Passengers.Big Four` + Passengers.NA)]
+  db1b.r[, `Big Four` := `Passengers.Big Four` / (Passengers.ULCC + `Passengers.Big Four` + Passengers.NA)]
+  
+  db1b.r[, Month := -1]
+  db1b.r[Quarter == 1, Month := 2]
+  db1b.r[Quarter == 2, Month := 5]
+  db1b.r[Quarter == 3, Month := 8]
+  db1b.r[Quarter == 4, Month := 11]
+  db1b.r[, Date := my(paste(Month, Year))]
+  
+  db1b.l <- melt(db1b.r[, .(Date, UCC, `Big Four`)], id.vars = "Date")
+  
+  ggplot(db1b.l, aes(x = Date, y = value, linetype = variable)) +
+    geom_rect(aes(xmin = my("January 2020"), xmax = my("April 2021"), ymin = -Inf, ymax = Inf), 
+              fill = "grey") +
+    geom_line() +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") +
+    scale_y_continuous(expand = c(0,0), limits = c(0, 1)) +
+    labs(x = "Time", y = "Share of Trips")
+  
+  ggsave(graph_out, units = "in", width = 7, height = 3)
+}
+
+quarterly_ridership_graph <- function(db1b_in = "02.Intermediate/Construct_DB1B/DB1B_Condensed.rds",
+                                      graph_out = "05.Figures/Quarterly_DB1B_Itineraries.pdf"){
+  db1b <- readRDS(db1b_in)
+  db1b[, Month := -1]
+  db1b[Quarter == 1, Month := 2]
+  db1b[Quarter == 2, Month := 5]
+  db1b[Quarter == 3, Month := 8]
+  db1b[Quarter == 4, Month := 11]
+  db1b[, Date := my(paste(Month, Year))]
+  
+  db1b.c <- db1b %>% group_by(Date) %>% summarize(Passengers := sum(Passengers.Product) / 1000000)
+  
+  ggplot(db1b.c, aes(x = Date, y = Passengers)) +
+    geom_rect(aes(xmin = my("January 2020"), xmax = my("April 2021"), ymin = -Inf, ymax = Inf), 
+              fill = "grey") +
+    geom_line() +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") +
+    scale_y_continuous(expand = c(0,0), limits = c(0, 150)) +
+    labs(x = "Time", y = "Passengers, Millions")
+  
+  ggsave(filename = graph_out, units = "in", 
+         height = 3, width = 7)
+}
+

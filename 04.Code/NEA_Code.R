@@ -164,6 +164,7 @@ nea_did_construct_data <- function(input =  "02.Intermediate/DB1B_With_Controls.
   saveRDS(db1b, Market_output)
 }
 
+# P(Codesharing in)
 nea_op_carrier_switch <- function(input = "02.Intermediate/Construct_DB1B/DB1B_Initial.Rds",
                       output = "02.Intermediate/NEA_OPCarrier_Switch.Rds"){
   data <- readRDS(input)
@@ -186,7 +187,7 @@ nea_op_carrier_switch <- function(input = "02.Intermediate/Construct_DB1B/DB1B_I
   data <- data %>% group_by(Year, Quarter, Origin, OriginState, Dest,  DestState, TkCarrier, TkCarrierGroup, OpCarrier,
                             OpCarrierGroup, MktCoupons, AirportGroup, MktMilesFlown) %>%
     summarize(MktFare = sum(MktFare * Passengers) / sum(Passengers),
-              Passengers = sum(Passengers)) %>%
+              Passengers = sum(Passengers) * 10) %>%
     mutate(Carrier = TkCarrier) %>% as.data.table(); gc();
 
   # Identify Which Carriers are in OpGroup
@@ -197,7 +198,9 @@ nea_op_carrier_switch <- function(input = "02.Intermediate/Construct_DB1B/DB1B_I
   data[, JetBlue_Op := grepl(pattern = "B6", x = OpCarrierGroup)]
   data[, Southwest_Op := grepl(pattern = "WN", x = OpCarrierGroup)]
   
-  data[, AA_B6 := pmin(American_Op, JetBlue_Op)]
+  # data[, AA_B6 := pmin(American_Op, JetBlue_Op)]
+  data[, AA_B6 := pmax(American_Op & Carrier == "B6", 
+                       JetBlue_Op & Carrier == "AA")]
   
   data[, NEA_Market := FALSE]
   data[grepl(pattern = "JFK", x = AirportGroup), NEA_Market := TRUE]
@@ -1232,39 +1235,40 @@ nea_operational_logit <- function(input = "02.Intermediate/NEA_OPCarrier_Switch.
         custom.header = list("JetBlue Op" = 1:2, "American OP" = 3:4))
 }
 
-# Regress on Dummy Variable for P(Market Had Customers Switch from JB to AA on an Itenerary)
-nea_changes_recorded_estimate <- function(input = "02.Intermediate/NEA_OPCarrier_Switch.Rds",
+# Regress on Dummy Variable for P(Market Had Codeshares)
+nea_codeshare_markets_estimate <- function(input = "02.Intermediate/NEA_OPCarrier_Switch.Rds",
                                           output.tab = "06.Tables/NEA_Probability_Switches.tex",
                                           output.graph = "05.Figures/NEA_Probability_Switches_Graph.pdf"){
   db1b <- readRDS(input)
   
   db1b <- nea_create_period(db1b)
   
-  db1b.s <- db1b %>% filter(MktCoupons < 3) %>% group_by(Year, Quarter, Origin, Dest, Period) %>%
+  db1b.s <- db1b %>% filter(MktCoupons == 1) %>% group_by(Year, Quarter, Origin, Dest, Period) %>%
     summarize(Switches_Occured := max(AA_B6),
               NEA_Market := max(NEA_Market),
               MktMilesFlown := min(MktMilesFlown) / 100) %>%
     mutate(Mkt = paste(Origin, Dest)) %>%
     as.data.table()
     
-  reg1 <- lm(Switches_Occured ~ NEA_Market + Period:NEA_Market,
+  reg1 <- lm(Switches_Occured ~ NEA_Market:Period,
              data = db1b.s)
   test <- coeftest(reg1, vcov = vcovCL, cluster = ~ Mkt)
   
-  clustered_se <- sqrt(diag(vcovCL(x = reg1, cluster = ~Mkt)))
+  clustered_se <- sqrt(diag(vcovCL(x = reg1, cluster = ~ Mkt)))
   
-  order <- list("(Intercept)" = NA,"NEA_Market" = NA,"NEA_Market:Period-8" = NA,
-      "NEA_Market:Period-7" = NA,"NEA_Market:Period-6" = NA,"NEA_Market:Period-5" = NA,"NEA_Market:Period-4" = NA,
+  order <- list("(Intercept)" = NA, "NEA_Market:Period-8" = NA,
+      "NEA_Market:Period-7" = NA,"NEA_Market:Period-6" = NA,"NEA_Market:Period-5" = NA,
+      "NEA_Market:Period-4" = NA,
       "NEA_Market:Period-3" = NA,"NEA_Market:Period-2" = NA,
       "NEA_Market:Period0" = NA, "NEA_Market:Period1" = NA,"NEA_Market:Period2" = NA,
-       "NEA_Market:Period3" = NA,"NEA_Market:Period4" = NA,"NEA_Market:Period5"  = NA,"NEA_Market:Period6"  = NA,
-       "NEA_Market:Period7" = NA,"NEA_Market:Period8" = NA)
+       "NEA_Market:Period3" = NA,"NEA_Market:Period4" = NA,"NEA_Market:Period5"  = NA,
+      "NEA_Market:Period6"  = NA, "NEA_Market:Period7" = NA,"NEA_Market:Period8" = NA)
   
   texreg(l = reg1, file = output.tab, single.row = TRUE, stars = c(0.1, 0.05, 0.01),
          table = FALSE, override.se = clustered_se, 
          override.pvalues = test[, 4],
-         digits = 5,
-         custom.coef.map = order)
+       #  custom.coef.map = order,
+         digits = 5)
   
   
   # Now, Graph
@@ -1284,15 +1288,15 @@ nea_changes_recorded_estimate <- function(input = "02.Intermediate/NEA_OPCarrier
     geom_point() + 
     geom_errorbar(aes(ymin = Fit_Value-SE_Bound, ymax = Fit_Value+SE_Bound)) +
     scale_y_continuous(expand = c(0,0),
-                       limits = c(-0.01, 0.15),
+                       limits = c(-0.01, 0.55),
                        labels = comma) + 
     geom_hline(aes(yintercept = 0),color = "grey", linetype = "dashed") +
     theme(panel.background = element_blank(), 
           axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           legend.position = "bottom") +
-    labs(x = "Period", y = "P(Switches Occured)")
-    ggsave(filename = output.graph, units = "in", height = 3, width = 5)
+    labs(x = "Period", y = "P(Codeshares | NEA Airport)")
+    ggsave(filename = output.graph, units = "in", height = 3, width = 7)
 }
 
 # Regress on Number of Code Sharing Itineraries

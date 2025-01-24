@@ -213,9 +213,51 @@ plane_types <- function(){
          units = "in", width = 7, height = 3)
 }
 
+jb_sp_planes <- function(input = "02.Intermediate/Fleet_Compilation.rds"){
+  planes <- readRDS(input);
+  
+  planes <- as.data.table(planes);
+  
+  plane_census_firm <- function(planes.in = planes, Carrier_Choice, output){
+    
+    planes <- planes.in %>% filter(Carrier %in% Carrier_Choice)
+    
+    if(length(Carrier_Choice) == 1){
+      plane.census <- planes %>%  group_by(Year) %>% summarize(Inventory = n())
+      
+      ggplot(plane.census, aes(x = Year, y = Inventory)) +
+        geom_col() + scale_fill_manual(values = c("grey")) +
+        theme(panel.background = element_blank(), 
+              axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+              panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+              legend.position = "bottom") + labs(x = "Year", y = "Plane Inventory") +
+        scale_y_continuous(expand = c(0, 0), limits = c(0, 325))
+    } else {
+      plane.census <- planes %>%  group_by(Carrier, Year) %>% summarize(Inventory = n())
+      
+      ggplot(plane.census, aes(x = Year, y = Inventory, fill = Carrier)) +
+        geom_col(position = "dodge2") + scale_fill_manual(values = c("black", "grey")) +
+        theme(panel.background = element_blank(), 
+              axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+              panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+              legend.position = "bottom") + labs(x = "Year", y = "Plane Inventory") +
+        scale_y_continuous(expand = c(0, 0), limits = c(0, 325))
+    }
+    
+    ggsave(output, units = "in", width = 7, height = 3)
+    
+  }
+  
+  plane_census_firm(Carrier_Choice = "JetBlue Airways", 
+                    output = "05.Figures/JetBlue_Planes.pdf")
+  plane_census_firm(Carrier_Choice = "Spirit Air Lines", 
+                    output = "05.Figures/Spirit_Planes.pdf")
+  plane_census_firm(Carrier_Choice = c("Spirit Air Lines", "JetBlue Airways"),
+                    output = "05.Figures/Both_Planes.pdf")
+}
+
 plane_graphs <- function(){
   planes_by_class(); gc();
-  spirit_planes(); gc();
-  jetblue_planes(); gc();
+  jb_sp_planes(); gc();
   plane_types(); gc()
 }
