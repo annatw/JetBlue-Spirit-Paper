@@ -28,7 +28,7 @@ nea_market_mile_price <- function(input = "02.Intermediate/DB1B_With_Controls.Rd
 
 nea_did_construct_data <- function(input =  "02.Intermediate/DB1B_With_Controls.Rds",
                                    Airline_output = "02.Intermediate/NEA_Airline_Yield.Rds",
-                                   Market_output = "02.Intermediate/NEA_Market_Yield.Rds"){
+                                   Market_output = "02.Intermediate/NEA_Market.Rds"){
   market_group <- c("Year", "Quarter", "Origin", "Origin_MSA", "Dest", "Destination_MSA")
   
   db1b <- as.data.table(readRDS(input))
@@ -121,14 +121,20 @@ nea_did_construct_data <- function(input =  "02.Intermediate/DB1B_With_Controls.
        by = market_group]
   db1b[, Market_Share_NonStop := sum(NonStop * Passengers.Product) / sum(Passengers.Product),
        by = market_group]
+  db1b[, Market_Average_Miles := sum(MktMilesFlown * Passengers.Product) / sum(Passengers.Product),
+       by = market_group]
   
   db1b[, Period.Numeric := as.numeric(as.character(Period))]
   db1b <- setorder(db1b, Period.Numeric)
   db1b[, Market_Share_NonStop.Lag := shift(Market_Share_NonStop,
                                            type = "lag"),
        by = c("Origin", "Dest")]
+  db1b[, Market_Average_Miles.Lag := shift(Market_Average_Miles,
+                                           type = "lag"),
+        by = c("Origin", "Dest")]
   
-  db1b <- db1b %>% select(Year, Quarter, Period,
+  
+  db1b <- db1b %>% select(Year, Quarter, Period, NonStopMiles,
                           Origin, Origin_MSA, Dest, Destination_MSA,Market_Avg_Fare, 
                           Destination.Airport.Type, Origin.Airport.Type, Origin_Income_PerCap,
                           Dest_Income_PerCap, Origin.Population, Destination.Population,
@@ -137,7 +143,8 @@ nea_did_construct_data <- function(input =  "02.Intermediate/DB1B_With_Controls.
                           Origin_Covid_Cases, Origin_Covid_Cases, Destination_Covid_Cases,
                           Destination_Covid_Deaths,Origin_PC_Covid_Cases, Origin_PC_Covid_Deaths, 
                           Destination_PC_Covid_Cases, Destination_PC_Covid_Deaths, Market_HHI.Lag,
-                          OriginState_Income, DestinationState_Income, OriginState_Pop, DestinationState_Pop) %>%
+                          OriginState_Income, DestinationState_Income, OriginState_Pop, DestinationState_Pop,
+                          Market_Average_Miles,Market_Average_Miles.Lag) %>%
     unique() %>% ungroup() %>%
     mutate(NEA_Origin = Origin %in% c("BOS", "EWR", "LGA", "JFK"),
            NEA_Destination = Dest %in% c("BOS", "EWR", "LGA", "JFK"),
@@ -148,7 +155,7 @@ nea_did_construct_data <- function(input =  "02.Intermediate/DB1B_With_Controls.
            Market_Yield.log = log(Market_Yield),
            Market_Passengers.log = log(Market_Passengers),
            Origin_Dest.Pair = paste(Origin, Dest),
-           Mkt = paste("Origin", "Dest"),
+           Mkt = paste(Origin, Dest),
            Post_NEA = as.numeric(as.numeric(as.character(Period)) >= 0)) %>% 
     filter(!is.nan(Market_Yield.log),
            !is.na(Market_Yield.log),
@@ -680,7 +687,7 @@ share_nea_table <- function(input = "02.Intermediate/DB1B_With_Controls.Rds",
 }
 
 
-market_yield_reg <- function(input = "02.Intermediate/NEA_Market_Yield.Rds",
+market_yield_reg <- function(input = "02.Intermediate/NEA_Market.Rds",
                              output.table = "06.Tables/NEA_Market_Yield.tex",
                              output.graph = "05.Figures/NEA_Market_Yield_Graph.pdf",
                              output.graph_airport = "05.Figures/NEA_Airport_Yield_Graph.pdf"){
@@ -780,7 +787,7 @@ market_yield_reg <- function(input = "02.Intermediate/NEA_Market_Yield.Rds",
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           legend.position = "bottom") +
     labs(x = "Period", y = "Average Market Yield")
-  ggsave(output.graph, units = "in", height = 3, width = 5)
+  ggsave(output.graph, units = "in", height = 3, width = 7)
   
   reg_airports <- lm(log(Market_Yield) ~ Period + BOS_Market + EWR_Market + LGA_Market + JFK_Market +
                        Period:BOS_Market + Period:EWR_Market + Period:LGA_Market + Period:JFK_Market + 
@@ -824,12 +831,12 @@ market_yield_reg <- function(input = "02.Intermediate/NEA_Market_Yield.Rds",
           axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           legend.position = "bottom") +
-    facet_grid(rows = vars(Airport)) + 
+    facet_wrap(facets = vars(Airport), ncol = 2) + 
     labs(x = "Period", y = "Average Market Yield")
-  ggsave(output.graph_airport, units = "in", height = 7, width = 5)
+  ggsave(output.graph_airport, units = "in", height = 7, width = 6)
 }
 
-market_fare_reg <- function(input = "02.Intermediate/NEA_Market_Yield.Rds",
+market_fare_reg <- function(input = "02.Intermediate/NEA_Market.Rds",
                             output.table = "06.Tables/NEA_Market_Fare.tex",
                             output.graph = "05.Figures/NEA_Market_Fare_Graph.pdf",
                             output.graph_airport = "05.Figures/NEA_Airport_Fare_Graph.pdf"){
@@ -837,15 +844,15 @@ market_fare_reg <- function(input = "02.Intermediate/NEA_Market_Yield.Rds",
   nea_d[, Mkt := paste(Origin, Dest)]
   nea_d[, Period := relevel(Period, ref = "-1")]
   
-  reg1 <- lm(log(Market_Avg_Fare) ~ Period + NEA_Market + Period:NEA_Market + 
-               Market_Share_NonStop + log(Pop_GeomMean) +
+  reg1 <- lm(log(Market_Avg_Fare) ~ Period + Market_Average_Miles.Lag + NEA_Market + Period:NEA_Market + 
+               Market_Share_NonStop.Lag + log(Pop_GeomMean) +
                Southwest_Prescence + Spirit_Prescence + Origin_PC_Covid_Cases + Destination_PC_Covid_Cases + Market_HHI.Lag, 
              data = nea_d)
   reg1.se <- sqrt(diag(vcovCL(reg1, cluster = nea_d$Mkt)))
   test1 <- coeftest(reg1, vcov = vcovCL, cluster = ~ Mkt)
   
-  reg2 <- lm(log(Market_Avg_Fare) ~ Period + NEA_Market + Period:NEA_Market + 
-               Market_Share_NonStop + log(Pop_GeomMean) + log(Income_GeomMean) + 
+  reg2 <- lm(log(Market_Avg_Fare) ~ Period + Market_Average_Miles.Lag + NEA_Market + Period:NEA_Market + 
+               Market_Share_NonStop.Lag + log(Pop_GeomMean) + log(Income_GeomMean) + 
                Southwest_Prescence + Spirit_Prescence + Origin_PC_Covid_Cases + Destination_PC_Covid_Cases + Market_HHI.Lag, 
              data = nea_d)
   reg2.se <- sqrt(diag(vcovCL(reg2, cluster = nea_d$Mkt)))
@@ -854,24 +861,24 @@ market_fare_reg <- function(input = "02.Intermediate/NEA_Market_Yield.Rds",
   restrict_data <- nea_d[Period %in% c("-4", "-3", "-2", "0", "1", "2", "3", "-1"),]
   restrict_data[, Period := relevel(Period, ref = "-1")]
   
-  reg3 <- lm(log(Market_Avg_Fare) ~ Period + NEA_Market + NEA_Market:Period + 
-               Market_Share_NonStop + log(Pop_GeomMean) + log(Income_GeomMean) + 
+  reg3 <- lm(log(Market_Avg_Fare) ~ Period + Market_Average_Miles.Lag + NEA_Market + NEA_Market:Period + 
+               Market_Share_NonStop.Lag + log(Pop_GeomMean) + log(Income_GeomMean) + 
                Southwest_Prescence + Spirit_Prescence + Origin_PC_Covid_Cases + Destination_PC_Covid_Cases + 
                Market_HHI.Lag, 
              data = restrict_data)
   reg3.se <- sqrt(diag(vcovCL(reg3, cluster = restrict_data$Mkt)))
   test3 <- coeftest(reg3, vcov = vcovCL, cluster = ~Mkt)
   
-  reg4 <- lm(log(Market_Avg_Fare) ~ Period + NEA_Market + Period:NEA_Market + 
-               Market_Share_NonStop + log(Pop_GeomMean) + log(stateIncome_GeomMean) + 
+  reg4 <- lm(log(Market_Avg_Fare) ~ Period + Market_Average_Miles.Lag + NEA_Market + Period:NEA_Market + 
+               Market_Share_NonStop.Lag + log(Pop_GeomMean) + log(stateIncome_GeomMean) + 
                Southwest_Prescence + Spirit_Prescence + Origin_PC_Covid_Cases + Destination_PC_Covid_Cases + Market_HHI.Lag, 
              data = nea_d)
   reg4.se <- sqrt(diag(vcovCL(reg4, cluster = nea_d$Mkt)))
   test4 <- coeftest(reg4, vcov = vcovCL, cluster = ~ Mkt)
   
   
-  reg5 <- lm(log(Market_Avg_Fare) ~ Period + NEA_Market + Period:NEA_Market + 
-               Market_Share_NonStop + log(Pop_GeomMean) + log(stateIncome_GeomMean) + 
+  reg5 <- lm(log(Market_Avg_Fare) ~ Period + Market_Average_Miles.Lag + NEA_Market + Period:NEA_Market + 
+               Market_Share_NonStop.Lag + log(Pop_GeomMean) + log(stateIncome_GeomMean) + 
                Southwest_Prescence + Spirit_Prescence + Origin_PC_Covid_Cases + Destination_PC_Covid_Cases + Market_HHI.Lag, 
              data = restrict_data)
   reg5.se <- sqrt(diag(vcovCL(reg5, cluster = restrict_data$Mkt)))
@@ -928,8 +935,8 @@ market_fare_reg <- function(input = "02.Intermediate/NEA_Market_Yield.Rds",
           axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           legend.position = "bottom") +
-    labs(x = "Period", y = "Average Market Yield")
-  ggsave(output.graph, units = "in", height = 3, width = 5)
+    labs(x = "Period", y = "Average Market Fare")
+  ggsave(output.graph, units = "in", height = 3, width = 7)
   
   reg_airports <- lm(log(Market_Avg_Fare) ~ Period + BOS_Market + EWR_Market + LGA_Market + JFK_Market +
                        Period:BOS_Market + Period:EWR_Market + Period:LGA_Market + Period:JFK_Market + 
@@ -973,9 +980,9 @@ market_fare_reg <- function(input = "02.Intermediate/NEA_Market_Yield.Rds",
           axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           legend.position = "bottom") +
-    facet_grid(rows = vars(Airport)) + 
+    facet_wrap(facets = vars(Airport), ncol = 2, nrow = 2) + 
     labs(x = "Period", y = "Average Market Fare")
-  ggsave(output.graph_airport, units = "in", height = 7, width = 5)
+  ggsave(output.graph_airport, units = "in", height = 6, width = 7)
 }
 
 nea_pass_reg <- function(input = "02.Intermediate/NEA_Airline_Yield.Rds",
@@ -1068,7 +1075,7 @@ nea_pass_reg <- function(input = "02.Intermediate/NEA_Airline_Yield.Rds",
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           legend.position = "bottom") +
     labs(x = "Period", y = "AA + JB Passengers")
-  ggsave(output.graph, units = "in", height = 3, width = 5)
+  ggsave(output.graph, units = "in", height = 3, width = 7)
   
   reg_airports <- lm(log(NEA_Mkt_Pass) ~ Period + BOS_Market + EWR_Market + LGA_Market + JFK_Market +
                        Period:BOS_Market + Period:EWR_Market + Period:LGA_Market + Period:JFK_Market + 
@@ -1112,9 +1119,9 @@ nea_pass_reg <- function(input = "02.Intermediate/NEA_Airline_Yield.Rds",
           axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           legend.position = "bottom") +
-    facet_grid(rows = vars(Airport)) + 
+    facet_wrap(vars(Airport), ncol = 2, nrow = 2) + 
     labs(x = "Period", y = "AA + JB Passengers")
-  ggsave(output.graph_airport, units = "in", height = 7, width = 5)
+  ggsave(output.graph_airport, units = "in", height = 7, width = 6)
 }
 
 
