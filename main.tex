@@ -48,7 +48,7 @@
 	
 	\section{Introduction}
 	\label{sec:Introduction}
-	The 2020's saw the American aviation company JetBlue Airways involved with two different actions that would be found to be anticompetitive - the Northeast Alliance with American Airlines and an attempted merger with Spirit Airlines. The first of these saw it coordinating operations in four major airports within the northeastern United States, resulting in a state of affairs that was only slightly less than a merger with a competitor. The latter of these saw it attempting to purchase the nation's largest ultra-low cost carrier. 
+    The 2020's saw the American aviation company JetBlue Airways involved with two different actions that would be found to be anticompetitive - the Northeast Alliance with American Airlines and an attempted merger with Spirit Airlines. The first of these saw it coordinating operations in four major airports within the northeastern United States, resulting in a state of affairs that was only slightly less than a merger with a competitor. The latter of these saw it attempting to purchase the nation's largest ultra-low cost carrier. 
 	
 	This paper's focus is on JetBlue's attempted merger with Spirit, and specifically the estimation of counterfactual pricing in the event that the merger would have been approved. However, estimation of this counterfactual is complicated by two factors. The first of these is the aforementioned Northeast Alliance. It began in 2020 and would be ultimately dissolved in 2023 following an adverse judgment in a lawsuit brought by the United States Department of Justice and Arizona, California, Florida, Massachusetts, Pennsylvania, Virginia, and the District of Columbia. As JetBlue attempted to acquire Spirit in 2022, while this alliance was still in effect, this complicates attempts to calculate counterfactual pricing due to American's role in shaping the route structure of JetBlue during this time, which would not have been present had the merger ultimately have been approved in 2023 or later. 
 	
@@ -227,15 +227,17 @@
 
 	\section{Data and Summary Statistics}
 	\label{sec:Data}
-	The primary dataset used in the creation of this paper is the Bureau of Transportation Statistics's Airline Origin and Destination Survey (DB1B) dataset. This is a 10\% sample of all domestic itineraries within the United States and includes data on pricing, length of air travel, carrier, and number of connecting flights. Within the literature, the DB1B has been the preferred data for domestic air travel for decades (e.g.  \citet{ciliberto_market_2021, berry_tracing_2010, goolsbee_how_2008, peters_evaluating_2006}). 
+	The primary dataset used in the creation of this paper is the Bureau of Transportation Statistics's Airline Origin and Destination Survey (DB1B). This is a 10\% sample of all domestic itineraries within the United States. It includes data on pricing, distance, carrier, and number of connecting flights. Within the literature, it has been the preferred data for domestic air travel for decades (e.g.  \citet{ciliberto_market_2021, berry_tracing_2010, goolsbee_how_2008, peters_evaluating_2006}). 
+    
+    Notably, the fare data only includes the price of the base airfare, and does not account for additional spending by consumers on airline fees (such as for checked bag fees on Spirit). As Spirit and the other ultra-low cost carriers focus on ``unbundled" fares, these airline fares are liable to be reported as systematically lower than the full price paid by consumers after taking into account spending on checked baggage or in-flight refreshments. This inhibits a full estimation of effects of the merger on consumer surplus as products should be understood as solely each airline's base fare. However, this still permits insight to be gained into the accuracy of the decision blocking the merger as it focused on the impact to consumers relying on the minimum fares within various markets.  % Come back to
 	
-	 Within this industry, markets are defined by by origin airport, destination airport, year, and quarter. Within this definition, orinating and terminating airports are used as the determinants of a market rather than the metropolitan statistical areas that these airports reside in. This accounts for the known phenomenon that consumers do not treat airports within a metropolitan statistical area as interchangeable with each other.\footnote{For an example of this phenomenon, \citet{goolsbee_how_2008} observes differential impacts on pricing of prospective firm entry at the airport level than would be expected if airports were treated as interchangeable by consumers.} Within this paper, products within a market are further defined by carrier and non-stop status.\footnote{As such, each carrier is assumed to have either 0, 1, or 2 products within a market.} Appendix \ref{sec:DataProcessing} details the sample construction methodology and restrictions on markets within the sample (such as excluding markets that consist of airports that are fewer than 150 miles apart.)
+	 Markets in consumer aviation are defined by origin airport, destination airport, year, and quarter. Within this definition, originating and terminating airports are used as the determinants of a market rather than the metropolitan statistical areas that these airports reside in. This accounts for the known phenomenon that consumers do not treat airports within a metropolitan statistical area as interchangeable.\footnote{For an example of this phenomenon, \citet{goolsbee_how_2008} observes differential impacts on pricing of prospective firm entry at the airport level than would be expected if airports were treated as interchangeable by consumers.} Within this paper, products within a market are further defined by carrier and non-stop status.\footnote{As such, each carrier is assumed to have either 0, 1, or 2 products within a market.} Appendix \ref{sec:DataProcessing} details the sample construction methodology and restrictions on markets within the sample (such as excluding markets that consist of airports that are fewer than 150 miles apart.)
 	
-	Market size is defined as the geographic mean of the population of the origin and destination metropolitan statistical areas population. This is a standard assumption within this literature (such as in \citep{ciliberto_market_2021}). This is calculated using the United State Census Bureau's annual estimates of metropolitan statistical area population. The outside good within a market is not consuming air travel between an origin and destination airport pair. As such, this includes instances where consumers choose to either not make a trip or to make the trip using an alternative method of transport, such as car or bus. 
+	Market size is defined as the geographic mean of the population of the origin and destination metropolitan statistical areas population. This is a standard assumption within this literature (such as in \citep{ciliberto_market_2021}). This is calculated using the United State Census Bureau's annual estimates of metropolitan statistical area population. The outside good within a market is defined as the decision to consume air travel between an origin and destination airport pair. As such, the outside good includes not making a trip; making a trip by car or bus; and making a trip between two different airports within the same metropolitan area. 
 
 	% In constructing my instruments for price, I used data on the spot price for jet fuel provided by the U.S. Energy Information Administration in addition to reported expenditures on jet fuel from airlines' P-12 filings with the Department of Transportation. The difference between the reported expenditures and the national average spot price is plotted in Figure \ref{fig:JetFuel}. The relative expenditures are fairly consistent for each airline, with the exception of Delta during the coronavirus pandemic and Southwest in 2022, with the latter deviation caused by fixed-price contracts filed in anticipation of an oil price shock due to the Russian invasion of Ukraine in 2022 \citep{mooney_southwest_2022}.  
 	
-	For the analysis of the Northeast Alliance in Section \ref{sec:Analysis_NEA}, data on state level coronavirus cases from the Centers for Disease Control and Prevention was used. Airport markets were assigned to this data on the basis of the state of the principal city within the origin and destination metropolitan areas.\footnote{For example, the New York City market was assigned New York}. State level data is used rather than county level data as this data is liable to be more accurate than county level data as coronavirus patients were able to test outside of their primary county. Furthermore, the virus saw seasonal trends that were regionally differentiated, suggesting that quarter level controls would be insufficient. Beyond this data, census bureau state-level and MSA-level estimates of personal income was collected for use in this analysis.\footnote{There is a significant delay in releases of these estimates for MSA. As such, the state-level data allows for a longer sample to be analyzed. On the shared quarters, I do not observe any notable differences in the estimated coefficients through the use of state or MSA level income data.}
+	For the analysis of the Northeast Alliance in Section \ref{sec:Analysis_NEA}, data on state level coronavirus cases from the Centers for Disease Control and Prevention was used. Airport markets were assigned to this data on the basis of the state of the principal city within the origin and destination metropolitan areas.\footnote{For example, the New York City market was assigned New York}. Coronavirus patients who were tested outside of their home county were included in the alternate county's testing data. As such, I believe that state level data is more reliable than county level data. Furthermore, the virus saw seasonal trends that were different between regions. This suggesting that quarter level controls would be insufficient. Beyond this data, census bureau state-level and MSA-level estimates of personal income were used as controls for discretionary income.\footnote{There is a significant delay in releases of these estimates for MSA. As such, the state-level data allows for a longer sample to be analyzed. On the shared quarters, I do not observe any notable differences in the estimated coefficients through the use of state or MSA level income data.}
 
     \begin{table}
     \caption{Product Level Summary Statistics}
@@ -247,7 +249,7 @@
                     \end{center}
     \end{table}
 
-    Summary statistics for product level data are included in Table \ref{tab:Summary_Statistics_Product}. Roughly three-percent of the products included in the final sample belong to each of JetBlue and Spirit, consistent with their smaller network sizes than the legacy carriers and Southwest. There is a slight, roughly \$20 decrease in airfare following the pandemic, however, this is not statistically distinct from the fares in the pre-pandemic period. Product characteristics relating to network structure, such as travel distance and nonstop status and also unchanged between the two periods, consistent with the idea that the observed changes in the customer base between these two periods did not result in firms substantially changing their offerings.  
+    Summary statistics for product level data are included in Table \ref{tab:Summary_Statistics_Product}. Roughly three-percent of the products included in the final sample belong to each of JetBlue and Spirit, consistent with their smaller network sizes than the legacy carriers and Southwest. Airfare was slightly cheaper in the post-pandemic period than in the pre-pandemic period, but not to a statistically significant extent. Product characteristics relating to network structure, such as travel distance and nonstop status, was also largely unchanged between the two periods, consistent with the idea that the observed changes in the customer base between these two periods did not result in firms substantially changing their offerings.  
 
     Summary statistics for market level characteristics are included in Table \ref{tab:Summary_Statistics_Market}. Despite the post-pandemic period having fewer overall markets included in the sample, JetBlue and Spirit competed in over a hundred additional markets in this period than in the years leading up to the pandemic. Additionally, there was on average roughly a third of an additional firm in the post-pandemic period in the average market, driven by firms operating a single product within the market. Finally, it is observing noting that the number of customers within the average marker decreased aby approximately 16,000 customers between the two periods. Aside from this, overall market characteristics are similar in terms of miles flown and market concentration between the two periods. 
 
@@ -390,6 +392,15 @@
         \vspace{-15mm}
         \begin{center}
         \include{06.Tables/Merger_HHI_Results}
+        \end{center}
+    \end{table}
+
+    \begin{table}
+        \caption{Simulated Percent Change in Consumer Surplus}
+        \label{tab:CS_Change}
+        \vspace{-15mm}
+        \begin{center}
+        
         \end{center}
     \end{table}
     
@@ -607,33 +618,8 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 	\end{figure}	
 
     \FloatBarrier
-	\subsection{Estimation Results: JetBlue-Spirit Merger}
-	
-	\begin{table}
-		\caption{Demand Estimation}
-		\label{tab:DemandEstimation_OriginalInstruments}
-		\include{06.Tables/Demand_Unoptimal}
-		\footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$ Products are defined as a Carrier-Nonstop pair within an Origin-Destination-Year-Quarter market. Origin Service Ratio is the fraction of direct routes out of the originating airport operated by the carrier divided by the number of distinct direct routes out fo that airport. Extra Miles is the average additional miles flown with a connecting itinerary minus the minimum miles flown within a market.  A tourist product is one that serves the Las Vegas metropolitan statistical area or an airport in Florida.}
-	\end{table}
-	
-	
-	\FloatBarrier
-	
+	\subsection{Estimation Results: JetBlue-Spirit Merger}		
 	\subsubsection{Pre-Pandemic Period}
-	
-	\begin{table}
-		\caption{Summary Statistics - Product Level, Pre-Pandemic}
-		\label{tab:SummaryStatistics_Products_Pre}
-		\include{06.Tables/prepandemic_SummaryStatistics_Product}
-		\footnotesize{Data spans the period from 2017Q1 through 2019Q4. Products are defined as a one-way trip between two airports, operated as either nonstop or connecting. ``Route Shares" are the share of nonstop destinations served by the ticketing carrier out of the indicated airport as a fraction of all nonstop routes that airport has service to.}
-	\end{table}
-	
-	\begin{table}
-		\caption{Summary Statistics - Market Level, Pre-Pandemic}
-		\label{tab:SummaryStatistics_Market_Pre}
-		\include{06.Tables/prepandemic_SummaryStatistics_Market}
-		\footnotesize{Data spans the period from 2017Q1 through 2019Q4. Markets are defined as a combination of origin airport, destination airport, year, and quarter. A ``JetBlue" market is one that JetBlue operates within; a ``JetBlue-Spirit" market is one in which both firms operates within. }
-	\end{table}
 	
 	\begin{landscape}
 		\begin{table}
@@ -644,30 +630,8 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 		\end{table}
 	\end{landscape}
 	
-	
-	\begin{table}
-		\caption{Pre-Pandemic Demand Estimation Results}
-		\label{tab:Results_PrePandemic}
-		\include{06.Tables/Prepandemic_RCL_Results}
-		\footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$ Products are defined as a Carrier-Nonstop pair within an Origin-Destination-Year-Quarter market. Origin Service Ratio is the fraction of direct routes out of the originating airport operated by the carrier divided by the number of distinct direct routes out fo that airport. Extra Miles is the average additional miles flown with a connecting itinerary minus the minimum miles flown within a market.  A tourist product is one that serves the Las Vegas metropolitan statistical area or an airport in Florida.}
-	\end{table}
-	
 	\FloatBarrier
-	\subsubsection{Post-Pandemic Period}
-		\begin{table}
-		\caption{Summary Statistics - Product Level, Post-Pandemic}
-		\label{tab:SummaryStatistics_Products_Post}
-		\include{06.Tables/SummaryStatistics_Product}
-		\footnotesize{Data spans the period from 2021Q2 through 2023Q2. Products are defined as a one-way trip between two airports, operated as either nonstop or connecting. ``Route Shares" are the share of nonstop destinations served by the ticketing carrier out of the indicated airport as a fraction of all nonstop routes that airport has service to. }
-	\end{table}
-	
-	\begin{table}
-		\caption{Summary Statistics - Market Level, Post-Pandemic}
-		\label{tab:SummaryStatistics_Market_Post}
-		\include{06.Tables/SummaryStatistics_Market}
-		\footnotesize{Data spans the period from 2021Q2 through 2023Q2. Markets are defined as a combination of origin airport, destination airport, year, and quarter. A ``JetBlue" market is one that JetBlue operates within; a ``JetBlue-Spirit" market is one in which both firms operates within. }
-	\end{table}
-	
+	\subsubsection{Post-Pandemic Period}	
 	\begin{landscape}
 		\begin{table}
 			\caption{Instrument Comparison Table - Post-Pandemic}
