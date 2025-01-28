@@ -558,6 +558,14 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
   # Compute Costs
   data[, cost := model$compute_costs()]
   
+  # Get Original Markets, Consumer Surplus
+ original_problem <- pyblp$Problem(c(linear, nonlinear), data, 
+                                   integration = pyblp$Integration('halton', size = 250L,
+                                                 specification_options = dict("seed" = 97L)))
+ original_markets <- as.numeric(original_problem$unique_market_ids)
+  cs_observed <- model$compute_consumer_surpluses()
+  original_cs <- data.table(market_ids = original_markets, ConsumerSurplus_Observed = cs_observed)
+  
   data.new <- data %>% group_by(merger_carrier, Origin, Dest, Year, Quarter, Year_Quarter_Effect, NonStop, market_ids) %>%
     summarize(NonStopMiles = min(NonStopMiles), 
               MktMilesFlown = min(MktMilesFlown),
@@ -614,7 +622,8 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
     components <- linear
   }
   
-  sigma_vec <- model$sigma; remove(model); gc()
+  sigma_vec <- model$sigma; 
+  remove(model); gc()
   
   simulation.best <- pyblp$Simulation(product_formulations = components,
                                  product_data = data.new,
@@ -661,29 +670,18 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
            by = c("market_ids")]
   
   # Add each markets Consumer Surplus
-  # markets <- unique(data.new$market_ids)
-  # data.new[, CS.Original := 0]
-  # data.new[, CS.MinCost.Sim := 0]
-  # data.new[, CS.MeanCost.Sim := 0]
-  # data.new[, CS.MaxCost.Sim := 0]
-  # 
-  # for(i in 1:length(markets)){
-  #   invisible(data.new[market_ids == markets[i], CS.Original := model$compute_consumer_surpluses(market_id = markets[i])])
-  #   invisible(data.new[market_ids == markets[i], CS.MinCost.Sim := py_to_r(simulation.min$compute_consumer_surpluses(market_id = markets[i]))[1,1]])
-  #   
-  #   if(invisible(nrow(py_to_r(simulation.min$compute_consumer_surpluses(market_id = markets[i]))) > 1)){
-  #     print(i);
-  #     break;
-  #   } else if(invisible(ncol(py_to_r(simulation.min$compute_consumer_surpluses(market_id = markets[i]))) > 1)){
-  #     print(i);
-  #     break;
-  #   }
-  #   
-  #   invisible(data.new[market_ids == markets[i], CS.MeanCost.Sim := py_to_r(simulation.mean$compute_consumer_surpluses(market_id = markets[i]))[1,1]])
-  #  
-  #   invisible(data.new[market_ids == markets[i], CS.MaxCost.Sim := py_to_r(simulation.max$compute_consumer_surpluses(market_id = markets[i]))[1,1]])
-  #   print(paste("Success: ", i))
-  # }
-  # gc();
+  markets <- as.numeric(simulation.best$unique_market_ids)
+  cs.best <- as.numeric(simulation.min$compute_consumer_surpluses())
+  cs.avg <- as.numeric(simulation.mean$compute_consumer_surpluses())
+  cs.worst <- as.numeric(simulation.max$compute_consumer_surpluses())
+
+  cs_table <- data.table(market_ids = markets,
+                         CS_Best = cs.best, 
+                         CS_Average = cs.avg,
+                         CS_Worst = cs.worst)
+
+  cs_table <- merge(cs_table, original_cs, by = "market_ids", all.x = TRUE)
+  data.new <- merge(data.new, cs_table, by = "market_ids", all.x = TRUE)
+  
   saveRDS(data.new, file = data_out)
 }

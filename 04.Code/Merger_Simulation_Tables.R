@@ -1,55 +1,69 @@
-merger_results_table <- function(merger_data = "03.Output/Adv_Merger_Sim_Data.rds",
-                                 observed_data = "02.Intermediate/Product_Data.rds", 
+merger_results_table <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rds",
+                                 observed_post = "02.Intermediate/Product_Data.rds",
+                                 merger_pre = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
+                                 observed_pre = "02.Intermediate/prepandemic.rds",
                                  table_out = "06.Tables/Merger_Results.tex"){
-  merger <- readRDS(merger_data)
-  observed <- readRDS(observed_data)
-  
-  # Identify markets which merger impacted
-  impactedMarkets <- observed %>% group_by(market_ids) %>%
-    summarize(Spirit = max(Spirit),
-              JetBlue = max(JetBlue)) %>% 
-    filter(Spirit == 1, JetBlue == 1); impactedMarkets <- impactedMarkets$market_ids
-  
-  # Restrict
-  merger <- merger[market_ids %in% impactedMarkets,]
-  
-  # Cluster 1: Prices 
-  price.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim,
-                                        weight_variable = merger$Potential_Passengers *
-                                          merger$Shares.WithinMarket.MinCost)
-  price.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim,
-                                       weight_variable = merger$Potential_Passengers *
-                                         merger$Shares.WithinMarket.MinCost)
-  price.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim,
+  output_rows <- function(merger_in, observed_in){
+    merger <- readRDS(merger_in)
+    observed <- readRDS(observed_in)
+    
+    # Identify markets which merger impacted
+    impactedMarkets <- observed %>% group_by(market_ids) %>%
+      summarize(Spirit = max(Spirit),
+                JetBlue = max(JetBlue)) %>% 
+      filter(Spirit == 1, JetBlue == 1); impactedMarkets <- impactedMarkets$market_ids
+    
+    # Restrict
+    merger <- merger[market_ids %in% impactedMarkets,]
+    
+    # Cluster 1: Prices 
+    price.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim,
+                                          weight_variable = merger$Potential_Passengers *
+                                            merger$Shares.WithinMarket.MinCost)
+    price.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim,
                                          weight_variable = merger$Potential_Passengers *
                                            merger$Shares.WithinMarket.MinCost)
-  
-  # Cluster 2: Price Change
-  priceChange.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim - merger$Fare.Original,
-                                              weight_variable = merger$Potential_Passengers *
-                                                merger$Shares.WithinMarket.MinCost)
-  priceChange.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim - merger$Fare.Original,
-                                             weight_variable = merger$Potential_Passengers *
-                                               merger$Shares.WithinMarket.MinCost)
-  priceChange.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim - merger$Fare.Original,
+    price.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim,
+                                           weight_variable = merger$Potential_Passengers *
+                                             merger$Shares.WithinMarket.MinCost)
+    
+    # Cluster 2: Price Change
+    priceChange.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim - merger$Fare.Original,
+                                                weight_variable = merger$Potential_Passengers *
+                                                  merger$Shares.WithinMarket.MinCost)
+    priceChange.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim - merger$Fare.Original,
                                                weight_variable = merger$Potential_Passengers *
                                                  merger$Shares.WithinMarket.MinCost)
+    priceChange.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim - merger$Fare.Original,
+                                                 weight_variable = merger$Potential_Passengers *
+                                                   merger$Shares.WithinMarket.MinCost)
+    
+    table <- rbind(price.best, price.avg, price.worst,
+                   priceChange.best, priceChange.avg, priceChange.worst)
+    rownames(table) <- NULL
+    return(table)
+  }
   
-  table <- rbind(price.best, price.avg, price.worst,
-                 priceChange.best, priceChange.avg, priceChange.worst)
-  rownames(table) <- NULL
+  post_pandemic <- output_rows(merger_in = merger_post,
+                               observed_in = observed_post)
+  pre_pandemic <- output_rows(merger_in = merger_pre,
+                              observed_in = observed_pre)
   
   title_row <- c("", "Mean", "(SD)", "Minimum", "Median", "Maximum")
+  table <- rbind(pre_pandemic, post_pandemic)
   
   kbl(table,
       format = "latex", col.names = title_row,
       escape = TRUE, booktabs = TRUE) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 6) %>%
     pack_rows(group_label = "Prices", 1, 3) %>%
     pack_rows(group_label = "Price Change", 4, 6) %>%
+    pack_rows(group_label = "Post-Pandemic", 7, 12) %>%
+    pack_rows(group_label = "Prices", 7, 9) %>%
+    pack_rows(group_label = "Price Change", 10, 12) %>%
+    row_spec(row = 6, hline_after = TRUE) %>%
+    row_spec(row = 12, hline_after = TRUE) %>%
     save_kable(file = table_out)
-  
-  # pack_rows(group_label = "Within Market Shares", 7, 9) %>%
-  # pack_rows(group_label = "Within Market Shares Change", 10, 12) %>%
 }
 
 
@@ -158,108 +172,120 @@ minimum_fare_increase_table <- function(merger_data.post = "03.Output/Adv_Merger
     save_kable(file = table_out)
 }
 
-merger_simulation_hhi_change <- function(merger_data = "03.Output/Adv_Merger_Sim_Data.rds",
-                                         observed_data = "02.Intermediate/Product_Data.rds", 
+merger_simulation_hhi_change <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rds",
+                                         observed_post = "02.Intermediate/Product_Data.rds",
+                                         merger_pre = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
+                                         observed_pre = "02.Intermediate/prepandemic.rds",
                                          table_out = "06.Tables/Merger_HHI_Results.tex"){
-  observed <- readRDS(observed_data)
-  
-  observed[, Spirit_Prescence := max(Spirit_Prescence), by = c("Year", "Quarter", "Origin",
-                                                           "Dest")]
-  observed[, JetBlue_Prescence := max(JetBlue_Prescence), by = c("Year", "Quarter", "Origin",
-                                                             "Dest")]
-  
-  # Compute Costs
-  shared_markets <- unique(observed[Spirit_Prescence == 1 & JetBlue_Prescence == 1, market_ids])
-  
-  
-  observed[, totalRevShare := sum(prices * shares), by = c("market_ids")]
-  observed[, totalShare := sum(shares), by = c("market_ids")]
-  observed[, ownRevShare := prices * shares / totalRevShare * 100]
-  observed[, ownShare := shares / totalShare * 100]
-  observed <- observed %>% filter(market_ids %in% shared_markets) %>% group_by(market_ids) %>%
-    summarize(HHI.Share = sum(ownShare^2),
-              HHI.Rev = sum(ownRevShare^2))
-  
-  merger <- readRDS(merger_data)
-  merger[, totalShare.Max := sum(Shares.MaxCost.Sim), by = c("market_ids")]
-  merger[, totalRevShare.Max := sum(Shares.MaxCost.Sim * Prices.MaxCost.Sim), by = c("market_ids")]
-  merger[, ownShare.Max := Shares.MaxCost.Sim / totalShare.Max * 100]
-  merger[, ownRevShare.Max := Prices.MaxCost.Sim * Shares.MaxCost.Sim / totalRevShare.Max * 100]
-  merger[, totalShare.Avg := sum(Shares.MeanCost.Sim), by = c("market_ids")]
-  merger[, totalRevShare.Avg := sum(Shares.MeanCost.Sim * Prices.MaxCost.Sim), by = c("market_ids")]
-  merger[, ownShare.Avg := Shares.MeanCost.Sim / totalShare.Avg * 100]
-  merger[, ownRevShare.Avg := Prices.MeanCost.Sim * Shares.MeanCost.Sim / totalRevShare.Avg * 100]
-  merger[, totalShare.Min := sum(Shares.MinCost.Sim), by = c("market_ids")]
-  merger[, totalRevShare.Min := sum(Shares.MinCost.Sim * Prices.MaxCost.Sim), by = c("market_ids")]
-  merger[, ownShare.Min := Shares.MinCost.Sim / totalShare.Min * 100]
-  merger[, ownRevShare.Min := Prices.MinCost.Sim * Shares.MinCost.Sim / totalRevShare.Min * 100]
-  
-  merger <- merger %>% filter(market_ids %in% shared_markets) %>% group_by(market_ids) %>%
-    summarize(HHI.Max = sum(ownShare.Max^2),
-              HHI.Rev.Max = sum(ownRevShare.Max^2),
-              HHI.Avg = sum(ownShare.Avg^2),
-              HHI.Rev.Avg = sum(ownRevShare.Avg^2),
-              HHI.Min = sum(ownShare.Min^2),
-              HHI.Rev.Min = sum(ownRevShare.Min^2))
-  
-  data <- as.data.table(merge(merger, observed, by = "market_ids"))
-  print(paste("Number of Markets HHI < 1800: ", nrow(data[HHI.Share < 1800,])))
-  print(paste("Number of Markets HHI, Revenue < 1800:", nrow(data[HHI.Rev < 1800,])))
-  
-  data[, HHI.Max.Change := HHI.Max - HHI.Share]
-  data[, HHI.Avg.Change := HHI.Avg - HHI.Share]
-  data[, HHI.Min.Change := HHI.Min - HHI.Share]
-  data[, HHI.Rev.Max.Change := HHI.Rev.Max - HHI.Rev]
-  data[, HHI.Rev.Avg.Change := HHI.Rev.Avg - HHI.Rev]
-  data[, HHI.Rev.Min.Change := HHI.Rev.Min - HHI.Rev]
-  data <- data[, .(market_ids, HHI.Min.Change, HHI.Avg.Change, HHI.Max.Change,
-                   HHI.Rev.Min.Change, HHI.Rev.Avg.Change, HHI.Rev.Max.Change)]
-  
-  data[, Bucket.HHI.Min := cut(HHI.Min.Change,
-                               breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
-                               labels = c("$<$ 0", "0 - 100", "100 - 1000",
-                                          "1000 - 3000", "3000 $<$"))]
-  data[, Bucket.HHI.Rev.Min := cut(HHI.Rev.Min.Change,
-                                   breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
-                                   labels = c("$<$ 0", "0 - 100", "100 - 1000",
-                                              "1000 - 3000", "3000 $<$"))]
-  data[, Bucket.HHI.Mean := cut(HHI.Avg.Change,
-                                breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
-                                labels = c("$<$ 0", "0 - 100", "100 - 1000",
-                                           "1000 - 3000", "3000 $<$"))]
-  data[, Bucket.HHI.Rev.Mean := cut(HHI.Rev.Avg.Change,
-                                    breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
-                                    labels = c("$<$ 0", "0 - 100", "100 - 1000",
-                                               "1000 - 3000", "3000 $<$"))]
-  data[, Bucket.HHI.Max := cut(HHI.Max.Change,
-                               breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
-                               labels = c("$<$ 0", "0 - 100", "100 - 1000",
-                                          "1000 - 3000", "3000 $<$"))]
-  data[, Bucket.HHI.Rev.Max := cut(HHI.Rev.Max.Change,
-                                    breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
-                                    labels = c("$<$ 0", "0 - 100", "100 - 1000",
-                                               "1000 - 3000", "3000 $<$"))]
-  
-  hhiCount.Min <- data[, .N, by = c("Bucket.HHI.Min")]; colnames(hhiCount.Min) <- c("Bucket", "Min")
-  hhiCount.Mean <- data[, .N, by = c("Bucket.HHI.Mean")]; colnames(hhiCount.Mean) <- c("Bucket", "Mean")
-  hhiCount.Max <- data[, .N, by = c("Bucket.HHI.Max")]; colnames(hhiCount.Max) <- c("Bucket", "Max")
-  hhiCount.Rev.Min <- data[, .N, by = c("Bucket.HHI.Rev.Min")]; colnames(hhiCount.Rev.Min) <- c("Bucket", "MinRev")
-  hhiCount.Rev.Mean <- data[, .N, by = c("Bucket.HHI.Rev.Mean")]; colnames(hhiCount.Rev.Mean) <- c("Bucket", "MeanRev")
-  hhiCount.Rev.Max <- data[, .N, by = c("Bucket.HHI.Rev.Max")]; colnames(hhiCount.Rev.Max) <- c("Bucket", "MaxRev")
-  
-  out <- merge(merge(merge(merge(merge(hhiCount.Min, hhiCount.Mean, by = "Bucket", all.x = TRUE, all.y = TRUE), 
-                                 hhiCount.Max, by = "Bucket", all.x = TRUE, all.y = TRUE), 
-                           hhiCount.Rev.Min, by = "Bucket", all.x = TRUE, all.y = TRUE),
-                     hhiCount.Rev.Mean, by = "Bucket", all.x = TRUE, all.y = TRUE),
-               hhiCount.Rev.Max, by = "Bucket", all.x = TRUE, all.y = TRUE)
-  out <- as.data.frame(out)
-  for(i in 1:nrow(out)){
-    for(j in 2:ncol(out)){
-      if(is.na(out[i,j])){
-        out[i,j] <- 0
+  table_make <- function(merger_in, observed_in){
+    observed <- readRDS(observed_in)
+    
+    observed[, Spirit_Prescence := max(Spirit_Prescence), by = c("Year", "Quarter", "Origin",
+                                                                 "Dest")]
+    observed[, JetBlue_Prescence := max(JetBlue_Prescence), by = c("Year", "Quarter", "Origin",
+                                                                   "Dest")]
+    
+    # Compute Costs
+    shared_markets <- unique(observed[Spirit_Prescence == 1 & JetBlue_Prescence == 1, market_ids])
+    
+    
+    observed[, totalRevShare := sum(prices * shares), by = c("market_ids")]
+    observed[, totalShare := sum(shares), by = c("market_ids")]
+    observed[, ownRevShare := prices * shares / totalRevShare * 100]
+    observed[, ownShare := shares / totalShare * 100]
+    observed <- observed %>% filter(market_ids %in% shared_markets) %>% group_by(market_ids) %>%
+      summarize(HHI.Share = sum(ownShare^2),
+                HHI.Rev = sum(ownRevShare^2))
+    
+    merger <- readRDS(merger_in)
+    merger[, totalShare.Max := sum(Shares.MaxCost.Sim), by = c("market_ids")]
+    merger[, totalRevShare.Max := sum(Shares.MaxCost.Sim * Prices.MaxCost.Sim), by = c("market_ids")]
+    merger[, ownShare.Max := Shares.MaxCost.Sim / totalShare.Max * 100]
+    merger[, ownRevShare.Max := Prices.MaxCost.Sim * Shares.MaxCost.Sim / totalRevShare.Max * 100]
+    merger[, totalShare.Avg := sum(Shares.MeanCost.Sim), by = c("market_ids")]
+    merger[, totalRevShare.Avg := sum(Shares.MeanCost.Sim * Prices.MaxCost.Sim), by = c("market_ids")]
+    merger[, ownShare.Avg := Shares.MeanCost.Sim / totalShare.Avg * 100]
+    merger[, ownRevShare.Avg := Prices.MeanCost.Sim * Shares.MeanCost.Sim / totalRevShare.Avg * 100]
+    merger[, totalShare.Min := sum(Shares.MinCost.Sim), by = c("market_ids")]
+    merger[, totalRevShare.Min := sum(Shares.MinCost.Sim * Prices.MaxCost.Sim), by = c("market_ids")]
+    merger[, ownShare.Min := Shares.MinCost.Sim / totalShare.Min * 100]
+    merger[, ownRevShare.Min := Prices.MinCost.Sim * Shares.MinCost.Sim / totalRevShare.Min * 100]
+    
+    merger <- merger %>% filter(market_ids %in% shared_markets) %>% group_by(market_ids) %>%
+      summarize(HHI.Max = sum(ownShare.Max^2),
+                HHI.Rev.Max = sum(ownRevShare.Max^2),
+                HHI.Avg = sum(ownShare.Avg^2),
+                HHI.Rev.Avg = sum(ownRevShare.Avg^2),
+                HHI.Min = sum(ownShare.Min^2),
+                HHI.Rev.Min = sum(ownRevShare.Min^2))
+    
+    data <- as.data.table(merge(merger, observed, by = "market_ids"))
+    print(paste("Number of Markets HHI < 1800: ", nrow(data[HHI.Share < 1800,])))
+    print(paste("Number of Markets HHI, Revenue < 1800:", nrow(data[HHI.Rev < 1800,])))
+    
+    data[, HHI.Max.Change := HHI.Max - HHI.Share]
+    data[, HHI.Avg.Change := HHI.Avg - HHI.Share]
+    data[, HHI.Min.Change := HHI.Min - HHI.Share]
+    data[, HHI.Rev.Max.Change := HHI.Rev.Max - HHI.Rev]
+    data[, HHI.Rev.Avg.Change := HHI.Rev.Avg - HHI.Rev]
+    data[, HHI.Rev.Min.Change := HHI.Rev.Min - HHI.Rev]
+    data <- data[, .(market_ids, HHI.Min.Change, HHI.Avg.Change, HHI.Max.Change,
+                     HHI.Rev.Min.Change, HHI.Rev.Avg.Change, HHI.Rev.Max.Change)]
+    
+    data[, Bucket.HHI.Min := cut(HHI.Min.Change,
+                                 breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
+                                 labels = c("$<$ 0", "0 - 100", "100 - 1000",
+                                            "1000 - 3000", "3000 $<$"))]
+    data[, Bucket.HHI.Rev.Min := cut(HHI.Rev.Min.Change,
+                                     breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
+                                     labels = c("$<$ 0", "0 - 100", "100 - 1000",
+                                                "1000 - 3000", "3000 $<$"))]
+    data[, Bucket.HHI.Mean := cut(HHI.Avg.Change,
+                                  breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
+                                  labels = c("$<$ 0", "0 - 100", "100 - 1000",
+                                             "1000 - 3000", "3000 $<$"))]
+    data[, Bucket.HHI.Rev.Mean := cut(HHI.Rev.Avg.Change,
+                                      breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
+                                      labels = c("$<$ 0", "0 - 100", "100 - 1000",
+                                                 "1000 - 3000", "3000 $<$"))]
+    data[, Bucket.HHI.Max := cut(HHI.Max.Change,
+                                 breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
+                                 labels = c("$<$ 0", "0 - 100", "100 - 1000",
+                                            "1000 - 3000", "3000 $<$"))]
+    data[, Bucket.HHI.Rev.Max := cut(HHI.Rev.Max.Change,
+                                     breaks = c(-Inf, 0, 100, 1000, 3000, Inf),
+                                     labels = c("$<$ 0", "0 - 100", "100 - 1000",
+                                                "1000 - 3000", "3000 $<$"))]
+    
+    hhiCount.Min <- data[, .N, by = c("Bucket.HHI.Min")]; colnames(hhiCount.Min) <- c("Bucket", "Min")
+    hhiCount.Mean <- data[, .N, by = c("Bucket.HHI.Mean")]; colnames(hhiCount.Mean) <- c("Bucket", "Mean")
+    hhiCount.Max <- data[, .N, by = c("Bucket.HHI.Max")]; colnames(hhiCount.Max) <- c("Bucket", "Max")
+    hhiCount.Rev.Min <- data[, .N, by = c("Bucket.HHI.Rev.Min")]; colnames(hhiCount.Rev.Min) <- c("Bucket", "MinRev")
+    hhiCount.Rev.Mean <- data[, .N, by = c("Bucket.HHI.Rev.Mean")]; colnames(hhiCount.Rev.Mean) <- c("Bucket", "MeanRev")
+    hhiCount.Rev.Max <- data[, .N, by = c("Bucket.HHI.Rev.Max")]; colnames(hhiCount.Rev.Max) <- c("Bucket", "MaxRev")
+    
+    out <- merge(merge(merge(merge(merge(hhiCount.Min, hhiCount.Mean, by = "Bucket", all.x = TRUE, all.y = TRUE), 
+                                   hhiCount.Max, by = "Bucket", all.x = TRUE, all.y = TRUE), 
+                             hhiCount.Rev.Min, by = "Bucket", all.x = TRUE, all.y = TRUE),
+                       hhiCount.Rev.Mean, by = "Bucket", all.x = TRUE, all.y = TRUE),
+                 hhiCount.Rev.Max, by = "Bucket", all.x = TRUE, all.y = TRUE)
+    out <- as.data.frame(out)
+    for(i in 1:nrow(out)){
+      for(j in 2:ncol(out)){
+        if(is.na(out[i,j])){
+          out[i,j] <- 0
+        }
       }
     }
+    
+    return(out)
   }
+  
+  pre_table <- table_make(merger_pre, observed_pre)
+  post_table <- table_make(merger_post, observed_post)
+  
+  out <- rbind(pre_table, post_table)
+  
   out <- as.data.table(out)
   colnames <- c("", "Best", "Average", "Worst", "Best", "Average", "Worst")
   rownames(out) <- NULL;
@@ -269,6 +295,65 @@ merger_simulation_hhi_change <- function(merger_data = "03.Output/Adv_Merger_Sim
       escape = FALSE, booktabs = TRUE,
       col.names = colnames) %>%
     add_header_above(c(" ", "Passenger Shares" = 3, "Revenue Shares" = 3)) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 5) %>%
+    pack_rows(group_label = "Post-Pandemic", 6, 10) %>%
+    row_spec(row = 5, hline_after = TRUE) %>%
     save_kable(file = table_out)
   
+}
+
+merger_simulation_cs_change <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rds",
+                                        observed_post = "02.Intermediate/Product_Data.rds",
+                                        merger_pre = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
+                                        observed_pre = "02.Intermediate/prepandemic.rds",
+                                        table_out = "06.Tables/Merger_CS_Results.tex"){
+  output_rows <- function(merger_in, observed_in){
+    merger <- readRDS(merger_in)
+    observed <- readRDS(observed_in)
+    
+    # Identify markets which merger impacted
+    impactedMarkets <- observed %>% group_by(market_ids) %>%
+      summarize(Spirit = max(Spirit),
+                JetBlue = max(JetBlue)) %>% 
+      filter(Spirit == 1, JetBlue == 1); impactedMarkets <- impactedMarkets$market_ids
+    
+    # Restrict
+    merger <- merger[market_ids %in% impactedMarkets,]
+    
+    # Calculate Change in Market Consumer Surplus
+    merger <- merger %>% select(market_ids, CS_Best, CS_Average, CS_Worst, ConsumerSurplus_Observed.V1) %>%
+      unique()
+    
+    merger[, CS_Best_Change := (CS_Best - ConsumerSurplus_Observed.V1)/ConsumerSurplus_Observed.V1]
+    merger[, CS_Average_Change := (CS_Average - ConsumerSurplus_Observed.V1)/ConsumerSurplus_Observed.V1]
+    merger[, CS_Worst_Change := (CS_Worst - ConsumerSurplus_Observed.V1)/ConsumerSurplus_Observed.V1]
+    
+    # Cluster 1: Consumer Surplus Change 
+    cs.best <- five_statistic_row_make("Best Case", merger$CS_Best_Change)
+    cs.avg <- five_statistic_row_make("Average Case", merger$CS_Average_Change)
+    cs.worst <- five_statistic_row_make("Worst Case", merger$CS_Worst_Change)
+    
+    obs_row <- c("N Markets", nrow(merger), "", "", "", "")
+    
+    table <- rbind(cs.best, cs.avg, cs.worst, obs_row)
+    rownames(table) <- NULL
+    return(table)
+  }
+  
+  pre_rows <- output_rows(merger_pre, observed_pre)
+  post_rows <- output_rows(merger_post, observed_post)
+  
+  
+  table <- rbind(pre_rows, post_rows); rownames(table) <- NULL
+  title_row <- c("", "Mean", "(SD)", "Minimum", "Median", "Maximum")
+  
+  kbl(table,
+      format = "latex", col.names = title_row,
+      escape = TRUE, booktabs = TRUE) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 4) %>%
+    pack_rows(group_label = "Post-Pandemic", 5, 8) %>%
+    row_spec(row = 3, hline_after = TRUE) %>%
+    row_spec(row = 4, hline_after = TRUE) %>%
+    row_spec(row = 7, hline_after = TRUE) %>%
+    save_kable(file = table_out)
 }
