@@ -550,24 +550,26 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
                                        mode = "rcl"){
   model <- py_load_object(model_in)
   data <- readRDS(data_in)
-  
+
   data[, merger_carrier := Carrier]
   data[Carrier == "Spirit Air Lines", merger_carrier := "JetBlue Airways"]
   data[, unobserved := model$xi]
-  
+
   # Compute Costs
   data[, cost := model$compute_costs()]
-  
+
   # Get Original Markets, Consumer Surplus
- original_problem <- pyblp$Problem(c(linear, nonlinear), data, 
+ original_problem <- pyblp$Problem(c(linear, nonlinear), data,
                                    integration = pyblp$Integration('halton', size = 250L,
                                                  specification_options = dict("seed" = 97L)))
  original_markets <- as.numeric(original_problem$unique_market_ids)
   cs_observed <- model$compute_consumer_surpluses()
   original_cs <- data.table(market_ids = original_markets, ConsumerSurplus_Observed = cs_observed)
-  
-  data.new <- data %>% group_by(merger_carrier, Origin, Dest, Year, Quarter, Year_Quarter_Effect, NonStop, market_ids) %>%
-    summarize(NonStopMiles = min(NonStopMiles), 
+
+  data.new <- data %>% group_by(merger_carrier, Origin, Dest, Year,
+                                Quarter, Year_Quarter_Effect, NonStop, 
+                                market_ids, nesting_ids) %>%
+    summarize(NonStopMiles = min(NonStopMiles),
               MktMilesFlown = min(MktMilesFlown),
               shares = sum(shares),
               prices = mean(prices),
@@ -587,88 +589,93 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
            Carrier = merger_carrier,
            UCC = as.numeric(Carrier %in% c("Spirit Air Lines", "Allegiant Air", "Frontier Airlines Inc."))) %>%
     as.data.table()
-  
-  data.price <- data %>% select(Origin, Dest, Year, Quarter, Year_Quarter_Effect, 
-                                NonStop, market_ids, Carrier, merger_carrier,prices, shares) %>% 
+
+  data.price <- data %>% select(Origin, Dest, Year, Quarter, Year_Quarter_Effect,
+                                NonStop, market_ids, Carrier, merger_carrier,prices, shares) %>%
     filter(!Carrier == "Spirit Air Lines") %>%
     mutate(Fare.Original = prices,
            Share.Original = shares,
            prices = NULL,
            shares = NULL) %>% as.data.table()
-  
+
   data.price[, Share.WithinMarket.Original := Share.Original / sum(Share.Original),
              by = market_ids]
-  
+
   data.new <- merge(data.new, data.price)
-  
+
   remove(data); gc();
-  
+
   # Recompute Origin Prescence Variable
   ratio_data <- readRDS("02.Intermediate/Merger_Service_Ratios.Rds")
-  
-  colnames(ratio_data) <- c("Year", "Quarter", "Carrier", "Origin", 
+
+  colnames(ratio_data) <- c("Year", "Quarter", "Carrier", "Origin",
             "Origin_Firm_Destinations", "Origin_Firm_Service_Ratio")
   data.new <- merge(data.new, ratio_data, by = c("Year", "Quarter", "Carrier", "Origin"),
                       all.x = TRUE);
-  
+
   # Need to remove Spirit Beta Coeff
   beta_vec <- model$beta
   beta_labels <- model$beta_labels
   beta_vec <- beta_vec[!grepl(pattern = "Spirit", x = beta_labels)]
+  rho_est <- model$rho
+  
   
   if(mode == "rcl"){
-    components <- c(linear, nonlinear) 
+    components <- c(linear, nonlinear)
+    sigma_vec <- model$sigma;
   } else {
     components <- linear
   }
-  
-  sigma_vec <- model$sigma; 
+
   remove(model); gc()
-  
+
   simulation.best <- pyblp$Simulation(product_formulations = components,
                                  product_data = data.new,
                                  beta = beta_vec,
                                  sigma = sigma_vec,
+                                 rho = rho_est,
                                  integration = pyblp$Integration('product', 9L,
                                             specification_options = dict("seed" = 97L)),
                                  xi = data.new$unobserved.best)
-  
+
   simulation.avg <- pyblp$Simulation(product_formulations = components,
                                       product_data = data.new,
                                       beta = beta_vec,
                                       sigma = sigma_vec,
+                                     rho = rho_est,
                                       integration = pyblp$Integration('product', 9L,
                                                                       specification_options = dict("seed" = 97L)),
                                       xi = data.new$unobserved.avg)
-  
+
   simulation.worst <- pyblp$Simulation(product_formulations = components,
                                       product_data = data.new,
                                       beta = beta_vec,
                                       sigma = sigma_vec,
+                                      rho = rho_est,
                                       integration = pyblp$Integration('product', 9L,
                                                                       specification_options = dict("seed" = 97L)),
                                       xi = data.new$unobserved.worst)
-  
-  
-  
-  simulation.min <- simulation.best$replace_endogenous(costs = data.new$costs.min); gc(); 
+
+
+
+  simulation.min <- simulation.best$replace_endogenous(costs = data.new$costs.min); gc();
   simulation.mean <- simulation.avg$replace_endogenous(costs = data.new$costs.mean); gc();
   simulation.max <- simulation.worst$replace_endogenous(costs = data.new$costs.max); gc()
-  
+
   data.new[, Shares.MinCost.Sim := py_to_r(simulation.min$product_data$shares)]
   data.new[, Shares.MeanCost.Sim := py_to_r(simulation.mean$product_data$shares)]
   data.new[, Shares.MaxCost.Sim := py_to_r(simulation.max$product_data$shares)]
   data.new[, Prices.MinCost.Sim := py_to_r(simulation.min$product_data$prices)]
   data.new[, Prices.MeanCost.Sim := py_to_r(simulation.mean$product_data$prices)]
   data.new[, Prices.MaxCost.Sim := py_to_r(simulation.max$product_data$prices)]
-  
+
   data.new[, Shares.WithinMarket.MinCost := Shares.MinCost.Sim / sum(Shares.MinCost.Sim),
            by = c("market_ids")]
   data.new[, Shares.WithinMarket.MeanCost := Shares.MeanCost.Sim / sum(Shares.MinCost.Sim),
            by = c("market_ids")]
   data.new[, Shares.WithinMarket.MaxCost := Shares.MaxCost.Sim / sum(Shares.MinCost.Sim),
            by = c("market_ids")]
-  
+
   # Add each markets Consumer Surplus
   markets <- as.numeric(simulation.best$unique_market_ids)
   cs.best <- as.numeric(simulation.min$compute_consumer_surpluses())
@@ -676,12 +683,85 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
   cs.worst <- as.numeric(simulation.max$compute_consumer_surpluses())
 
   cs_table <- data.table(market_ids = markets,
-                         CS_Best = cs.best, 
+                         CS_Best = cs.best,
                          CS_Average = cs.avg,
                          CS_Worst = cs.worst)
 
   cs_table <- merge(cs_table, original_cs, by = "market_ids", all.x = TRUE)
   data.new <- merge(data.new, cs_table, by = "market_ids", all.x = TRUE)
-  
+
   saveRDS(data.new, file = data_out)
+}
+
+bankruptcy_simulation <- function(model_in = "03.Output/random_coeff_nested_logit_results.pickle",
+                                  data_in = "02.Intermediate/Product_Data.rds",
+                                  data_out = "03.Output/Bankruptcy_Sim_Data.rds",
+                                  linear = pyblp$Formulation('0 + prices + NonStop + MktMilesFlown + I(MktMilesFlown**2) + Origin_Firm_Service_Ratio + Extra_Miles + Extra_Miles_Sq + Tourism + C(Year_Quarter_Effect) + C(Carrier)'),
+                                  nonlinear = pyblp$Formulation("0 + prices + NonStop + MktMilesFlown"),
+                                  mode = "rcl"){
+    model <- py_load_object(model_in)
+    data <- readRDS(data_in)
+    
+    data[, merger_carrier := Carrier]
+    data[, unobserved := model$xi]
+    
+    # Compute Costs
+    data[, cost := model$compute_costs()]
+    
+    data.new <- data %>% filter(Carrier != "Spirit Air Lines") %>%
+      mutate(Fare.Original = prices,
+             Share.Original = shares,
+             prices = NULL,
+             shares = NULL,
+             Origin_Firm_Destinations = NULL,
+             Origin_Firm_Service_Ratio = NULL) %>%
+      as.data.table()
+
+    data.new[, Share.WithinMarket.Original := Share.Original / sum(Share.Original),
+               by = market_ids]
+    
+    remove(data); gc();
+    
+    # Recompute Origin Prescence Variable
+    ratio_data <- readRDS("02.Intermediate/Merger_Service_Ratios.Rds")
+    
+    colnames(ratio_data) <- c("Year", "Quarter", "Carrier", "Origin",
+                              "Origin_Firm_Destinations", "Origin_Firm_Service_Ratio")
+    data.new <- merge(data.new, ratio_data, by = c("Year", "Quarter", "Carrier", "Origin"),
+                      all.x = TRUE);
+    
+    # Need to remove Spirit Beta Coeff
+    beta_vec <- model$beta
+    beta_labels <- model$beta_labels
+    beta_vec <- beta_vec[!grepl(pattern = "Spirit", x = beta_labels)]
+    rho_est <- model$rho
+    
+    if(mode == "rcl"){
+      components <- c(linear, nonlinear)
+      sigma_vec <- model$sigma;
+      
+    } else {
+      components <- linear
+    }
+    
+    remove(model); gc()
+    
+    simulation.new <- pyblp$Simulation(product_formulations = components,
+                                        product_data = data.new,
+                                        beta = beta_vec,
+                                        sigma = sigma_vec,
+                                       rho = rho_est,
+                                        integration = pyblp$Integration('product', 9L,
+                                          specification_options = dict("seed" = 97L)),
+                                        xi = data.new$unobserved)
+    
+    simulation.drop <- simulation.new$replace_endogenous(costs = data.new$costs.min); gc();
+
+    data.new[, Shares.Drop.Sim := py_to_r(simulation.min$product_data$shares)]
+    data.new[, Prices.Drop.Sim := py_to_r(simulation.max$product_data$prices)]
+    
+    data.new[, Shares.WithinMarket.Drop := Shares.Drop.Sim / sum(Shares.Drop.Sim),
+             by = c("market_ids")]
+    
+    saveRDS(data.new, file = data_out)
 }
