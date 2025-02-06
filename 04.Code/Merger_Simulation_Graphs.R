@@ -337,11 +337,86 @@ change_average_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
   
 }
 
-change_spirit_fare_basic <- function(merger_data = "02.Intermediate/Basic_Sim_Product_Data.rds",
-                                      figure_out = "05.Figures/Spirit_Fare_Change.pdf"){
-  merger <- readRDS(merger_data)
-  merger.sp <- merger[Carrier == "Spirit Air Lines",]
+change_average_fare_dist <- function(merger_data.adv = "03.Output/Adv_Merger_Sim_Data.rds",
+                                     observed_data = "02.Intermediate/Product_Data.rds",
+                                     graph_out.raw = "05.Figures/Merger_Change_AverageFare_Dist.pdf",
+                                     graph_out.percent = "05.Figures/Merger_Change_AverageFare_Dist_Percent.pdf"){
+  merger <- readRDS(merger_data.adv)
+  observed <- readRDS(observed_data)
   
-  ggplot(data = merger.sp, aes(x = price.change)) +
-    geom_histogram() 
+  observed[, Spirit_Prescence := max(Spirit_Prescence), by = c("Year", "Quarter", "Origin",
+                                                               "Dest")]
+  observed[, JetBlue_Prescence := max(JetBlue_Prescence), by = c("Year", "Quarter", "Origin",
+                                                                 "Dest")]
+  
+  # Compute Costs
+  shared_markets <- unique(observed[Spirit_Prescence == 1 & JetBlue_Prescence == 1, market_ids])
+  
+  merger <- merger %>% filter(market_ids %in% shared_markets) %>%
+    group_by(market_ids) %>%
+    summarize(Prices.MinCost = mean(Prices.MinCost.Sim) * 100,
+              Prices.MeanCost = mean(Prices.MeanCost.Sim) * 100,
+              Prices.MaxCost = mean(Prices.MaxCost.Sim)* 100,
+              Passengers.Mean = sum(Shares.MeanCost.Sim * Potential_Passengers)) %>% as.data.table()
+  
+  observed <- observed %>% filter(market_ids %in% shared_markets) %>%
+    group_by(market_ids) %>%
+    summarize(MeanPrice = mean(prices)* 100) %>% as.data.table()
+  
+  result <- merge(merger, observed, by = "market_ids")
+  result[, `Low Cost Merge` := Prices.MinCost - MeanPrice]
+  result[, `Low Cost %` := (Prices.MinCost - MeanPrice)/MeanPrice * 100]
+  result[, `Mean Cost Merge` := Prices.MeanCost - MeanPrice]
+  result[, `Mean Cost %` := (Prices.MeanCost - MeanPrice)/MeanPrice * 100]
+  result[, `High Cost Merge` := Prices.MaxCost - MeanPrice]
+  result[, `High Cost %` := (Prices.MaxCost - MeanPrice)/MeanPrice * 100]
+  
+  result.raw <- result[, .(market_ids, `Low Cost Merge`, `Mean Cost Merge` , `High Cost Merge`)] %>% unique()
+  
+  result.melt <- melt(result.raw, id.vars = c("market_ids")) %>% data.table()
+  colnames(result.melt) <- c("Market", "Simulation", "Change")
+  result.melt[, Simulation := factor(x = Simulation, levels = c("Low Cost Merge", "Mean Cost Merge",
+                                                                "High Cost Merge"),
+                                     labels = c("Best Case", "Average Case", "Worst Case"))]
+  
+ ggplot(data = result.melt, aes(x = Change, group = Simulation)) +
+   geom_histogram(binwidth = 5, 
+                  boundary = 0) + 
+   labs(x = "Change in Average Market Fare (2017 USD)",
+        y = "Number of Markets") + 
+   geom_vline(xintercept = 0, color = "grey") +
+   theme(panel.background = element_blank(), 
+         axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+         panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+         legend.position = "bottom") +
+   scale_y_continuous(expand = c(0,0),
+                      labels = comma) + facet_wrap(~Simulation, nrow = 2) +
+   scale_x_continuous(limits = c(-25, 45))
+  
+    ggsave(filename = graph_out.raw, width = 7, height = 5, units = "in")
+ 
+    # Percent Change
+    result.per <- result[, .(market_ids, `Low Cost %`, `Mean Cost %` , `High Cost %`)] %>% unique()
+    
+    result.melt <- melt(result.per, id.vars = c("market_ids")) %>% data.table()
+    colnames(result.melt) <- c("Market", "Simulation", "Change")
+    result.melt[, Simulation := factor(x = Simulation, levels = c("Low Cost %", "Mean Cost %",
+                                                                  "High Cost %"),
+                                       labels = c("Best Case", "Average Case", "Worst Case"))]
+    
+    ggplot(data = result.melt, aes(x = Change, group = Simulation)) +
+      geom_histogram(binwidth = 5, 
+                     boundary = 0) + 
+      labs(x = "Change in Average Fare (Percent)",
+           y = "Number of Markets") + 
+      geom_vline(xintercept = 0, color = "grey") +
+      theme(panel.background = element_blank(), 
+            axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+            panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+            legend.position = "bottom") +
+      scale_y_continuous(expand = c(0,0),
+                         labels = comma) + facet_wrap(~Simulation, nrow = 2) +
+      scale_x_continuous(limits = c(-25, 45))
+    
+    ggsave(graph_out.percent, units = "in", width = 7, height = 5)
 }
