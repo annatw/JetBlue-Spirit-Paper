@@ -15,7 +15,7 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
   observed[, JetBlue_Prescence := max(JetBlue_Prescence), by = c("Year", "Quarter", "Origin",
                                                                  "Dest")]
   
-  # Compute Costs
+  # Compute Minimum Fares
   shared_markets <- unique(observed[Spirit_Prescence == 1 & JetBlue_Prescence == 1, market_ids])
   
   merger <- merger %>% filter(market_ids %in% shared_markets) %>%
@@ -130,6 +130,83 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
                        labels = comma)
   ggsave(filename = graph_out, 
          units = "in", width = 7, height = 5)
+}
+
+change_minimum_fare_dist <- function(merger_data = "03.Output/Adv_Merger_Sim_Data.rds",
+                                     observed_data = "02.Intermediate/Product_Data.rds",
+                                     graph_out = "05.Figures/Merger_Change_MinimumFare_Dist.pdf",
+                                     graph_out.percent = "05.Figures/Merger_Change_MinimumFare_Percent_Dist.pdf"){
+  merger <- readRDS(merger_data)
+  observed <- readRDS(observed_data)
+  
+  observed[, Spirit_Prescence := max(Spirit_Prescence), by = c("Year", "Quarter", "Origin",
+                                                               "Dest")]
+  observed[, JetBlue_Prescence := max(JetBlue_Prescence), by = c("Year", "Quarter", "Origin",
+                                                                 "Dest")]
+  # Compute Minimum Fares
+  shared_markets <- unique(observed[Spirit_Prescence == 1 & JetBlue_Prescence == 1, market_ids])
+  
+  merger <- merger %>% filter(market_ids %in% shared_markets) %>%
+    group_by(market_ids) %>%
+    summarize(Prices.MinCost = min(Prices.MinCost.Sim) * 100,
+              Prices.MeanCost = min(Prices.MeanCost.Sim) * 100,
+              Prices.MaxCost = min(Prices.MaxCost.Sim)* 100) %>% as.data.table()
+  
+  observed <- observed %>% filter(market_ids %in% shared_markets) %>%
+    group_by(market_ids) %>%
+    summarize(MinPrice = min(prices)* 100) %>% as.data.table()
+  
+  result <- merge(merger, observed, by = "market_ids")
+  result[, `Low Cost Merge` := Prices.MinCost - MinPrice]
+  result[, `Low Cost %` := (Prices.MinCost - MinPrice) / MinPrice]
+  result[, `Mean Cost Merge` := Prices.MeanCost - MinPrice]
+  result[, `Mean Cost %` := (Prices.MeanCost - MinPrice) / MinPrice]
+  result[, `High Cost Merge` := Prices.MaxCost - MinPrice]
+  result[, `High Cost %` := (Prices.MaxCost - MinPrice) / MinPrice]
+  result.dollar <- result[, .(market_ids, `Low Cost Merge`, `Mean Cost Merge` , `High Cost Merge`)] %>% unique()
+  
+  result.per <- result[, .(market_ids, `Low Cost Merge`, `Mean Cost Merge` , `High Cost Merge`)] %>% unique()
+  
+  result.melt <- melt(result.dollar, id.vars = c("market_ids")) %>% data.table()
+  colnames(result.melt) <- c("Market", "Simulation", "Change")
+
+  ggplot(data = result.melt, aes(x = Change, group = Simulation)) +
+    geom_histogram(binwidth = 5, 
+                   boundary = 0) + 
+    labs(x = "Change in Minimum Market Fare (2017 USD)",
+         y = "Number of Markets") + 
+    geom_vline(xintercept = 0, color = "grey") +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") +
+    scale_y_continuous(expand = c(0,0),
+                       labels = comma) + facet_wrap(~Simulation, nrow = 2)  +
+    scale_x_continuous(limits = c(-15, 115))
+
+    ggsave(graph_out, units = "in", height = 4, width = 7)
+    
+  # Percent Change Minimum Fare
+    result.melt <- melt(result.per, id.vars = c("market_ids")) %>% data.table()
+    colnames(result.melt) <- c("Market", "Simulation", "Change")
+    
+    
+    ggplot(data = result.melt, aes(x = Change, group = Simulation)) +
+      geom_histogram(binwidth = 10, 
+                     boundary = 0) + 
+      labs(x = "Change in Minimum Market Fare (Percent)",
+           y = "Number of Markets") + 
+      geom_vline(xintercept = 0, color = "grey") +
+      theme(panel.background = element_blank(), 
+            axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+            panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+            legend.position = "bottom") +
+      scale_y_continuous(expand = c(0,0),
+                         labels = comma) + facet_wrap(~Simulation, nrow = 2)+
+      scale_x_continuous(limits = c(-15, 100))
+    
+    ggsave(graph_out.percent, units = "in", height = 4, width = 7)
+    
 }
 
 # Change in Passengers
