@@ -300,7 +300,7 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 	
 	Within this model, the contribution to utility shared by consumers, $x_{jt}$, contains the distance between the origin and destination airports within the market, the squared distance, a dummy variable which is one if an itinerary does not include any intermediate stops between the origin and destination airports, the difference between the miles flown by the itenary and the minimum number of miles flown within the market, the square of this difference, a dummy variable which is 1 if the origin or destination airport are in Florida or Las Vegas, and the ratio of the number of destinations served out of the origin airport by the carrier divided by the total number of destinations served out of that airport. This last measure is intended to proxy for rewards program strength of the carrier at the origin airport. $F_{jt}$ is a vector of controls which includes fixed effects for each year-quarter and carrier. The variables included in $x_{jt}$ are intended to be largely unresponsive to demand shocks - these characteristics of a product are determined primarily by a carrier's network structure and the geography between the origin and destination airports. As such, these characteristics should not change in response to unobserved quarterly demand shocks.
 	
-	 Four sets of instruments are used to account for the endogeneity of prices and shares within a market. The first set consists of cost shifters created by multiplying dummy variables for origin or destination airport being a hub of the ticketing carrier by the miles traveled and the square of the miles traveled. The second set of instruments, employed to account for endogeneity in market shares, consists of the differentiation instruments described in \citet{gandhi_measuring_2019} constructed from a dummy variable that is 1 for a nonstop flight, the miles covered by the itinerary, the square of the miles covered by the itinerary, and the service ratio of the carrier out of the destination airport. The third set of instruments, employed to instrument for the nesting parameter $\lambda$ consists solely of the number of products within a market. Finally, all remaining exogenous regressors and their interactions comprise the final set of instruments.\footnote{Other instruments for price were considered, including interactions between the gas miles variable and characteristics of the origin airport and interactions between the exogenous variables. However, the selection of price shifters used in the final model had the best performance across the tests documented in Tables \ref{tab:Instrument_Compare_Pre}. The final specification chosen (column 4) has the benefit of passing the Wu-Hausman test while failing the Test of Over Identification by the least amount of the tested models. As noted in \citet{nevo_measuring_2001}, provided enough observations it is virtually impossible to pass the over-identification test, and as such, I am not concerned with the result. For comparison purposes, the instrument comparison table on the main period of interest (2021 Q2 through 2023 Q2) is included as Table \ref{tab:Instrument_Compare}.}
+	 Four sets of instruments are used to account for the endogeneity of prices and shares within a market. The first set consists of cost shifters created by multiplying dummy variables for origin or destination airport being a hub of the ticketing carrier by the miles traveled and the square of the miles traveled. The second set of instruments, employed to account for endogeneity in market shares, consists of the differentiation instruments described in \citet{gandhi_measuring_2019} constructed from a dummy variable for nonstop flight status, the distance traveled, the square of the distance, and the service ratio of the ticketing carrier out of the destination airport. The third set of instruments, employed to instrument for the nesting parameter $\lambda$ consists solely of the number of products within a market to assist in model convergence. Finally, all remaining exogenous regressors and their interactions comprise the final set of instruments.\footnote{Other instruments for price were considered, including interactions between the gas miles variable and characteristics of the origin airport and interactions between the exogenous variables. However, the selection of price shifters used in the final model had the best performance across the tests documented in Tables \ref{tab:Instrument_Compare_Pre}. The final specification chosen (column 4) has the benefit of passing the Wu-Hausman test while failing the Test of Over Identification by the least amount of the tested models. As noted in \citet{nevo_measuring_2001}, provided enough observations it is virtually impossible to pass the over-identification test, and as such, I am not concerned with the result. For comparison purposes, the instrument comparison table on the main period of interest (2021 Q2 through 2023 Q2) is included as Table \ref{tab:Instrument_Compare}.}
 	
     Results for the estimation of this model's coefficients for both periods are included in Table \ref{tab:DemandEst}. With the exception of nonstop flight status and the tourist route dummy variable, all variables are predicted to influence consumer demand in both periods. However, of the variables which allow for random effects, only price takes a significant coefficient, of roughly $0.6$. Finally, I estimate a nesting parameter of a little over a tenth in both periods. This is consistent with high degrees of substitutability between air travel and the outside good, which is inconsistent with most previous literature's estimates of the nesting parameter. As such, consumers are predicted to have a high willing to enter (leave) the market in response to a price decrease (increase).
 
@@ -580,8 +580,6 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 		\footnotesize{Dependent variable is the average log-market fare within a market. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded , as such,  Period -1 is the fourth quarter of 2019. "Standard controls" are the log of mean population between the origin and destination metropolitan statistical areas, prescence of Spirit and Southwest, per-capita origin and destination state-level coronavirus cases, and lagged HHI. Standard errors clustered at the level of origin-destination pairs are reported.  }
 	\end{table}
 	
-	
-	
 	\begin{table}
 		\caption{NEA Market Yield Effects}
 		\label{tab:NEA_Market_Yield}
@@ -604,6 +602,40 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 	\end{figure}	
 
     \subsection{Additional Merger Figures}
+    \begin{table}
+        \caption{Pre-Pandemic Instrument Comparison Table}
+        \label{tab:Instrument_Compare_Pre}
+        \resizebox{\linewidth}{!}{%
+            \begin{tabular}{l c c c c c c c c c}
+\toprule
+ & Model 1 & Model 2 & Model 3 & Model 4 & Model 5 & Model 6 & Model 7 & Model 8 & Model 9 \\
+\midrule
+Price                       & $-0.42^{***}$ & $-4.97^{***}$ & $-0.18^{**}$  & $-0.18^{**}$  & $-2.12^{***}$ & $-0.14^{*}$   & $-2.09^{***}$ & $-2.28^{***}$ & $-2.23^{***}$ \\
+                            & $(0.00)$      & $(0.09)$      & $(0.06)$      & $(0.06)$      & $(0.04)$      & $(0.06)$      & $(0.04)$      & $(0.03)$      & $(0.03)$      \\
+Nesting                     & $0.55^{***}$  & $0.42^{***}$  & $-0.14^{***}$ & $-0.14^{***}$ & $0.12^{***}$  & $-0.14^{***}$ & $0.12^{***}$  & $0.18^{***}$  & $0.18^{***}$  \\
+                            & $(0.00)$      & $(0.01)$      & $(0.01)$      & $(0.01)$      & $(0.01)$      & $(0.01)$      & $(0.01)$      & $(0.00)$      & $(0.00)$      \\
+\midrule
+Products in Market          &               & X             & X             & X             & X             & X             & X             & X             & X             \\
+Gas Instruments             &               & X             &               &               & X             &               & X             &               & X             \\
+Hub Interactions            &               &               & X             & X             & X             & X             & X             & X             & X             \\
+Gandhi Instruments          &               &               &               &               &               & X             & X             & X             & X             \\
+Exog Interactions           &               &               &               &               &               &               &               & X             & X             \\
+Price Test                  &               & 101307.015    & 94273.624     & 94273.624     & 87736.444     & 94159.23      & 87480.095     & 78369.648     & 77831.661     \\
+P-Value                     &               & 0             & 0             & 0             & 0             & 0             & 0             & 0             & 0             \\
+Test of Over Identification &               & N/A           & 4187.14       & 4187.14       & 7279.16       & 4283.57       & 7526.31       & 11166.96      & 11605.17      \\
+p-value                     &               & N/A           & 0             & 0             & 0             & 0             & 0             & 0             & 0             \\
+Mean Elasticity             & $-0.99$       & $-11.62$      & $-0.42$       & $-0.42$       & $-4.96$       & $-0.32$       & $-4.88$       & $-5.32$       & $-5.21$       \\
+Median Elasticity           & $-1.00$       & $-11.74$      & $-0.42$       & $-0.42$       & $-5.01$       & $-0.33$       & $-4.93$       & $-5.37$       & $-5.27$       \\
+Share Inelastic Products    & $0.51$        & $0.00$        & $1.00$        & $1.00$        & $0.00$        & $1.00$        & $0.00$        & $0.00$        & $0.00$        \\
+Share JB Inelastic Products & $0.67$        & $0.00$        & $1.00$        & $1.00$        & $0.00$        & $1.00$        & $0.00$        & $0.00$        & $0.00$        \\
+Share SP Inelastic Products & $0.88$        & $0.00$        & $1.00$        & $1.00$        & $0.00$        & $1.00$        & $0.00$        & $0.00$        & $0.00$        \\
+Num. obs.                   & $307289$      & $307289$      & $307289$      & $307289$      & $307289$      & $307289$      & $307289$      & $307289$      & $307289$      \\
+\bottomrule
+\multicolumn{10}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+\end{tabular}
+        }
+    \end{table}
+    
     \begin{table}
         \caption{Consistency in Estimated Minimum Fare Change Across Time}
         \label{tab:Merger_ConsistencyTable}
