@@ -741,14 +741,22 @@ market_yield_reg <- function(input = "02.Intermediate/NEA_Market.Rds",
   pvalues <- list(test1[,4], test2[,4], test3[,4], test4[,4], test5[,4])
   
   
-  order <- list("Period-8:NEA_Market" = NA,
-                "Period-7:NEA_Market" = NA,"Period-6:NEA_Market" = NA,
-                "Period-5:NEA_Market" = NA,
-                "Period-4:NEA_Market" = NA,"Period-3:NEA_Market" = NA,
-                "Period-2:NEA_Market" = NA,"Period0:NEA_Market"  = NA, 
-                "Period1:NEA_Market" = NA, "Period2:NEA_Market"  = NA,
-                "Period3:NEA_Market"  = NA, "Period4:NEA_Market" = NA, "Period5:NEA_Market" = NA ,
-                "Period6:NEA_Market" = NA, "Period7:NEA_Market" = NA, "Period8:NEA_Market" = NA)
+  order <- list("Period-8:NEA_Market" = "NEA Market: Period -8",
+                "Period-7:NEA_Market" = "NEA Market: Period -7",
+                "Period-6:NEA_Market" = "NEA Market: Period -6",
+                "Period-5:NEA_Market" = "NEA Market: Period -5",
+                "Period-4:NEA_Market" = "NEA Market: Period -4",
+                "Period-3:NEA_Market" = "NEA Market: Period -3",
+                "Period-2:NEA_Market" = "NEA Market: Period -2",
+                "Period0:NEA_Market"  = "NEA Market: Period 0", 
+                "Period1:NEA_Market" = "NEA Market: Period 1", 
+                "Period2:NEA_Market"  = "NEA Market: Period 2",
+                "Period3:NEA_Market"  = "NEA Market: Period 3", 
+                "Period4:NEA_Market" = "NEA Market: Period 4", 
+                "Period5:NEA_Market" = "NEA Market: Period 5",
+                "Period6:NEA_Market" = "NEA Market: Period 6", 
+                "Period7:NEA_Market" = "NEA Market: Period 7", 
+                "Period8:NEA_Market" = "NEA Market: Period 8")
   
   gof_rows <- list("Standard Controls" = c("Yes", "Yes", "Yes", "Yes", "Yes"),
                    "Income Data" = c("", "MSA", "MSA", "State", "State"),
@@ -833,7 +841,7 @@ market_yield_reg <- function(input = "02.Intermediate/NEA_Market.Rds",
           legend.position = "bottom") +
     facet_wrap(facets = vars(Airport), ncol = 2) + 
     labs(x = "Period", y = "Average Market Yield")
-  ggsave(output.graph_airport, units = "in", height = 7, width = 6)
+  ggsave(output.graph_airport, units = "in", height = 6, width = 7)
 }
 
 market_fare_reg <- function(input = "02.Intermediate/NEA_Market.Rds",
@@ -890,15 +898,23 @@ market_fare_reg <- function(input = "02.Intermediate/NEA_Market.Rds",
   pvalues <- list(test1[,4], test2[,4], test3[,4], test4[,4], test5[,4])
   
   
-  order <- list("Period-8:NEA_Market" = NA,
-                "Period-7:NEA_Market" = NA,"Period-6:NEA_Market" = NA,
-                "Period-5:NEA_Market" = NA,
-                "Period-4:NEA_Market" = NA,"Period-3:NEA_Market" = NA,
-                "Period-2:NEA_Market" = NA,"Period0:NEA_Market"  = NA, 
-                "Period1:NEA_Market" = NA, "Period2:NEA_Market"  = NA,
-                "Period3:NEA_Market"  = NA, "Period4:NEA_Market" = NA, "Period5:NEA_Market" = NA ,
-                "Period6:NEA_Market" = NA, "Period7:NEA_Market" = NA, "Period8:NEA_Market" = NA)
- 
+  order <- list("Period-8:NEA_Market" = "NEA Market: Period -8",
+                "Period-7:NEA_Market" = "NEA Market: Period -7",
+                "Period-6:NEA_Market" = "NEA Market: Period -6",
+                "Period-5:NEA_Market" = "NEA Market: Period -5",
+                "Period-4:NEA_Market" = "NEA Market: Period -4",
+                "Period-3:NEA_Market" = "NEA Market: Period -3",
+                "Period-2:NEA_Market" = "NEA Market: Period -2",
+                "Period0:NEA_Market"  = "NEA Market: Period 0", 
+                "Period1:NEA_Market" = "NEA Market: Period 1", 
+                "Period2:NEA_Market"  = "NEA Market: Period 2",
+                "Period3:NEA_Market"  = "NEA Market: Period 3", 
+                "Period4:NEA_Market" = "NEA Market: Period 4", 
+                "Period5:NEA_Market" = "NEA Market: Period 5",
+                "Period6:NEA_Market" = "NEA Market: Period 6", 
+                "Period7:NEA_Market" = "NEA Market: Period 7", 
+                "Period8:NEA_Market" = "NEA Market: Period 8")
+  
    gof_rows <- list("Standard Controls" = c("Yes", "Yes", "Yes", "Yes", "Yes"),
                     "Income Data" = c("", "MSA", "MSA", "State", "State"),
                     "Sample" = c("Full", "Full", "Two Years", "Full", "Two Years"))
@@ -1263,18 +1279,28 @@ nea_codeshare_markets_estimate <- function(input = "02.Intermediate/NEA_OPCarrie
   
   clustered_se <- sqrt(diag(vcovCL(x = reg1, cluster = ~ Mkt)))
   
-  order <- list("(Intercept)" = NA, "NEA_Market:Period-8" = NA,
-      "NEA_Market:Period-7" = NA,"NEA_Market:Period-6" = NA,"NEA_Market:Period-5" = NA,
-      "NEA_Market:Period-4" = NA,
-      "NEA_Market:Period-3" = NA,"NEA_Market:Period-2" = NA,
-      "NEA_Market:Period0" = NA, "NEA_Market:Period1" = NA,"NEA_Market:Period2" = NA,
-       "NEA_Market:Period3" = NA,"NEA_Market:Period4" = NA,"NEA_Market:Period5"  = NA,
-      "NEA_Market:Period6"  = NA, "NEA_Market:Period7" = NA,"NEA_Market:Period8" = NA)
+  order <- list("(Intercept)" = NA, 
+                "NEA_Market:Period-8" = "NEA Market: Period -8",
+      "NEA_Market:Period-7" = "NEA Market: Period -7",
+      "NEA_Market:Period-6" = "NEA Market: Period -6",
+      "NEA_Market:Period-5" = "NEA Market: Period -5",
+      "NEA_Market:Period-4" = "NEA Market: Period -4",
+      "NEA_Market:Period-3" = "NEA Market: Period -3",
+      "NEA_Market:Period-2" = "NEA Market: Period -2",
+      "NEA_Market:Period0" = "NEA Market: Period 0", 
+      "NEA_Market:Period1" = "NEA Market: Period 1",
+      "NEA_Market:Period2" = "NEA Market: Period 2",
+       "NEA_Market:Period3" = "NEA Market: Period 3",
+      "NEA_Market:Period4" = "NEA Market: Period 4",
+      "NEA_Market:Period5"  = "NEA Market: Period 5",
+      "NEA_Market:Period6"  = "NEA Market: Period 6", 
+      "NEA_Market:Period7" = "NEA Market: Period 7",
+      "NEA_Market:Period8" = "NEA Market: Period 8")
   
   texreg(l = reg1, file = output.tab, single.row = TRUE, stars = c(0.1, 0.05, 0.01),
          table = FALSE, override.se = clustered_se, 
          override.pvalues = test[, 4],
-       #  custom.coef.map = order,
+         custom.coef.map = order,
          digits = 5)
   
   
@@ -1308,8 +1334,8 @@ nea_codeshare_markets_estimate <- function(input = "02.Intermediate/NEA_OPCarrie
 
 # Regress on Number of Code Sharing Itineraries
 nea_code_sharing_itenaries <- function(input = "02.Intermediate/NEA_OPCarrier_Switch.Rds",
-                                          output.tab = "06.Tables/NEA_N_Switches.tex",
-                                          output.graph = "05.Figures/NEA_N_Switches_Graph.pdf"){
+                          output.tab = "06.Tables/NEA_N_Switches.tex",
+                          output.graph = "05.Figures/NEA_N_Switches_Graph.pdf"){
   db1b <- readRDS(input)
   
   db1b <- nea_create_period(db1b)

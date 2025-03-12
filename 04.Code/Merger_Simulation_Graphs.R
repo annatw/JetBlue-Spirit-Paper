@@ -157,18 +157,22 @@ change_minimum_fare_dist <- function(merger_data = "03.Output/Adv_Merger_Sim_Dat
     summarize(MinPrice = min(prices)* 100) %>% as.data.table()
   
   result <- merge(merger, observed, by = "market_ids")
-  result[, `Low Cost Merge` := Prices.MinCost - MinPrice]
-  result[, `Low Cost %` := (Prices.MinCost - MinPrice) / MinPrice]
-  result[, `Mean Cost Merge` := Prices.MeanCost - MinPrice]
-  result[, `Mean Cost %` := (Prices.MeanCost - MinPrice) / MinPrice]
-  result[, `High Cost Merge` := Prices.MaxCost - MinPrice]
-  result[, `High Cost %` := (Prices.MaxCost - MinPrice) / MinPrice]
-  result.dollar <- result[, .(market_ids, `Low Cost Merge`, `Mean Cost Merge` , `High Cost Merge`)] %>% unique()
+  result[, `Best Case Scenario` := Prices.MinCost - MinPrice]
+  result[, `Best Case %` := (Prices.MinCost - MinPrice) / MinPrice]
+  result[, `Average Case Scenario` := Prices.MeanCost - MinPrice]
+  result[, `Average Case %` := (Prices.MeanCost - MinPrice) / MinPrice]
+  result[, `Worst Case Scenario` := Prices.MaxCost - MinPrice]
+  result[, `Worst Case %` := (Prices.MaxCost - MinPrice) / MinPrice]
+  result.dollar <- result[, .(market_ids, `Best Case Scenario`, `Average Case Scenario` , `Worst Case Scenario`)] %>% unique()
   
-  result.per <- result[, .(market_ids, `Low Cost Merge`, `Mean Cost Merge` , `High Cost Merge`)] %>% unique()
+  result.per <- result[, .(market_ids, `Best Case %`, `Average Case %` , `Worst Case %`)] %>% unique()
   
   result.melt <- melt(result.dollar, id.vars = c("market_ids")) %>% data.table()
   colnames(result.melt) <- c("Market", "Simulation", "Change")
+
+  print(paste("Low Cost Mean Change in Minimum Fare:", mean(result.melt[Simulation == 'Best Case Scenario']$Change)))
+  print(paste("Mean Cost Mean Change in Minimum Fare:", mean(result.melt[Simulation == 'Average Case Scenario']$Change)))
+  print(paste("High Cost Mean Change in Minimum Fare:", mean(result.melt[Simulation == 'Worst Case Scenario']$Change)))
 
   ggplot(data = result.melt, aes(x = Change, group = Simulation)) +
     geom_histogram(binwidth = 5, 

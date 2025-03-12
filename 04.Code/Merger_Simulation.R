@@ -205,6 +205,9 @@ merger_sim_data_generate <- function(input_file = "02.Intermediate/DB1B_With_Con
   
   # Price in 100s
   product_data[, prices := prices / 100]
+  
+  # Nominal Prices
+  product_data[, nominal_prices := prices]
   # Real prices
   product_data[, prices := prices / (price_index / 100)]
   product_data[, Jet_Fuel_Price := Jet_Fuel_Price / (price_index / 100)]
@@ -528,14 +531,14 @@ bankruptcy_simulation <- function(model_in = "03.Output/random_coeff_nested_logi
     
     # Need to remove Spirit Beta Coeff
     beta_vec <- model$beta
-    beta_labels <- model$beta_labels
-    beta_vec <- beta_vec[!grepl(pattern = "Spirit", x = beta_labels)]
+    # beta_labels <- model$beta_labels
+    # beta_vec <- beta_vec[!grepl(pattern = "Spirit", x = beta_labels)]
+    
     rho_est <- model$rho
     
     if(mode == "rcl"){
       components <- c(linear, nonlinear)
       sigma_vec <- model$sigma;
-      
     } else {
       components <- linear
     }

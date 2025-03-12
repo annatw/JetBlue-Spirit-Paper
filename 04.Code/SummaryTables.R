@@ -1,21 +1,3 @@
-five_statistic_row_make <- function(name, vector,
-                                    weight_variable = NULL){
-  if(is.null(weight_variable)){
-    new_row <- c(name, round(mean(vector, na.rm = TRUE), digits = 2),
-                 paste("(", round(sd(vector, na.rm = TRUE), digits = 2), ")", sep = ""),
-                 round(min(vector, na.rm = TRUE), digits = 2),
-                 round(median(vector,na.rm = TRUE), digits = 2),
-                 round(max(vector, na.rm = TRUE), digits = 2))
-  } else {
-    new_row <- c(name, round(sum(vector*weight_variable)/sum(weight_variable), digits = 2),
-                 paste("(", round(sd(vector, na.rm = TRUE), digits = 2), ")", sep = ""),
-                 round(min(vector, na.rm = TRUE), digits = 2),
-                 round(median(vector,na.rm = TRUE), digits = 2),
-                 round(max(vector, na.rm = TRUE), digits = 2))
-  }
-  return(new_row)
-}
-
 regions_of_note <- function(output = "06.Tables/regionsOfNote.tex"){
   db1b_data <- readRDS("02.Intermediate/Compile_DB1B.Rds")
   t100_data <- readRDS("02.Intermediate/Compile_T100_Q.Rds")
@@ -813,13 +795,14 @@ summary_statistics_product_two_period <- function(post_pandemic_in = "02.Interme
   product_data <- readRDS(input)
   
   price_row <- five_statistic_row_make(name = "Price (2017 USD)", product_data$prices * 100)
+  nominal_row <- five_statistic_row_make(name = "Price (Nominal USD)", product_data$nominal_prices * 100)
   passengers_row <- five_statistic_row_make(name = "Passengers", product_data$Passengers.Product)
   mktMiles_row <- five_statistic_row_make(name = "Distance (1000s)", product_data$MktMilesFlown)
   exMiles_row <- five_statistic_row_make(name = "Extra Distance", product_data$Extra_Miles)
   nonstop_row <- five_statistic_row_make(name = "Nonstop", product_data$NonStop)
   origin_dest <- five_statistic_row_make(name = "Origin Destinations",
                                          product_data$Origin_Firm_Destinations)
-  origin_prescence <- five_statistic_row_make(name = "Origin Prescence (%)",
+  origin_prescence <- five_statistic_row_make(name = "Origin Presence (%)",
                                               product_data$Origin_Firm_Service_Ratio)
   delta <- five_statistic_row_make(name = "Delta", product_data$Carrier == "Delta Air Lines Inc.")
   american <- five_statistic_row_make(name = "American", product_data$Carrier == "American Airlines Inc.")
@@ -830,7 +813,7 @@ summary_statistics_product_two_period <- function(post_pandemic_in = "02.Interme
   minor_carrier <- five_statistic_row_make(name = "Other Carrier", product_data$Carrier == "Minor Carrier")
   obs_row <- c("Observations", nrow(product_data), "", "", "", "")
   
-  return(rbind(price_row, passengers_row,
+  return(rbind(price_row, nominal_row,  passengers_row,
                  mktMiles_row, exMiles_row, nonstop_row,
                  origin_dest, origin_prescence, delta,
                  american, united, southwest, jetblue,
@@ -854,6 +837,53 @@ summary_statistics_product_two_period <- function(post_pandemic_in = "02.Interme
    row_spec(row = 29, hline_after = TRUE) %>%
    save_kable(file = output)
 }
+
+summary_statistics_product_two_period_compare <- function(post_pandemic_in = "02.Intermediate/Product_Data.rds",
+                                                  pre_pandemic_in = "02.Intermediate/prepandemic.rds",
+                                                  output = "06.Tables/SummaryStatistics_Product_Compare.tex"){
+  pre <- readRDS(pre_pandemic_in);
+  post <- readRDS(post_pandemic_in);
+
+  price_row <- compare_row_make(name = "Price (2017 USD)", pre$prices * 100,
+                                       post$prices * 100)
+  passengers_row <- compare_row_make(name = "Passengers", pre$Passengers.Product,
+                                            post$Passengers.Product)
+  mktMiles_row <- compare_row_make(name = "Distance (1000s)", pre$MktMilesFlown,
+                                          post$MktMilesFlown)
+  exMiles_row <- compare_row_make(name = "Extra Distance", pre$Extra_Miles,
+                                         post$Extra_Miles)
+  nonstop_row <- compare_row_make(name = "Nonstop", pre$NonStop,
+                                         post$NonStop)
+  origin_dest <- compare_row_make(name = "Origin Destinations",
+                                         pre$Origin_Firm_Destinations,
+                                         post$Origin_Firm_Destinations)
+  origin_prescence <- compare_row_make(name = "Origin Presence (%)",
+                                              pre$Origin_Firm_Service_Ratio,
+                                              post$Origin_Firm_Service_Ratio)
+  delta <- compare_row_make(name = "Delta", pre$Carrier == "Delta Air Lines Inc.", post$Carrier == "Delta Air Lines Inc.")
+  american <- compare_row_make(name = "American", pre$Carrier == "American Airlines Inc.", post$Carrier == "American Airlines Inc.")
+  united <- compare_row_make(name = "United", pre$Carrier == "United Air Lines Inc.", post$Carrier == "United Air Lines Inc.")
+  southwest <- compare_row_make(name = "Southwest", pre$Carrier == "Southwest Airlines Co.", post$Carrier == "Southwest Airlines Co.")
+  jetblue <- compare_row_make(name = "JetBlue", pre$Carrier == "JetBlue Airways", post$Carrier == "JetBlue Airways")
+  spirit <- compare_row_make(name = "Spirit", pre$Carrier == "Spirit Air Lines", post$Carrier == "Spirit Air Lines")
+  minor_carrier <- compare_row_make(name = "Other Carrier", pre$Carrier == "Minor Carrier", post$Carrier == "Minor Carrier")
+  obs_row <- c("Observations", nrow(pre), "", nrow(post), "", "")
+  
+  title_row <- c("", "Mean", "(SD)", "Mean", "(SD)", "t-Statistic")
+
+  output_table <- rbind(price_row, passengers_row,
+                        mktMiles_row, exMiles_row, nonstop_row,
+                        origin_dest, origin_prescence, delta,
+                        american, united, southwest, jetblue,
+                        spirit, minor_carrier, obs_row)
+  rownames(output_table) <- NULL
+  
+  kbl(output_table,
+      format = "latex", col.names = title_row,
+      escape = TRUE, booktabs = TRUE) %>%
+    save_kable(file = output)
+}
+
 
 summary_statistics_market_level <- function(input = "02.Intermediate/Product_Data.rds",
                                             output = "06.Tables/SummaryStatistics_Market.tex"){
@@ -1305,7 +1335,7 @@ summary_statistics_market_two_period <- function(post_pandemic_in = "02.Intermed
     hhi <- five_statistic_row_make(name = "HHI", market_data$HHI)
     
     obs_row <- c("Observations", nrow(market_data), "", "JetBlue Markets", sum(market_data$JetBlue), "")
-    obs_row2 <- c("Spirit & JetBlue", sum(market_data$Spirit_JetBlue), "", "Spirit Markets", sum(market_data$Spirit), "")
+    obs_row2 <- c("JetBlue & Spirit Markets", sum(market_data$Spirit_JetBlue), "", "Spirit Markets", sum(market_data$Spirit), "")
 
     return(rbind(min_miles, mean_miles, number_of_firms, number_of_products, number_of_passengers, hhi, obs_row,
                  obs_row2))
@@ -1961,6 +1991,7 @@ summary_product <- function(input = "02.Intermediate/Product_Data.rds",
   product_data <- readRDS(input)
   
   price_row <- five_statistic_row_make(name = "Price (2017 USD)", product_data$prices * 100)
+  nominal_row <- five_statistic_row_make(name = "Price (Nominal USD)", product_data$nominal_prices * 100)
   passengers_row <- five_statistic_row_make(name = "Passengers", product_data$Passengers.Product)
   mktMiles_row <- five_statistic_row_make(name = "Distance (1000s)", product_data$MktMilesFlown)
   exMiles_row <- five_statistic_row_make(name = "Extra Distance", product_data$Extra_Miles)

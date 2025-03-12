@@ -15,31 +15,40 @@ merger_results_table <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rd
     
     # Restrict
     merger <- merger[market_ids %in% impactedMarkets,]
+    observed <- observed[market_ids %in% impactedMarkets]
     
-    # Cluster 1: Prices 
-    price.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim,
-                                          weight_variable = merger$Potential_Passengers *
-                                            merger$Shares.WithinMarket.MinCost)
-    price.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim,
-                                         weight_variable = merger$Potential_Passengers *
-                                           merger$Shares.WithinMarket.MinCost)
-    price.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim,
-                                           weight_variable = merger$Potential_Passengers *
-                                             merger$Shares.WithinMarket.MinCost)
+    # Cluster 1: Prices
+    price.obs <- six_statistic_row_make("Observed", observed$prices)
+    price.best <- six_statistic_row_make("Best Case", merger$Prices.MinCost.Sim)
+    price.avg <- six_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim)
+    price.worst <- six_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim)
     
-    # Cluster 2: Price Change
-    priceChange.best <- five_statistic_row_make("Best Case", merger$Prices.MinCost.Sim - merger$Fare.Original,
-                                                weight_variable = merger$Potential_Passengers *
-                                                  merger$Shares.WithinMarket.MinCost)
-    priceChange.avg <- five_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim - merger$Fare.Original,
-                                               weight_variable = merger$Potential_Passengers *
-                                                 merger$Shares.WithinMarket.MinCost)
-    priceChange.worst <- five_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim - merger$Fare.Original,
-                                                 weight_variable = merger$Potential_Passengers *
-                                                   merger$Shares.WithinMarket.MinCost)
+    # Summarize Mean Price Change in Each Market
+    merger <- merger %>% group_by(market_ids) %>%
+      summarize(MeanPrice.MaxCost = sum(Shares.WithinMarket.MaxCost * Prices.MaxCost.Sim)/sum(Shares.WithinMarket.MaxCost),
+                MeanPrice.MinCost = sum(Shares.WithinMarket.MinCost * Prices.MinCost.Sim)/sum(Shares.WithinMarket.MinCost),
+                MeanPrice.MeanCost = sum(Shares.WithinMarket.MeanCost * Prices.MaxCost.Sim)/sum(Shares.WithinMarket.MeanCost))
     
-    table <- rbind(price.best, price.avg, price.worst,
-                   priceChange.best, priceChange.avg, priceChange.worst)
+    observed[, withinMarketShares := sum(shares), by = market_ids]
+    observed <- observed %>% group_by(market_ids) %>%
+      summarize(MeanPrice.Real = sum(withinMarketShares * prices) / sum(withinMarketShares))
+    
+    merger <- merge(merger, observed, by = "market_ids", all.x = TRUE)
+    
+    # Cluster 2: Market Mean Price
+    meanPrice.obs <- six_statistic_row_make("Observed", merger$MeanPrice.Real)
+    meanPrice.best <- six_statistic_row_make("Best Case", merger$MeanPrice.MinCost)
+    meanPrice.avg <- six_statistic_row_make("Average Case", merger$MeanPrice.MeanCost)
+    meanPrice.worst <- six_statistic_row_make("Worst Case", merger$MeanPrice.MaxCost)
+    
+    # Cluster 3: % Change in Market Mean Price
+    change.best <- six_statistic_row_make("Best Case", (merger$MeanPrice.MinCost - merger$MeanPrice.Real)/merger$MeanPrice.Real * 100)
+    change.avg <- six_statistic_row_make("Average Case", (merger$MeanPrice.MeanCost - merger$MeanPrice.Real)/merger$MeanPrice.Real * 100)
+    change.worst <- six_statistic_row_make("Worst Case", (merger$MeanPrice.MaxCost - merger$MeanPrice.Real)/merger$MeanPrice.Real * 100)
+    
+    table <- rbind(price.obs, price.best, price.avg, price.worst,
+                   meanPrice.obs, meanPrice.best, meanPrice.avg, meanPrice.worst,
+                   change.best, change.avg, change.worst)
     rownames(table) <- NULL
     return(table)
   }
@@ -49,20 +58,21 @@ merger_results_table <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rd
   pre_pandemic <- output_rows(merger_in = merger_pre,
                               observed_in = observed_pre)
   
-  title_row <- c("", "Mean", "(SD)", "Minimum", "Median", "Maximum")
+  title_row <- c("", "N", "Mean", "(SD)", "Minimum", "Median", "Maximum")
   table <- rbind(pre_pandemic, post_pandemic)
   
   kbl(table,
       format = "latex", col.names = title_row,
       escape = TRUE, booktabs = TRUE) %>%
-    pack_rows(group_label = "Pre-Pandemic", 1, 6) %>%
-    pack_rows(group_label = "Prices", 1, 3) %>%
-    pack_rows(group_label = "Price Change", 4, 6) %>%
-    pack_rows(group_label = "Post-Pandemic", 7, 12) %>%
-    pack_rows(group_label = "Prices", 7, 9) %>%
-    pack_rows(group_label = "Price Change", 10, 12) %>%
-    row_spec(row = 6, hline_after = TRUE) %>%
-    row_spec(row = 12, hline_after = TRUE) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 11) %>%
+    pack_rows(group_label = "Prices (100s, 2017 USD)", 1, 4) %>%
+    pack_rows(group_label = "Market Average Price", 5, 8) %>%
+    pack_rows(group_label = "% Change Average Price", 9, 11) %>%
+    pack_rows(group_label = "Post-Pandemic", 12, 22) %>%
+    pack_rows(group_label = "Prices  (100s, 2017 USD)", 12, 15) %>%
+    pack_rows(group_label = "Market Average Price", 16, 19) %>%
+    pack_rows(group_label = "% Change Average Price", 20, 22) %>%
+    row_spec(row = 11, hline_after = TRUE) %>%
     save_kable(file = table_out)
 }
 
@@ -356,4 +366,87 @@ merger_simulation_cs_change <- function(merger_post = "03.Output/Adv_Merger_Sim_
     row_spec(row = 4, hline_after = TRUE) %>%
     row_spec(row = 7, hline_after = TRUE) %>%
     save_kable(file = table_out)
+}
+
+# For routes with price increase > 40, how many times do they appear?
+route_consistency_table <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rds",
+                                    observed_post = "02.Intermediate/Product_Data.rds",
+                                    merger_pre = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
+                                    observed_pre = "02.Intermediate/prepandemic.rds",
+                                    table_out = "06.Tables/Route_Consistency.tex"){
+  frame_make <- function(real, merger){
+    real <- readRDS(real); merger <- readRDS(merger)
+    
+    real[, Spirit_Prescence := max(Spirit_Prescence), by = c("Year", "Quarter", "Origin",
+                                                             "Dest")]
+    real[, JetBlue_Prescence := max(JetBlue_Prescence), by = c("Year", "Quarter", "Origin",
+                                                               "Dest")]
+    
+    # Compute Costs
+    shared_markets <- unique(real[Spirit_Prescence == 1 & JetBlue_Prescence == 1, market_ids])
+    
+    # For each market, identify its minimum price pre, post merger. 
+    merger <- merger %>% filter(market_ids %in% shared_markets) %>% group_by(market_ids, Year, Quarter, Origin, Dest) %>%
+      summarize(Best.Min = min(Prices.MinCost.Sim),
+                Avg.Min = min(Prices.MeanCost.Sim),
+                Worst.Min = min(Prices.MaxCost.Sim))
+    
+    real <- real %>% filter(market_ids %in% shared_markets) %>% group_by(market_ids) %>%
+      summarize(Prices.Real = min(prices))
+    
+    out <- as.data.table(merge(real, merger, by = "market_ids"))
+    out[, Best := round(100*(Best.Min - Prices.Real), digits = 2)]
+    out[, Average := round(100*(Avg.Min - Prices.Real), digits = 2)]
+    out[, Worst := round(100*(Worst.Min - Prices.Real), digits = 2)]
+    
+    return(out)
+  }
+  
+  panel_make <- function(route_data){
+    best_col <- route_data[Best > 40, .N, by = c("Origin", "Dest")]
+    best_col[N > 5, N := 5]
+    best_col <- best_col[, .N, by = "N"]
+    colnames(best_col) <- c("Quarters", "Best")
+    average_col <- route_data[Average > 40, .N, by = c("Origin", "Dest")]
+    average_col[N > 5, N := 5]
+    average_col <- average_col[, .N, by = "N"]
+    colnames(average_col) <- c("Quarters", "Average")
+    worst_col <- route_data[Worst > 40, .N, by = c("Origin", "Dest")]
+    worst_col[N > 5, N := 5]
+    worst_col <- worst_col[, .N, by = "N"]
+    colnames(worst_col) <- c("Quarters", "Worst")
+    
+    out <- merge(best_col, average_col, by = "Quarters", all.x = TRUE, all.y = TRUE)
+    out <- merge(out, worst_col, by = "Quarters", all.x = TRUE, all.y = TRUE)
+    
+    out[, Quarters := as.character(Quarters)]
+    out[Quarters == 5, Quarters := "5+"]
+    out[is.na(Best), Best := 0]
+    out[is.na(Average), Average := 0]
+    out[is.na(Worst), Worst := 0]
+    
+    return(out)
+  }
+  
+  post <- panel_make(frame_make(observed_post, merger_post))
+  pre <- panel_make(frame_make(observed_pre, merger_pre))
+  
+  out <- rbind(pre, post)
+  colnames(out) <- c("Quarters", "Best Case", "Average Case", "Worst Case")
+  
+  kbl(out,
+      format = "latex",
+      escape = TRUE, booktabs = TRUE) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 5) %>%
+    pack_rows(group_label = "Post-Pandemic", 6, 10) %>%
+    save_kable(file = table_out)
+}
+
+bankruptcy_simulation_tables <- function(merger_in = "03.Output/Bankruptcy_Sim_Data.rds",
+                                        observed_in = "02.Intermediate/Product_Data.rds",
+                                        table_out = "06.Tables/Bankruptcy_Simulation.tex"){
+  merger <- readRDS(merger_in)
+  observed <- readRDS(observed_in)
+
+  
 }

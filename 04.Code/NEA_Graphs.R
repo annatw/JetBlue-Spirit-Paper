@@ -383,8 +383,10 @@ nea_op_carrier_graph <- function(input = "02.Intermediate/NEA_OPCarrier_Switch.R
   neaProd[Quarter == 1, Month := "February"]
   neaProd[Quarter == 2, Month := "May"]
   neaProd[Quarter == 3, Month := "August"]
-  neaProd[Quarter == 4, Month := "October"]
+  neaProd[Quarter == 4, Month := "November"]
   neaProd[, Date := my(paste(Month, Year))]
+  
+  neaProd <- neaProd[Date > dmy("12 December 2020")]
   
   neaProd <- neaProd[, .(Date, Joint_Operate, AmericanTicket_JBOp, JBTicket_AAOp)]
   neaProd.melt <- melt(neaProd, id.vars = "Date") %>% as.data.table()
@@ -393,12 +395,11 @@ nea_op_carrier_graph <- function(input = "02.Intermediate/NEA_OPCarrier_Switch.R
          labels = c("Joint Itinerary", "AA Ticket, JB Operator", "JB Ticket, AA Operator"))]
   neaProd.melt <- neaProd.melt[Date > mdy("January 1, 2018"),]
   
-  ggplot(data = neaProd.melt, aes(x = Date, y = value, linetype = variable)) +
-    geom_line() +
-    scale_y_continuous(expand = c(0,0),
-                       limits = c(0, 225000),
+  ggplot(data = neaProd.melt, aes(x = Date, y = value, fill = variable)) +
+    geom_col(position = "dodge") + scale_y_continuous(expand = c(0,0),
+                       limits = c(0, 190000),
                        labels = comma) +
-    geom_vline(xintercept = mdy("January 1, 2021")) +
+    scale_fill_grey() +
     theme(panel.background = element_blank(), 
           axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
