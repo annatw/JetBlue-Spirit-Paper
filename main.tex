@@ -328,7 +328,7 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 
     % Detail how this works mathematically
      
-	 Table \ref{tab:Simulation_Price} contains the estimated price effects from the merger on individual product prices for markets in which both JetBlue and Spirit competed in. In both the best and average case scenarios, I estimate declines in the average prices of products in markets wherein both JetBlue and Spirit competed. In the worst case scenario, I estimate an increase of average fare paid of approximately \$4. These trends are consistent between the pre-pandemic and post-pandemic estimates.  
+	 Table \ref{tab:Simulation_Price} contains the estimated price effects from the merger on individual product prices for markets in which both JetBlue and Spirit competed in. In both the best case scenario, I consistently estimate estimate declines in the average prices of products in markets wherein both JetBlue and Spirit competed of between 13\% and 15\%, or approximately \$23 and \$29. In the worst case scenario, I estimate a minimal increase in average market fares for the pre-pandemic period and an increase of approximately 5\% in the worst-case simulation. 
      
     \begin{table}
         \caption{Simulated Price Effects of Merger - Joint Markets}
@@ -340,7 +340,7 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
         \end{center}
      \end{table}
 
-    These estimated effects are notably smaller than the estimated effects of the merger on markets where Spirit operated but not JetBlue (Table \ref{tab:Simulation_Price_Spirit}). Within these markets, I estimate an average increase in average market fares of approximately 9.7\%. This is 
+    Notably, JetBlue was clear on its intention to retire the Spirit business model following the acquisition and retool all Spirit aircraft to follow the JetBlue configuration. As such, it is worth looking at the effect of this change on estimated pricing and costs on market fares in markets in which Spirit competed but not JetBlue. These estimated effects are notably smaller than the estimated effects of the merger on markets where Spirit operated but not JetBlue (Table \ref{tab:Simulation_Price_Spirit}).\footnote{As the different simulations are defined by the method used to combine products between the two firms, all simulations are equivalent for markets with only Spirit within them.} Within these markets, I estimate an average increase in average market fares of approximately 9.7\%, or approximately \$19. This is 
 
     \begin{table}
         \caption{Simulated Price Effects of Merger - Spirit Markets}
@@ -612,8 +612,17 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 		\includegraphics[width = \linewidth]{NEA_Airport_Yield_Graph}
 		\footnotesize{Coefficients from a model based on the model reported in Table \ref{tab:NEA_Market_Yield} but which includes airport-time interaction terms are reported. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded, and as such, Period -1 is the fourth quarter of 2019. Standard errors clustered at the level of origin-destination pairs are reported. }
 	\end{figure}	
-
+\FloatBarrier
     \subsection{Additional Merger Figures}
+    \begin{table}
+        \caption{Market Level Summary Statistics (By Competition Structure)}
+        \label{fig:Market_Type_Summary}
+                  \vspace{-15mm}
+        \begin{center}
+        \include{06.Tables/SummaryStatistics_MarketTypes}
+        \end{center}
+    \end{table}
+    
     \begin{table}
         \caption{Pre-Pandemic Instrument Comparison Table}
         \label{tab:Instrument_Compare_Pre}
@@ -686,6 +695,22 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
 \end{tabular}
     }
 \end{table}
+
+    \begin{figure}
+        \caption{Distribution in Changes of Average Market Fare - Pre-Pandemic}
+        \label{fig:AverageFare_ChangeDist_PrePandemic}
+        \begin{center}
+        \includegraphics[width = \linewidth]{PrePandemic_Merger_Change_AverageFare_Dist.pdf}
+        \end{center}
+    \end{figure}
+
+    \begin{figure}
+        \caption{Distribution in Changes of Average Market Fare - Post-Pandemic}
+        \label{fig:AverageFare_ChangeDist_PostPandemic}
+        \begin{center}
+        \includegraphics[width = \linewidth]{Merger_Change_AverageFare_Dist.pdf}
+        \end{center}
+    \end{figure}
     
     \begin{table}
         \caption{Consistency in Estimated Minimum Fare Change Across Time}
@@ -694,7 +719,7 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
         \begin{center}
         \include{06.Tables/Route_Consistency}
         \end{center}
-        \vspace{-15mm}
+        \vspace{-5mm}
         \footnotesize{For each route with an estimated increase in minimum fare greater than \$40 estimated in at least one quarter, the number of quarters is reported for which that route is estimated to have an increase in minimum fare greater than \$40. Table \ref{tab:MinimumPrice} details distribution of minimum price changes in terms of markets.}
     \end{table}
     
