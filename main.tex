@@ -421,14 +421,17 @@ As part of the merger process, JetBlue and Spirit were required to file an appli
 
 Stance detection, in brief, is the task of detecting the position held by the author of a text regarding some topic. In this context, it is to determine if the author of a comment left on the regulatory filing supported or opposed the proposed JetBlue-Spirit merger. This context is particularly suitable for the use of modern machine learning models as focused and direct. Therefore, an unsupervised zero-shot model should be effective with minimal issues with trying to gauge potentially contradictory statements that could be found in a longer work. 
 
-The stance detection problem should not be confused with that of the sentiment analysis problem. Sentiment analysis intends to capture the emotions expressed in a text rather than identify the emotions expressed within the text. As an example of how these differ, consider the comment ``Competition is good for a healthy economy."\footnote{This is an actual comment left on the regulatory docket.} Using a pre-trained sentiment detection model developed for analyzing financial sentiment data, FinBERT, \footnote{Model documentation is contained in \citet{araci_finbert_2019}.} this statement is judged to possess positive sentiment. However, it is correctly judged to oppose the merger by the stance detection model used for my analysis. 
+The stance detection problem should not be confused with that of the sentiment analysis problem. Sentiment analysis intends to capture the emotions expressed in a text rather than identify the emotions expressed within the text. As an example of how these differ, consider the comment ``Competition is good for a healthy economy."\footnote{This is an actual comment left on the regulatory docket.} Using a pre-trained sentiment detection model developed for analyzing financial sentiment data, FinBERT, \footnote{Model documentation is contained in \citet{araci_finbert_2019}.} this statement is judged to possess positive sentiment. However, it is correctly judged to oppose the merger by the stance detection model used for my analysis. Table \ref{tab:Sentiment_Stance_Table} details the breakdown of unique comments' assigned sentiments and stances. 
 
 \begin{table}
-    \caption{Summary and Stance - Unique Comments}
-    \label{tab:Summary_Stance_Table}
+    \caption{Sentiment and Stance - Unique Comments}
+    \label{tab:Sentiment_Stance_Table}
+    \vspace{-15mm}
     \begin{center}
-    
+    \include{06.Tables/Stance_Sentiment_Table}
     \end{center}
+        \vspace{-5mm}
+    \footnotesize{Each cell includes the number of comments with the given stance and sentiment. Only unique comments are included within this table. }
 \end{table}
 
 This paper uses the pre-trained model documented in \citet{laurer_less_2024} to detect the stances of each comment left on the docket. Each comment is assessed for the probability that each comment agrees with the statements ``The author of this comment \{approves of, disagrees with\} the merger." As these statements are mutually exclusive, the probabilities assigned for each comment sum to 1. As documented in Figures \ref{fig:ProbabilityApprove} and \ref{fig:ProbabilityApprove_Unique}, most comments are strongly polarized, suggesting that the language model had little difficulty in assigning stances to comments. Looking over a sample of fifty unique comments, all are sorted as would be expected based on my understanding of the text. As such, I believe that this model is well suited for analyzing the public comments.  
