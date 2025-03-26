@@ -17,6 +17,7 @@
 \usepackage[letterpaper, margin=1in]{geometry}
 
 \usepackage[toc,page]{appendix}
+\graphicspath{{05.Figures/}}
 
 \begin{document}
 	\subsection{Northeast Alliance}
@@ -50,5 +51,83 @@
 	\end{figure}
     
 	% I now turn my attention to the difference in average fares within markets with itineraries listing both airlines as the ticketing carrier. The results for this estimation are contained in Table \ref{tab:NEA_Fare_Neutral} and graphed in Figure \ref{fig:NEA_Fare_Neutral}.\footnote{Results for the average market yield are included in Table \ref{tab:NEA_Yield_Neutral} and Figure \ref{fig:NEA_Yield_Neutral} and follow the same trend.} I estimate that after the third quarter of the NEA's operation, this difference was consistently lower by about \$75 dollars within markets impacted by the NEA. This decline is consistent with the collaborating firms' stated desire for consumers to treat products offered by each firm as neutral and the timeline is consistent with my results in Table \ref{tab:NEA_Switch_Prob}. I fail to observe evidence of pre-trends, lending credence to the argument that the NEA reduced the price spread between American and JetBlue tickets. However, this result does not clarify if this was caused by American fares becoming less expensive or JetBlue fares becoming more expensive. 	
+
+	\subsection{Estimation Results: Northeast Alliance}
+
+	\begin{table}[h]
+	\caption{Probability of American, JetBlue Codesharing Flights}
+	\label{tab:NEA_Switch_Prob}
+     \vspace{-10mm}
+    \begin{center}
+	\include{06.Tables/NEA_Probability_Switches}
+    \end{center}
+         \vspace{-8mm}
+	\footnotesize{Dependent variable is the probability that within a nonstop market, at least one passenger took an itinerary with JetBlue or American as the ticketing carrier and the other firm operated at least one leg of the trip. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded , as such,  Period -1 is the fourth quarter of 2019.Standard errors are clustered at the level of origin, destination airport pairs.}
+\end{table}
+
+        \begin{figure}
+		\caption{NEA Effect on Market Fare}
+		\label{fig:NEA_Market_Fare}
+		\includegraphics[width = \linewidth]{NEA_Market_Fare_Graph.pdf}
+		\footnotesize{Figure plots the event study coefficients from the second column of Table \ref{tab:NEA_Market_Fare}. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded, and as such, Period -1 is the fourth quarter of 2019. Standard errors clustered at the level of origin-destination pairs are reported. Results from an alternative specification with Yield as the outcome of interest are detailed in Figure \ref{fig:NEA_Market_Yield} and Table \ref{tab:NEA_Market_Yield}.}
+	\end{figure}
+
+	
+	\begin{table}
+		\caption{American, JetBlue Fare Difference}
+		\label{tab:NEA_Fare_Neutral}
+		\include{06.Tables/NEA_Price_Neutrality.tex}
+		\footnotesize{Dependent variable is the difference of the average fare within a market of American Airlines less the average fare of JetBlue. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded , as such,  Period -1 is the fourth quarter of 2019. Standard errors are clustered at the level of origin, destination airport pairs.}
+	\end{table}
+	
+	\begin{figure}
+		\caption{American, JetBlue Fare Difference}
+		\label{fig:NEA_Fare_Neutral}
+		\includegraphics[width = \linewidth]{NEA_Price_Neutrality_Graph}
+		\footnotesize{Figure plots the estimated event study coefficients from Table \ref{tab:NEA_Fare_Neutral} Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded , as such,  Period -1 is the fourth quarter of 2019.}
+	\end{figure}
+	
+	\begin{table}
+		\caption{American, JetBlue Yield Difference}
+		\label{tab:NEA_Yield_Neutral}
+		\include{06.Tables/NEA_Price_Neutrality_Y.tex}
+		\footnotesize{Dependent variable is the difference of the average yield within a market of American Airlines less the average yield of JetBlue. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded , as such,  Period -1 is the fourth quarter of 2019. Standard errors are clustered at the level of origin, destination airport pairs.}
+	\end{table}
+	
+	\begin{figure}
+		\caption{American, JetBlue Yield Difference}
+		\label{fig:NEA_Yield_Neutral}
+		\includegraphics[width = \linewidth]{NEA_Price_Neutrality_Graph_Y}
+		\footnotesize{Figure plots the estimated event study coefficients from Table \ref{tab:NEA_Yield_Neutral} Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded , as such,  Period -1 is the fourth quarter of 2019.}
+	\end{figure}
+	
+	\begin{table}
+		\caption{NEA Market Fare Effects}
+		\label{tab:NEA_Market_Fare}
+		\include{06.Tables/NEA_Market_Fare}
+		\footnotesize{Dependent variable is the average log-market fare within a market. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded , as such,  Period -1 is the fourth quarter of 2019. "Standard controls" are the log of mean population between the origin and destination metropolitan statistical areas, prescence of Spirit and Southwest, per-capita origin and destination state-level coronavirus cases, and lagged HHI. Standard errors clustered at the level of origin-destination pairs are reported.  }
+	\end{table}
+	
+	\begin{table}
+		\caption{NEA Market Yield Effects}
+		\label{tab:NEA_Market_Yield}
+		\include{06.Tables/NEA_Market_Yield}
+		\footnotesize{Dependent variable is the average log market yield within a market. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded , as such,  Period -1 is the fourth quarter of 2019. "Standard controls" are the log of mean population between the origin and destination metropolitan statistical areas, prescence of Spirit and Southwest, per-capita origin and destination state-level coronavirus cases, and lagged HHI. Standard errors clustered at the level of origin-destination pairs are reported.  }
+	\end{table}
+	
+	\begin{figure}
+		\caption{NEA Market Yield Graph}
+		\label{fig:NEA_Market_Yield}
+		\includegraphics[width = \linewidth]{NEA_Market_Yield_Graph.pdf}
+		\footnotesize{Figure plots the event study coefficients from Table \ref{tab:NEA_Market_Yield}. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded, and as such, Period -1 is the fourth quarter of 2019. Standard errors clustered at the level of origin-destination pairs are reported. }
+	\end{figure}
+	
+	\begin{figure}
+		\caption{NEA Market Yield - Airport Interactions}
+		\label{fig:NEA_Market_Yield_Interaction}
+		\includegraphics[width = \linewidth]{NEA_Airport_Yield_Graph}
+		\footnotesize{Coefficients from a model based on the model reported in Table \ref{tab:NEA_Market_Yield} but which includes airport-time interaction terms are reported. Base period is 2021 Quarter 2. All data from 2020 and the first quarter of 2021 is excluded, and as such, Period -1 is the fourth quarter of 2019. Standard errors clustered at the level of origin-destination pairs are reported. }
+	\end{figure}	
+
 
 \end{document}
