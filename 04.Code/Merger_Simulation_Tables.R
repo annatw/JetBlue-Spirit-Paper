@@ -65,15 +65,88 @@ merger_results_table <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rd
       format = "latex", col.names = title_row,
       escape = TRUE, booktabs = TRUE) %>%
     pack_rows(group_label = "Pre-Pandemic", 1, 11) %>%
-    pack_rows(group_label = "Prices (100s, 2017 USD)", 1, 4) %>%
+    pack_rows(group_label = "Product Prices (100s, 2017 USD)", 1, 4) %>%
     pack_rows(group_label = "Market Average Price", 5, 8) %>%
     pack_rows(group_label = "% Change Average Price", 9, 11) %>%
     pack_rows(group_label = "Post-Pandemic", 12, 22) %>%
-    pack_rows(group_label = "Prices  (100s, 2017 USD)", 12, 15) %>%
+    pack_rows(group_label = "Product Prices  (100s, 2017 USD)", 12, 15) %>%
     pack_rows(group_label = "Market Average Price", 16, 19) %>%
     pack_rows(group_label = "% Change Average Price", 20, 22) %>%
     row_spec(row = 11, hline_after = TRUE) %>%
     save_kable(file = table_out)
+}
+
+merger_results_spirit_markets <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rds",
+                                          observed_post = "02.Intermediate/Product_Data.rds",
+                                          merger_pre = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
+                                          observed_pre = "02.Intermediate/prepandemic.rds",
+                                          table_out = "06.Tables/Merger_Spirit_Market_Results.tex"){
+  output_rows <- function(merger_in, observed_in){
+    merger <- readRDS(merger_in)
+    observed <- readRDS(observed_in)
+    
+    # Identify markets with Spirit, No JB
+    impactedMarkets <- observed %>% group_by(market_ids) %>%
+      summarize(Spirit = max(Spirit),
+                JetBlue = max(JetBlue)) %>% 
+      filter(Spirit == 1, JetBlue == 0); impactedMarkets <- impactedMarkets$market_ids
+    
+    # Restrict
+    merger <- merger[market_ids %in% impactedMarkets,]
+    observed <- observed[market_ids %in% impactedMarkets]
+    
+    # Cluster 1: Prices
+    price.obs <- six_statistic_row_make("Observed", observed$prices)
+    price.best <- six_statistic_row_make("Simulated", merger$Prices.MinCost.Sim)
+
+    # Summarize Mean Price Change in Each Market
+    merger <- merger %>% group_by(market_ids) %>%
+      summarize(MeanPrice.MaxCost = sum(Shares.WithinMarket.MaxCost * Prices.MaxCost.Sim)/sum(Shares.WithinMarket.MaxCost),
+                MeanPrice.MinCost = sum(Shares.WithinMarket.MinCost * Prices.MinCost.Sim)/sum(Shares.WithinMarket.MinCost),
+                MeanPrice.MeanCost = sum(Shares.WithinMarket.MeanCost * Prices.MaxCost.Sim)/sum(Shares.WithinMarket.MeanCost))
+    
+    observed[, withinMarketShares := sum(shares), by = market_ids]
+    observed <- observed %>% group_by(market_ids) %>%
+      summarize(MeanPrice.Real = sum(withinMarketShares * prices) / sum(withinMarketShares))
+    
+    merger <- merge(merger, observed, by = "market_ids", all.x = TRUE)
+    
+    # Cluster 2: Market Mean Price
+    meanPrice.obs <- six_statistic_row_make("Observed", merger$MeanPrice.Real)
+    meanPrice.best <- six_statistic_row_make("Simulated", merger$MeanPrice.MinCost)
+
+    # Cluster 3: % Change in Market Mean Price
+    change.best <- six_statistic_row_make("Simulated", (merger$MeanPrice.MinCost - merger$MeanPrice.Real)/merger$MeanPrice.Real * 100)
+
+    table <- rbind(price.obs, price.best, 
+                   meanPrice.obs, meanPrice.best,
+                   change.best )
+    rownames(table) <- NULL
+    return(table)
+  }
+  
+  post_pandemic <- output_rows(merger_in = merger_post,
+                               observed_in = observed_post)
+  pre_pandemic <- output_rows(merger_in = merger_pre,
+                              observed_in = observed_pre)
+  
+  title_row <- c("", "N", "Mean", "(SD)", "Minimum", "Median", "Maximum")
+  table <- rbind(pre_pandemic, post_pandemic)
+  
+  kbl(table,
+      format = "latex", col.names = title_row,
+      escape = TRUE, booktabs = TRUE) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 5) %>%
+    pack_rows(group_label = "Prices (100s, 2017 USD)", 1, 2) %>%
+    pack_rows(group_label = "Market Average Price", 3, 4) %>%
+    pack_rows(group_label = "% Change Average Price", 5,5) %>%
+    pack_rows(group_label = "Post-Pandemic", 6, 10) %>%
+    pack_rows(group_label = "Prices  (100s, 2017 USD)", 6, 7) %>%
+    pack_rows(group_label = "Market Average Price", 8, 9) %>%
+    pack_rows(group_label = "% Change Average Price", 10,10) %>%
+    row_spec(row = 5, hline_after = TRUE) %>%
+    save_kable(file = table_out)
+  
 }
 
 

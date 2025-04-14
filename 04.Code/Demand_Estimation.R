@@ -412,7 +412,6 @@ rcl_two_period_table <- function(post_in = "03.Output/random_coeff_nested_logit_
     row_spec(row = 16, hline_after = TRUE) %>%
     row_spec(row = 22, hline_after = TRUE) %>%
     row_spec(row = 24, hline_after = TRUE) %>%
-    row_spec(row = 31, hline_after = TRUE) %>%
     pack_rows(group_label = "Linear Coefficients", 1,16) %>%
     pack_rows(group_label = "Nonlinear Coefficients", 17, 22) %>%
     pack_rows(group_label = "Nesting Coefficient", 23, 24) %>%

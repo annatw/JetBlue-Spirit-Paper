@@ -215,7 +215,7 @@ condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000){
   DB1B[, Top.Fare.Cutoff := unname(quantile(x = MktFare, probs = 0.99, na.rm = TRUE)), by = c("Year", "Quarter")]
   DB1B[, Bottom.Yield.Cutoff := unname(quantile(x = Yield, probs = 0.01, na.rm = TRUE)), by = c("Year", "Quarter")]
   DB1B[, Top.Yield.Cutoff := unname(quantile(x = Yield, probs = 0.99, na.rm = TRUE)), by = c("Year", "Quarter")]
-
+  
   DB1B[MktFare < Bottom.Fare.Cutoff, MktFare := NA]
   DB1B[Yield < Bottom.Yield.Cutoff, MktFare := NA]
   DB1B[MktFare > Top.Fare.Cutoff, MktFare := NA]
@@ -230,37 +230,45 @@ condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000){
   
   market_group <- c("Year", "Quarter", "Origin", "Dest")
   product_group <- c(market_group, "Carrier", "NonStop")
- 
+  
   DB1B[, MktMilesFlown := mean(MktMilesFlown), by = product_group]
   DB1B[, Passengers.Product := sum(Passengers, na.rm = TRUE) * 10, by = product_group]
   DB1B[, Passengers.Inside.Market := sum(Passengers, na.rm = TRUE) * 10, by = market_group]
   
   # Remove small markets, products
   DB1B[Passengers.Product < 100, MktFare := NA]
-  print(paste("Small Products:", nrow(DB1B[Passengers.Product < 100,]) / nrow(DB1B) * 100, " Of Sample"))
+  DB1B[, Small.Product := Passengers.Product < 100];
+  
+  print(paste("Small Products:", nrow(DB1B[Small.Product == TRUE,]) / nrow(DB1B) * 100, " Of Sample"))
   
   DB1B[Passengers.Inside.Market < 500, MktFare := NA]
- # print(paste("Small Markets:", length(unique(DB1B[Passengers.Inside.Market < 500,]$market_group)) / length(unique(DB1B$market_group)) * 100, " Of Sample"))
+  # print(paste("Small Markets:", length(unique(DB1B[Passengers.Inside.Market < 500,]$market_group)) / length(unique(DB1B$market_group)) * 100, " Of Sample"))
   
   DB1B[is.na(MktFare), Passengers := NA]
   DB1B[, Avg.Fare := sum(MktFare * Passengers, na.rm= TRUE) / sum(Passengers, na.rm = TRUE),
-               by = product_group]; gc(); gc();
+       by = product_group]; gc(); gc();
+  DB1B[, Firm.Avg.Fare := sum(MktFare * Passengers, na.rm= TRUE) / sum(Passengers, na.rm = TRUE),
+       by = c(market_group, "Carrier")]
+  DB1B[, Firm.25.Quantile := quantile(MktFare, probs = 0.25, na.rm = TRUE, names = FALSE),
+       by = c(market_group, "Carrier")]
+  DB1B[, Firm.75.Quantile := quantile(MktFare, probs = 0.75, na.rm = TRUE, names = FALSE),
+       by = c(market_group, "Carrier")]
   DB1B <- DB1B[!is.nan(Avg.Fare),]
   DB1B[, Product_Name := paste(Origin, Dest, Carrier, NonStop)]
   DB1B[, Product_Name := factor(Product_Name)]
   
   # TESTING: CAPTURING SPIRIT USAGE FEE
- DB1B[Carrier == "Spirit Air Lines" & Year < 2020, Avg.Fare := Avg.Fare + 22.99 * MktCoupons]
+  DB1B[Carrier == "Spirit Air Lines" & Year < 2020, Avg.Fare := Avg.Fare + 22.99 * MktCoupons]
   
   DB1B <- DB1B %>% select(Year, Quarter, Origin, Origin.City, Dest, Destination.City, 
-                                          Carrier, MktMilesFlown, NonStop,
-                                          Product_Name, Passengers.Product, Passengers.Inside.Market,
-                                          Avg.Fare, NonStopMiles,
-                                      Origin.City, Destination.City);
+                          Carrier, MktMilesFlown, NonStop,
+                          Product_Name, Passengers.Product, Passengers.Inside.Market,
+                          Avg.Fare, NonStopMiles,
+                          Origin.City, Destination.City, Firm.Avg.Fare, Firm.25.Quantile, Firm.75.Quantile) %>% 
+    as.data.table() %>% unique();
   
-  DB1B <- as.data.table(DB1B);
-  DB1B <- unique(DB1B); gc(); gc()
-  write_rds(DB1B, output)
+  
+  saveRDS(DB1B, output)
 }
 
 

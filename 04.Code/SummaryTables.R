@@ -830,11 +830,11 @@ summary_statistics_product_two_period <- function(post_pandemic_in = "02.Interme
  kbl(output_table,
      format = "latex", col.names = title_row,
      escape = TRUE, booktabs = TRUE) %>%
-   pack_rows(group_label = "Pre-Pandemic", 1, 15) %>%
-   pack_rows(group_label = "Post-Pandemic", 16, 30) %>%
-   row_spec(row = 14, hline_after = TRUE) %>%
+   pack_rows(group_label = "Pre-Pandemic", 1, 16) %>%
+   pack_rows(group_label = "Post-Pandemic", 17, 32) %>%
    row_spec(row = 15, hline_after = TRUE) %>%
-   row_spec(row = 29, hline_after = TRUE) %>%
+   row_spec(row = 16, hline_after = TRUE) %>%
+   row_spec(row = 31, hline_after = TRUE) %>%
    save_kable(file = output)
 }
 
@@ -1317,8 +1317,8 @@ summary_statistics_market_two_period <- function(post_pandemic_in = "02.Intermed
     product_data <- readRDS(input)
     
     market_data <- product_data %>% group_by(market_ids) %>%
-      summarize(Spirit = max(Carrier == "Spirit Air Lines"),
-                JetBlue = max(Carrier == "JetBlue Airways"),
+      summarize(Spirit = max(Spirit_Prescence),
+                JetBlue = max(JetBlue_Prescence),
                 MinMiles = min(MktMilesFlown), 
                 AvgMiles = sum(MktMilesFlown * Passengers.Product) / sum(Passengers.Product), 
               Firms = mean(Num_Firms_In_Market),
@@ -1356,6 +1356,74 @@ summary_statistics_market_two_period <- function(post_pandemic_in = "02.Intermed
     row_spec(row = 6, hline_after = TRUE) %>%
     row_spec(row = 8, hline_after = TRUE) %>%
     row_spec(row = 14, hline_after = TRUE) %>%
+    save_kable(file = output)
+}
+
+summary_statistics_market_type <- function(post_pandemic_in = "02.Intermediate/Product_Data.rds",
+                                           pre_pandemic_in = "02.Intermediate/prepandemic.rds",
+                                           output = "06.Tables/SummaryStatistics_MarketTypes.tex"){
+  period_rows <- function(input){
+    product_data <- input
+    
+    market_data <- product_data %>% group_by(market_ids) %>%
+      summarize(Spirit = max(Spirit_Prescence),
+                JetBlue = max(JetBlue_Prescence),
+                MinMiles = min(MktMilesFlown), 
+                AvgMiles = sum(MktMilesFlown * Passengers.Product) / sum(Passengers.Product), 
+                Firms = mean(Num_Firms_In_Market),
+                Products = mean(Num_Products_In_Market),
+                Customers = sum(Passengers.Product),
+                HHI = mean(Market_HHI)) %>%
+      mutate(Spirit_JetBlue = Spirit * JetBlue)
+    
+    min_miles <- five_statistic_row_make(name = "Minimum Miles (1000s)", market_data$MinMiles)
+    mean_miles <- five_statistic_row_make(name = "Average Miles (1000s)", market_data$AvgMiles)
+    number_of_firms <- five_statistic_row_make(name = "Number of Firms", market_data$Firms)
+    number_of_products <- five_statistic_row_make(name = "Number of Products", market_data$Products)
+    number_of_passengers <- five_statistic_row_make(name = "Number of Customers", market_data$Customers)
+    hhi <- five_statistic_row_make(name = "HHI", market_data$HHI)
+    
+    obs_row <- c("Observations", nrow(market_data), "", "", "", "")
+
+    return(rbind(min_miles, mean_miles, number_of_firms, number_of_products, number_of_passengers, hhi, obs_row))
+  }
+  
+  title_row <- c("", "Mean", "(SD)", "Minimum", "Median", "Maximum")
+  
+  pre_pandemic <- readRDS(pre_pandemic_in)
+  pre_pandemic[, Spirit_Prescence := max(Spirit_Prescence), by = market_ids]
+  pre_pandemic[, JetBlue_Prescence := max(JetBlue_Prescence), by = market_ids]
+  pre_pandemic_both <- period_rows(pre_pandemic[Spirit_Prescence == 1 & JetBlue_Prescence == 1,])
+  pre_pandemic_spirit <- period_rows(pre_pandemic[Spirit_Prescence == 1 & JetBlue_Prescence == 0,])
+  
+  post_pandemic <- readRDS(post_pandemic_in)
+  post_pandemic[, Spirit_Prescence := max(Spirit_Prescence), by = market_ids]
+  post_pandemic[, JetBlue_Prescence := max(JetBlue_Prescence), by = market_ids]
+  post_pandemic_both <- period_rows(post_pandemic[Spirit_Prescence == 1 & JetBlue_Prescence == 1,])
+  post_pandemic_spirit <- period_rows(post_pandemic[Spirit_Prescence == 1 & JetBlue_Prescence == 0,])
+  
+
+  output_table <- rbind(pre_pandemic_spirit, pre_pandemic_both, 
+                        post_pandemic_spirit, post_pandemic_both)
+  rownames(output_table) <- NULL
+  
+  kbl(output_table,
+      format = "latex", col.names = title_row,
+      escape = TRUE, booktabs = TRUE) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 14) %>%
+    pack_rows(group_label = "Spirit Markets", 1, 7) %>%
+    pack_rows(group_label = "JetBlue & Spirit Markets", 8, 14) %>%
+    pack_rows(group_label = "Post-Pandemic", 15, 28) %>%
+    pack_rows(group_label = "Spirit Markets", 15, 21) %>%
+    pack_rows(group_label = "JetBlue & Spirit Markets", 22, 28) %>%
+    row_spec(row = 6, hline_after = TRUE) %>%
+    row_spec(row = 7, hline_after = TRUE) %>%
+    row_spec(row = 13, hline_after = TRUE) %>%
+    row_spec(row = 14, hline_after = TRUE) %>%
+    row_spec(row = 20, hline_after = TRUE) %>%
+    row_spec(row = 21, hline_after = TRUE) %>%
+    row_spec(row = 27, hline_after = TRUE) %>%
+    row_spec(row = 28, hline_after = TRUE) %>%
     save_kable(file = output)
 }
 

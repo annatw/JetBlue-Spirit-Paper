@@ -1797,3 +1797,134 @@ nea_revenue <- function(input = "02.Intermediate/NEA_Airline_Yield.Rds",
     labs(x = "Period", y = "Total AA, JB Revenue")
   ggsave(filename = output.graph, units = "in", height = 3, width = 5)
 }
+
+nea_product_details_make <- function(input = "02.Intermediate/Construct_DB1B/DB1B_Initial.Rds",
+                                     output = "02.Intermediate/NEA_Operator_Prep.rds"){
+  db1b <- as.data.table(readRDS(input))
+  
+  # In line with Shrago (2022), remove fares less than $15 to remove point redemptions
+  fares_min <- 15;
+  fares_max <- 2000
+  
+  db1b[MktFare < fares_min, MktFare := NA] 
+  db1b[MktFare > fares_max, MktFare := NA]
+  
+  # Remove All Tickets in Top/Bottom 1 Percent of Fare, Yield For a Quarter
+  db1b[, Yield := MktFare / MktMilesFlown]
+  db1b[, Bottom.Fare.Cutoff := unname(quantile(x = MktFare, probs = 0.01, na.rm = TRUE)), by = c("Year", "Quarter")]
+  db1b[, Top.Fare.Cutoff := unname(quantile(x = MktFare, probs = 0.99, na.rm = TRUE)), by = c("Year", "Quarter")]
+  db1b[, Bottom.Yield.Cutoff := unname(quantile(x = Yield, probs = 0.01, na.rm = TRUE)), by = c("Year", "Quarter")]
+  db1b[, Top.Yield.Cutoff := unname(quantile(x = Yield, probs = 0.99, na.rm = TRUE)), by = c("Year", "Quarter")]
+  
+  db1b[MktFare < Bottom.Fare.Cutoff, MktFare := NA]
+  db1b[Yield < Bottom.Yield.Cutoff, MktFare := NA]
+  db1b[MktFare > Top.Fare.Cutoff, MktFare := NA]
+  db1b[Yield > Top.Yield.Cutoff, MktFare := NA]
+  
+  # Restrict to three layovers or fewer
+  db1b[MktCoupons >= 4, MktFare := NA]
+  
+  
+  db1b.s <- db1b %>% 
+    group_by(Year, Quarter, Origin, Dest, TkCarrier,
+             OpCarrier, OpCarrierGroup, MktCoupons) %>%
+    summarize(MktMilesFlown = mean(MktMilesFlown, na.rm = TRUE),
+              Passengers = sum(Passengers,  na.rm = TRUE),
+              AvgFare = sum(Passengers * MktFare,  na.rm = TRUE) / sum(Passengers,  na.rm = TRUE)) %>% 
+    mutate(MarketID = paste(Year, Quarter, Origin, Dest)) %>%
+    as.data.table(); remove(db1b); gc();
+  
+  db1b.s <- db1b.s[!is.na(Passengers)]
+  db1b.s <- db1b.s[!is.na(MktMilesFlown)]
+  
+  # Identify Relevant Markets
+  db1b.sample <- readRDS("02.Intermediate/DB1B_With_Controls.Rds") %>%
+    mutate(MarketID = paste(Year, Quarter, Origin, Dest))
+
+  db1b.s <- db1b.s[MarketID %in% db1b.sample$MarketID,]
+  
+  # Restrict to Only After 2021, Quarter 1
+  db1b.s[, Keep := FALSE]
+  db1b.s[Year >= 2022, Keep := TRUE]
+  db1b.s[Year == 2021 & Quarter >= 1, Keep := TRUE]
+  
+  db1b.s <- db1b.s[Keep == TRUE,]
+  
+  # Now, determine which potential products were operated by JetBlue, AA
+  db1b.s[, American_Operated := grepl(pattern = "AA", x = db1b.s$OpCarrierGroup)]
+  db1b.s[, JetBlue_Operated := grepl(pattern = "B6", x = db1b.s$OpCarrierGroup)]
+  
+  # Condense Data Again, Removing OPGroup Data
+  db1b.s <- db1b.s %>%
+    group_by(Year, Quarter, Origin, Dest, TkCarrier, MktCoupons) %>%
+    summarize(MktMilesFlown = mean(MktMilesFlown, na.rm = TRUE),
+              Passengers = sum(Passengers,  na.rm = TRUE),
+              AvgFare = sum(Passengers * AvgFare,  na.rm = TRUE) / sum(Passengers,  na.rm = TRUE),
+              Both_Operate = min(American_Operated, JetBlue_Operated),
+              JetBlue_Only_Operate = min(JetBlue_Operated, 1 - American_Operated),
+              American_Only_Operate = min(1 - JetBlue_Operated,  American_Operated),
+              JetBlue_Operate = max(JetBlue_Operated),
+              American_Operate = max(American_Operated)) %>% 
+    as.data.table()
+    
+    saveRDS(db1b.s, output)
+}
+
+# For each period, calculate the number of:
+# 1. JB Products
+# 2. JB AA Require Products
+# 3. JB AA Joint Products
+# 4. Above for AA (JB)
+# 5. Above for Markets with Spirit in them
+nea_product_requirements_table <- function(input =  "02.Intermediate/NEA_Operator_Prep.rds",
+                                           output = "06.Tables/NEA_Product_Requirements.tex"){
+  db1b <- as.data.table(readRDS(input))
+
+  # Load in Product Data to Identify which Markets (Origin-Destination Pairs) to exclude
+  product_data <- readRDS("02.Intermediate/Product_Data.rds")
+  product_data[, MatchID := paste(Origin, Dest)]
+  
+  db1b <- db1b[paste(Origin, Dest) %in% product_data$MatchID,]
+  db1b[, Time := paste(Year, "Q", Quarter, sep = "")]
+  db1b[, Spirit_Prescence := max(TkCarrier == "NK"), 
+       by = c("Origin", "Dest", "Quarter", "Year")]
+  
+  route_op_row_make <- function(data){
+    data <- data %>% filter(TkCarrier %in% c("AA", "B6")) %>%
+      mutate(Val1 = (TkCarrier == "B6") & (JetBlue_Only_Operate == 1),
+             Val2 = (TkCarrier == "B6") & (American_Only_Operate == 1),
+             Val3 = (TkCarrier == "B6") & (Both_Operate == 1),
+             Val4 = (TkCarrier == "AA") & (American_Only_Operate == 1),
+             Val5 = (TkCarrier == "AA") & (JetBlue_Only_Operate == 1),
+             Val6 = (TkCarrier == "AA") & (Both_Operate == 1)) %>%
+      group_by(Time) %>%
+      summarize(JBProducts = sum(Val1),
+                JB_AAReq = sum(Val2),
+                JB_AAJoint = sum(Val3),
+                AA_Only = sum(Val4),
+                AA_JBReq = sum(Val5),
+                AA_JBJoint = sum(Val6)) %>%
+      transpose(keep.names = "Row_Names",
+                make.names = "Time")
+    
+    data$Row_Names <- c("JetBlue Only", "JetBlue American Required",
+                        "JetBlue-American Joint", "American Only",
+                        "American JetBlue Required",
+                        "American-JetBlue Joint")
+    
+    return(data)
+  }
+  
+  all_markets <- route_op_row_make(data = db1b)
+  spirit_markets <- route_op_row_make(data = db1b[Spirit_Prescence == 1,])
+ 
+  output.table <- rbind(all_markets, spirit_markets)
+  colnames(output.table) = c("", colnames(output.table)[2:12])
+  kbl(output.table,
+      format = "latex", ,
+      escape = FALSE, booktabs = TRUE) %>%
+    pack_rows(group_label = "All Markets", 1, 6) %>%
+    pack_rows(group_label = "Spirit Markets", 7, 12) %>%
+    save_kable(output)
+  
+}

@@ -403,7 +403,7 @@ nea_op_carrier_graph <- function(input = "02.Intermediate/NEA_OPCarrier_Switch.R
     theme(panel.background = element_blank(), 
           axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-          legend.position = "bottom") +
+          legend.position = "bottom", legend.title = element_blank()) +
     labs(x = "Date", y = "Passengers")
 
   ggsave(filename = graph, units = "in", 

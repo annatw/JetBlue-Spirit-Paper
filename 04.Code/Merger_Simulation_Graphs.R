@@ -213,6 +213,8 @@ change_minimum_fare_dist <- function(merger_data = "03.Output/Adv_Merger_Sim_Dat
     
 }
 
+
+
 # Change in Passengers
 merger_change_pass_graph <- function(merger_data = "03.Output/Adv_Merger_Sim_Data.rds",
          observed_data = "02.Intermediate/Product_Data.rds",
@@ -474,7 +476,7 @@ change_average_fare_dist <- function(merger_data.adv = "03.Output/Adv_Merger_Sim
                       labels = comma) + facet_wrap(~Simulation, nrow = 2) +
    scale_x_continuous(limits = c(-25, 45))
   
-    ggsave(filename = graph_out.raw, width = 7, height = 5, units = "in")
+    ggsave(filename = graph_out.raw, width = 7, height = 4, units = "in")
  
     # Percent Change
     result.per <- result[, .(market_ids, `Low Cost %`, `Mean Cost %` , `High Cost %`)] %>% unique()
@@ -499,5 +501,5 @@ change_average_fare_dist <- function(merger_data.adv = "03.Output/Adv_Merger_Sim
                          labels = comma) + facet_wrap(~Simulation, nrow = 2) +
       scale_x_continuous(limits = c(-25, 45))
     
-    ggsave(graph_out.percent, units = "in", width = 7, height = 5)
+    ggsave(graph_out.percent, units = "in", width = 7, height = 4)
 }
