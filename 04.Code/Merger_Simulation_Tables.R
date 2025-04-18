@@ -515,6 +515,162 @@ route_consistency_table <- function(merger_post = "03.Output/Adv_Merger_Sim_Data
     save_kable(file = table_out)
 }
 
+merger_results_table_5_efficiency <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rds",
+                                 observed_post = "02.Intermediate/Product_Data.rds",
+                                 merger_pre = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
+                                 observed_pre = "02.Intermediate/prepandemic.rds",
+                                 table_out = "06.Tables/Merger_Results_5Percent_Efficient.tex"){
+  output_rows <- function(merger_in, observed_in){
+    merger <- readRDS(merger_in)
+    observed <- readRDS(observed_in)
+    
+    # Identify markets which merger impacted
+    impactedMarkets <- observed %>% group_by(market_ids) %>%
+      summarize(Spirit = max(Spirit),
+                JetBlue = max(JetBlue)) %>% 
+      filter(Spirit == 1, JetBlue == 1); impactedMarkets <- impactedMarkets$market_ids
+    
+    # Restrict
+    merger <- merger[market_ids %in% impactedMarkets,]
+    observed <- observed[market_ids %in% impactedMarkets]
+    
+    # Cluster 1: Prices
+    price.obs <- six_statistic_row_make("Observed", observed$prices)
+    price.best <- six_statistic_row_make("Best Case", merger$Prices.MinCost.Sim.95)
+    price.avg <- six_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim.95)
+    price.worst <- six_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim.95)
+    
+    # Summarize Mean Price Change in Each Market
+    merger <- merger %>% group_by(market_ids) %>%
+      summarize(MeanPrice.MaxCost = sum(Shares.WithinMarket.MaxCost.95 * Prices.MaxCost.Sim.95)/sum(Shares.WithinMarket.MaxCost.95),
+                MeanPrice.MinCost = sum(Shares.WithinMarket.MinCost.95 * Prices.MinCost.Sim.95)/sum(Shares.WithinMarket.MinCost.95),
+                MeanPrice.MeanCost = sum(Shares.WithinMarket.MeanCost.95 * Prices.MaxCost.Sim.95)/sum(Shares.WithinMarket.MeanCost.95))
+    
+    observed[, withinMarketShares := sum(shares), by = market_ids]
+    observed <- observed %>% group_by(market_ids) %>%
+      summarize(MeanPrice.Real = sum(withinMarketShares * prices) / sum(withinMarketShares))
+    
+    merger <- merge(merger, observed, by = "market_ids", all.x = TRUE)
+    
+    # Cluster 2: Market Mean Price
+    meanPrice.obs <- six_statistic_row_make("Observed", merger$MeanPrice.Real)
+    meanPrice.best <- six_statistic_row_make("Best Case", merger$MeanPrice.MinCost)
+    meanPrice.avg <- six_statistic_row_make("Average Case", merger$MeanPrice.MeanCost)
+    meanPrice.worst <- six_statistic_row_make("Worst Case", merger$MeanPrice.MaxCost)
+    
+    # Cluster 3: % Change in Market Mean Price
+    change.best <- six_statistic_row_make("Best Case", (merger$MeanPrice.MinCost - merger$MeanPrice.Real)/merger$MeanPrice.Real * 100)
+    change.avg <- six_statistic_row_make("Average Case", (merger$MeanPrice.MeanCost - merger$MeanPrice.Real)/merger$MeanPrice.Real * 100)
+    change.worst <- six_statistic_row_make("Worst Case", (merger$MeanPrice.MaxCost - merger$MeanPrice.Real)/merger$MeanPrice.Real * 100)
+    
+    table <- rbind(price.obs, price.best, price.avg, price.worst,
+                   meanPrice.obs, meanPrice.best, meanPrice.avg, meanPrice.worst,
+                   change.best, change.avg, change.worst)
+    rownames(table) <- NULL
+    return(table)
+  }
+  
+  post_pandemic <- output_rows(merger_in = merger_post,
+                               observed_in = observed_post)
+  pre_pandemic <- output_rows(merger_in = merger_pre,
+                              observed_in = observed_pre)
+  
+  title_row <- c("", "N", "Mean", "(SD)", "Minimum", "Median", "Maximum")
+  table <- rbind(pre_pandemic, post_pandemic)
+  
+  kbl(table,
+      format = "latex", col.names = title_row,
+      escape = TRUE, booktabs = TRUE) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 11) %>%
+    pack_rows(group_label = "Product Prices (100s, 2017 USD)", 1, 4) %>%
+    pack_rows(group_label = "Market Average Price", 5, 8) %>%
+    pack_rows(group_label = "% Change Average Price", 9, 11) %>%
+    pack_rows(group_label = "Post-Pandemic", 12, 22) %>%
+    pack_rows(group_label = "Product Prices  (100s, 2017 USD)", 12, 15) %>%
+    pack_rows(group_label = "Market Average Price", 16, 19) %>%
+    pack_rows(group_label = "% Change Average Price", 20, 22) %>%
+    row_spec(row = 11, hline_after = TRUE) %>%
+    save_kable(file = table_out)
+}
+
+merger_results_table_10_efficiency <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rds",
+                                              observed_post = "02.Intermediate/Product_Data.rds",
+                                              merger_pre = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
+                                              observed_pre = "02.Intermediate/prepandemic.rds",
+                                              table_out = "06.Tables/Merger_Results_10Percent_Efficient.tex"){
+  output_rows <- function(merger_in, observed_in){
+    merger <- readRDS(merger_in)
+    observed <- readRDS(observed_in)
+    
+    # Identify markets which merger impacted
+    impactedMarkets <- observed %>% group_by(market_ids) %>%
+      summarize(Spirit = max(Spirit),
+                JetBlue = max(JetBlue)) %>% 
+      filter(Spirit == 1, JetBlue == 1); impactedMarkets <- impactedMarkets$market_ids
+    
+    # Restrict
+    merger <- merger[market_ids %in% impactedMarkets,]
+    observed <- observed[market_ids %in% impactedMarkets]
+    
+    # Cluster 1: Prices
+    price.obs <- six_statistic_row_make("Observed", observed$prices)
+    price.best <- six_statistic_row_make("Best Case", merger$Prices.MinCost.Sim.90)
+    price.avg <- six_statistic_row_make("Average Case", merger$Prices.MeanCost.Sim.90)
+    price.worst <- six_statistic_row_make("Worst Case", merger$Prices.MaxCost.Sim.90)
+    
+    # Summarize Mean Price Change in Each Market
+    merger <- merger %>% group_by(market_ids) %>%
+      summarize(MeanPrice.MaxCost = sum(Shares.WithinMarket.MaxCost.90 * Prices.MaxCost.Sim.90)/sum(Shares.WithinMarket.MaxCost.90),
+                MeanPrice.MinCost = sum(Shares.WithinMarket.MinCost.90 * Prices.MinCost.Sim.90)/sum(Shares.WithinMarket.MinCost.90),
+                MeanPrice.MeanCost = sum(Shares.WithinMarket.MeanCost.90 * Prices.MaxCost.Sim.90)/sum(Shares.WithinMarket.MeanCost.90))
+    
+    observed[, withinMarketShares := sum(shares), by = market_ids]
+    observed <- observed %>% group_by(market_ids) %>%
+      summarize(MeanPrice.Real = sum(withinMarketShares * prices) / sum(withinMarketShares))
+    
+    merger <- merge(merger, observed, by = "market_ids", all.x = TRUE)
+    
+    # Cluster 2: Market Mean Price
+    meanPrice.obs <- six_statistic_row_make("Observed", merger$MeanPrice.Real)
+    meanPrice.best <- six_statistic_row_make("Best Case", merger$MeanPrice.MinCost)
+    meanPrice.avg <- six_statistic_row_make("Average Case", merger$MeanPrice.MeanCost)
+    meanPrice.worst <- six_statistic_row_make("Worst Case", merger$MeanPrice.MaxCost)
+    
+    # Cluster 3: % Change in Market Mean Price
+    change.best <- six_statistic_row_make("Best Case", (merger$MeanPrice.MinCost - merger$MeanPrice.Real)/merger$MeanPrice.Real * 100)
+    change.avg <- six_statistic_row_make("Average Case", (merger$MeanPrice.MeanCost - merger$MeanPrice.Real)/merger$MeanPrice.Real * 100)
+    change.worst <- six_statistic_row_make("Worst Case", (merger$MeanPrice.MaxCost - merger$MeanPrice.Real)/merger$MeanPrice.Real * 100)
+    
+    table <- rbind(price.obs, price.best, price.avg, price.worst,
+                   meanPrice.obs, meanPrice.best, meanPrice.avg, meanPrice.worst,
+                   change.best, change.avg, change.worst)
+    rownames(table) <- NULL
+    return(table)
+  }
+  
+  post_pandemic <- output_rows(merger_in = merger_post,
+                               observed_in = observed_post)
+  pre_pandemic <- output_rows(merger_in = merger_pre,
+                              observed_in = observed_pre)
+  
+  title_row <- c("", "N", "Mean", "(SD)", "Minimum", "Median", "Maximum")
+  table <- rbind(pre_pandemic, post_pandemic)
+  
+  kbl(table,
+      format = "latex", col.names = title_row,
+      escape = TRUE, booktabs = TRUE) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 11) %>%
+    pack_rows(group_label = "Product Prices (100s, 2017 USD)", 1, 4) %>%
+    pack_rows(group_label = "Market Average Price", 5, 8) %>%
+    pack_rows(group_label = "% Change Average Price", 9, 11) %>%
+    pack_rows(group_label = "Post-Pandemic", 12, 22) %>%
+    pack_rows(group_label = "Product Prices  (100s, 2017 USD)", 12, 15) %>%
+    pack_rows(group_label = "Market Average Price", 16, 19) %>%
+    pack_rows(group_label = "% Change Average Price", 20, 22) %>%
+    row_spec(row = 11, hline_after = TRUE) %>%
+    save_kable(file = table_out)
+}
+
 bankruptcy_simulation_tables <- function(merger_in = "03.Output/Bankruptcy_Sim_Data.rds",
                                         observed_in = "02.Intermediate/Product_Data.rds",
                                         table_out = "06.Tables/Bankruptcy_Simulation.tex"){

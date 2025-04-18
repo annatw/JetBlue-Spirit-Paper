@@ -380,6 +380,12 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
               costs.min = min(cost),
               costs.mean = mean(cost),
               costs.max = max(cost),
+              costs.min.95 = min(cost) * 0.95,
+              costs.min.90 = min(cost) * 0.90,
+              costs.mean.95 = mean(cost) * 0.95,
+              costs.mean.90 = mean(cost) * 0.90,
+              costs.max.95 = max(cost) * 0.95,
+              costs.max.90 = max(cost) * 0.90,
               Potential_Passengers = mean(Potential_Passengers)) %>%
     mutate(Extra_Miles = MktMilesFlown - market_min_miles,
            MktMilesFlown_Sq = MktMilesFlown * MktMilesFlown,
@@ -458,22 +464,58 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
 
 
   simulation.min <- simulation.best$replace_endogenous(costs = data.new$costs.min); gc();
+  simulation.min.95 <- simulation.best$replace_endogenous(costs = data.new$costs.min.95); gc();
+  simulation.min.90 <- simulation.best$replace_endogenous(costs = data.new$costs.min.90); gc();
   simulation.mean <- simulation.avg$replace_endogenous(costs = data.new$costs.mean); gc();
+  simulation.mean.95 <- simulation.avg$replace_endogenous(costs = data.new$costs.mean.95); gc();
+  simulation.mean.90 <- simulation.avg$replace_endogenous(costs = data.new$costs.mean.90); gc();
   simulation.max <- simulation.worst$replace_endogenous(costs = data.new$costs.max); gc()
+  simulation.max.95 <- simulation.worst$replace_endogenous(costs = data.new$costs.max.95); gc()
+  simulation.max.90 <- simulation.worst$replace_endogenous(costs = data.new$costs.max.90); gc()
+  
 
   data.new[, Shares.MinCost.Sim := py_to_r(simulation.min$product_data$shares)]
+  data.new[, Shares.MinCost.Sim.95 := py_to_r(simulation.min.95$product_data$shares)]
+  data.new[, Shares.MinCost.Sim.90 := py_to_r(simulation.min.90$product_data$shares)]
   data.new[, Shares.MeanCost.Sim := py_to_r(simulation.mean$product_data$shares)]
+  data.new[, Shares.MeanCost.Sim.95 := py_to_r(simulation.mean.95$product_data$shares)]
+  data.new[, Shares.MeanCost.Sim.90 := py_to_r(simulation.mean.90$product_data$shares)]
   data.new[, Shares.MaxCost.Sim := py_to_r(simulation.max$product_data$shares)]
+  data.new[, Shares.MaxCost.Sim.95 := py_to_r(simulation.max.95$product_data$shares)]
+  data.new[, Shares.MaxCost.Sim.90 := py_to_r(simulation.max.90$product_data$shares)]
+  
   data.new[, Prices.MinCost.Sim := py_to_r(simulation.min$product_data$prices)]
+  data.new[, Prices.MinCost.Sim.95 := py_to_r(simulation.min.95$product_data$prices)]
+  data.new[, Prices.MinCost.Sim.90 := py_to_r(simulation.min.90$product_data$prices)]
   data.new[, Prices.MeanCost.Sim := py_to_r(simulation.mean$product_data$prices)]
+  data.new[, Prices.MeanCost.Sim.95 := py_to_r(simulation.mean.95$product_data$prices)]
+  data.new[, Prices.MeanCost.Sim.90 := py_to_r(simulation.mean.90$product_data$prices)]
   data.new[, Prices.MaxCost.Sim := py_to_r(simulation.max$product_data$prices)]
+  data.new[, Prices.MaxCost.Sim.95 := py_to_r(simulation.max.95$product_data$prices)]
+  data.new[, Prices.MaxCost.Sim.90 := py_to_r(simulation.max.90$product_data$prices)]
+  
 
   data.new[, Shares.WithinMarket.MinCost := Shares.MinCost.Sim / sum(Shares.MinCost.Sim),
            by = c("market_ids")]
+  data.new[, Shares.WithinMarket.MinCost.95 := Shares.MinCost.Sim.95 / sum(Shares.MinCost.Sim.95),
+           by = c("market_ids")]
+  data.new[, Shares.WithinMarket.MinCost.90 := Shares.MinCost.Sim.90 / sum(Shares.MinCost.Sim.90),
+           by = c("market_ids")]
+  
   data.new[, Shares.WithinMarket.MeanCost := Shares.MeanCost.Sim / sum(Shares.MinCost.Sim),
            by = c("market_ids")]
+  data.new[, Shares.WithinMarket.MeanCost.95 := Shares.MeanCost.Sim.95 / sum(Shares.MinCost.Sim.95),
+           by = c("market_ids")]
+  data.new[, Shares.WithinMarket.MeanCost.90 := Shares.MeanCost.Sim.90 / sum(Shares.MinCost.Sim.90),
+           by = c("market_ids")]
+  
   data.new[, Shares.WithinMarket.MaxCost := Shares.MaxCost.Sim / sum(Shares.MinCost.Sim),
            by = c("market_ids")]
+  data.new[, Shares.WithinMarket.MaxCost.95 := Shares.MaxCost.Sim.95 / sum(Shares.MinCost.Sim.95),
+           by = c("market_ids")]
+  data.new[, Shares.WithinMarket.MaxCost.90 := Shares.MaxCost.Sim.90 / sum(Shares.MinCost.Sim.90),
+           by = c("market_ids")]
+  
 
   # Add each markets Consumer Surplus
   markets <- as.numeric(simulation.best$unique_market_ids)
