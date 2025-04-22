@@ -196,7 +196,10 @@ clarify_DB1B <- function(input = "02.Intermediate/Construct_DB1B/DB1B_Initial.Rd
   saveRDS(DB1B, file = output)
 }
 
-condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000){
+condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000,
+                          market_group = c("Year", "Quarter", "Origin", "Dest"),
+                          product_group = c("Year", "Quarter", "Origin", "Dest",
+                                            "Carrier", "NonStop")){
   DB1B <- read_rds(input)
   
   # In line with Shrago (2022), remove fares less than $15 to remove point redemptions
@@ -227,9 +230,6 @@ condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000){
   
   
   DB1B$NonStop <- DB1B$MktCoupons == 1
-  
-  market_group <- c("Year", "Quarter", "Origin", "Dest")
-  product_group <- c(market_group, "Carrier", "NonStop")
   
   DB1B[, MktMilesFlown := mean(MktMilesFlown), by = product_group]
   DB1B[, Passengers.Product := sum(Passengers, na.rm = TRUE) * 10, by = product_group]

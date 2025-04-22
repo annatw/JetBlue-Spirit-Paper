@@ -1,12 +1,10 @@
 merger_sim_data_generate <- function(input_file = "02.Intermediate/DB1B_With_Controls.Rds",
                                      output_file = "02.Intermediate/Product_Data.rds",
                                      years_allowed = 2021:2023,
-                                     fast = FALSE){
-  # Variables used for grouping rows into market categories
-  market_group <- c("Year", "Quarter", "Origin", "Origin_MSA", "Dest", "Destination_MSA")
-  
-  product_group <- c(market_group, "Carrier", "NonStop")
-  
+                                     fast = FALSE,
+                                     market_group=c("Year", "Quarter", "Origin", "Origin_MSA", "Dest", "Destination_MSA"),
+                                     product_group = c("Year", "Quarter", "Origin", "Origin_MSA", 
+                                                        "Dest", "Destination_MSA", "Carrier", "NonStop")){
   # First, Generate Product Data
   product_data <- as.data.table(readRDS(input_file))
   
@@ -21,7 +19,13 @@ merger_sim_data_generate <- function(input_file = "02.Intermediate/DB1B_With_Con
   }
   
   # Add Numeric ID for market to help PyBLP
-  product_data[, Market := paste(Year, Quarter, Origin, Dest)]
+  if(identical(market_group,c("Year", "Quarter", "Origin", "Origin_MSA", "Dest", "Destination_MSA"))){
+    product_data[, Market := paste(Year, Quarter, Origin, Dest)]
+  } else if (identical(market_group, c("Year", "Quarter", "Origin.City", "Destination.City"))){
+    product_data[, Market := paste(Year, Quarter, Origin.City, Destination.City)]
+  } else{
+    return(-1)
+  }
   product_data[, Market := factor(Market)]
   product_data[, Market_ID := as.numeric(Market)]
   
@@ -380,12 +384,12 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
               costs.min = min(cost),
               costs.mean = mean(cost),
               costs.max = max(cost),
-              costs.min.95 = min(cost) * 0.95,
-              costs.min.90 = min(cost) * 0.90,
-              costs.mean.95 = mean(cost) * 0.95,
-              costs.mean.90 = mean(cost) * 0.90,
-              costs.max.95 = max(cost) * 0.95,
-              costs.max.90 = max(cost) * 0.90,
+              costs.min.95 = min(cost* 0.95^(merger_carrier == "JetBlue Airways")) ,
+              costs.min.90 = min(cost* 0.90^(merger_carrier == "JetBlue Airways")) ,
+              costs.mean.95 = mean(cost* 0.95^(merger_carrier == "JetBlue Airways")) ,
+              costs.mean.90 = mean(cost* 0.90^(merger_carrier == "JetBlue Airways")) ,
+              costs.max.95 = max(cost* 0.95^(merger_carrier == "JetBlue Airways")) ,
+              costs.max.90 = max(cost * 0.90^(merger_carrier == "JetBlue Airways")) ,
               Potential_Passengers = mean(Potential_Passengers)) %>%
     mutate(Extra_Miles = MktMilesFlown - market_min_miles,
            MktMilesFlown_Sq = MktMilesFlown * MktMilesFlown,

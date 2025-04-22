@@ -56,8 +56,7 @@ merger_anticipatory_analysis <- function(input = "02.Intermediate/Merger_Panel_D
   
   # Use lm_robust to absorb large number of route fixed effects
   regression1 <- lm_robust(formula = 
-                             Avg.Fare.Log ~ Period : SP_JB_Market : Spirit +
-                               Period : SP_JB_Market : JetBlue +
+                             Avg.Fare.Log ~ 
                              Period:SP_JB_Market,
                            fixed_effects = ~ Route:Carrier + Period,
                     data = panel_data,
