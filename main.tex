@@ -697,11 +697,31 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
         \vspace{-5mm}
         \footnotesize{For each route with an estimated increase in minimum fare greater than \$40 estimated in at least one quarter, the number of quarters is reported for which that route is estimated to have an increase in minimum fare greater than \$40. Table \ref{tab:MinimumPrice} details distribution of minimum price changes in terms of markets.}
     \end{table}
-\FloatBarrier
-    \section{Robustness Checks}
+    \pagebreak 
 
-    \subsection{Alternative Market Definition}
+    \FloatBarrier
+    \section{Robustness Checks}
+    \setcounter{table}{0}
+    \setcounter{figure}{0}
+    \subsection{Assumed Merger Efficiencies}
+
+    In this section, I consider an alternative simulation method where for each case identified in the main text (Section \ref{sec:Analysis_Merger}), I additionally assume that the merged firm realizes efficiencies of either 5\% or 10\%. The results of this simulation for the 5\% case are reported in Table \ref{tab:Simulation_Price_5Gain} and the results for the 10\% case 
+
+        \begin{table}
+        \caption{Simulated Price Effects of Merger with 5\% Efficiency Gain - Joint Markets}
+        \label{tab:Simulation_Price_5Gain}
+                \vspace{-15mm}
+        \begin{center}
+         \include{06.Tables/Merger_Results_}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. Results correspond to the simulations detailed in Section \ref{sec:Analysis_Merger}, but with an assumption that the merged firm's marginal cost additionally decreases by 5\%.}
+
+     \end{table}
+
     
+  %  \subsection{Alternative Market Definition}
+  %  In this section, I consider an alternative market definition where markets are defined by origin and destination metropolitan statistical areas rather than airports. Individual products within markets are defined by carrier, nonstop status, and airports traveled between. 
     
 \end{appendices}
 	
