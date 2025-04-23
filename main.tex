@@ -295,7 +295,7 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 	
 	\subsection{Merger Simulation}
 	\label{sec:Analysis_Merger}
-	With the demand and supply models used within this paper described, I can now turn my attention to the simulation of the JetBlue-Spirit merger. For each of the pre-pandemic and post-pandemic periods, I estimate three counterfactual situations. These are respectively, a best case merger (where the merged product takes the lowest marginal cost and best unobservables of the two products), an average case merger (where the merged product takes the average of the two firms marginal costs and the average of the estimated unobservables), and a worst case scenario (where the merged product takes the greater of the marginal costs of the two firms and the lowest estimated unobservable characteristics). In each of these scenarios, I assume that the combined firm's connecting products take on the minimum of the miles flown, implicitly assuming that in all of these simulations that the combined firm will take advantage of better routing.\footnote{Furthermore, all products of the combined firm are coded as being operated by JetBlue for the purposes of carrier fixed effects.}  %Finally, I estimate a non-merger counterfactual where Spirit exits every market. This final counterfactual is intended to represent the case in which Spirit goes bankrupt and is completely liquidated.  
+	With the demand and supply models used within this paper described, I can now turn my attention to the simulation of the JetBlue-Spirit merger. For each of the pre-pandemic and post-pandemic periods, I estimate three counterfactual situations. These are respectively, a best case merger (where the merged product takes the lowest marginal cost and best unobservables of the two products), an average case merger (where the merged product takes the average of the two firms marginal costs and the average of the estimated unobservables), and a worst case scenario (where the merged product takes the greater of the marginal costs of the two firms and the lowest estimated unobservable characteristics). In each of these scenarios, I assume that the combined firm's connecting products take on the minimum of the miles flown, implicitly assuming that in all of these simulations that the combined firm will take advantage of better routing.\footnote{Furthermore, all products of the combined firm are coded as being operated by JetBlue for the purposes of carrier fixed effects.} Two alternative specifications for these simulations, where the merged firm's marginal costs decrease by either 5\% or 10\% are reported in Appendix \ref{App:Efficiencies}. The results for these alternative specifications are broadly consistent with the results discussed within this section.
 
     % Detail how this works mathematically
      
@@ -704,36 +704,55 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
     \setcounter{table}{0}
     \setcounter{figure}{0}
     \subsection{Assumed Merger Efficiencies}
-
-    In this section, I consider an alternative simulation method where for each case identified in the main text (Section \ref{sec:Analysis_Merger}), I additionally assume that the merged firm realizes efficiencies of either 5\% or 10\%. The results of this simulation for the 5\% case are reported in Table \ref{tab:Simulation_Price_5Gain} and the results for the 10\% case 
+    \label{App:Efficiencies}
+    In this section, I consider an alternative simulation method where for each case identified in the main text (Section \ref{sec:Analysis_Merger}), I additionally assume that the merged firm realizes efficiencies of either 5\% or 10\%. The results of this simulation for the 5\% case are reported in Table \ref{tab:Simulation_Price_5} and the results for the 10\% case in Table \ref{tab:Simulation_Price_10}. Minimum fare in market changes are reported in Tables \ref{tab:MinimumPrice_5} and \ref{tab:MinimumPrice_10}. 
 
         \begin{table}
         \caption{Simulated Price Effects of Merger with 5\% Efficiency Gain - Joint Markets}
-        \label{tab:Simulation_Price_5Gain}
+        \label{tab:Simulation_Price_5}
                 \vspace{-15mm}
         \begin{center}
          \include{06.Tables/Merger_Results_95}
         \end{center}
         \vspace{-5mm}
-        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. Results correspond to the simulations detailed in Section \ref{sec:Analysis_Merger}, but with an assumption that the merged firm's marginal cost additionally decreases by 5\%.}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Each simulation additionally assumes that the merged firm's marginal cost additionally decreases by 10\%. Prices are in 2017 dollars.}
 
      \end{table}
 
      
         \begin{table}
-        \caption{Simulated Price Effects of Merger with 5\% Efficiency Gain - Joint Markets}
-        \label{tab:Simulation_Price_5Gain}
+        \caption{Simulated Price Effects of Merger with 10\% Efficiency Gain - Joint Markets}
+        \label{tab:Simulation_Price_10}
                 \vspace{-15mm}
         \begin{center}
          \include{06.Tables/Merger_Results_90}
         \end{center}
         \vspace{-5mm}
-        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. Results correspond to the simulations detailed in Section \ref{sec:Analysis_Merger}, but with an assumption that the merged firm's marginal cost additionally decreases by 10\%.}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Each simulation additionally assumes that the merged firm's marginal cost additionally decreases by 10\%. Prices are in 2017 dollars.}
 
      \end{table}
 
+    \begin{table}
+        \caption{5\% Efficiency Case: Change in Minimum Fare Available in Market}
+        \label{tab:MinimumPrice_5}
+                \vspace{-15mm}
+        \begin{center}
+            \include{06.Tables/MinimumFareChange_95}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Each simulation additionally assumes that the merged firm's marginal cost additionally decreases by 5\%. Prices are in 2017 dollars.}
+    \end{table}   
 
-
+   \begin{table}
+        \caption{10\% Efficiency Case: Change in Minimum Fare Available in Market}
+        \label{tab:MinimumPrice_10}
+                \vspace{-15mm}
+        \begin{center}
+            \include{06.Tables/MinimumFareChange_90}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Each simulation additionally assumes that the merged firm's marginal cost additionally decreases by 10\%. Prices are in 2017 dollars.}
+    \end{table}  
     
   %  \subsection{Alternative Market Definition}
   %  In this section, I consider an alternative market definition where markets are defined by origin and destination metropolitan statistical areas rather than airports. Individual products within markets are defined by carrier, nonstop status, and airports traveled between. 
