@@ -353,6 +353,20 @@ nea_product_requirements_table()
 # share_wcia_table()
 ```
 
+# Robustness Check: 5%, 10% Effiencies
+```{r}
+merger_results_table(mode = 5,
+                     table_out = "06.Tables/Merger_Results_95.tex")
+merger_results_table(mode = 10,
+                     table_out = "06.Tables/Merger_Results_90.tex")
+minimum_fare_increase_table(mode = 5,
+                            table_out = "06.Tables/MinimumFareChange_95.tex")
+minimum_fare_increase_table(mode = 10,
+                            table_out = "06.Tables/MinimumFareChange_90.tex")
+
+```
+
+
 # Robustness Check: City-Pair Markets
 ```{r}
 condense_db1b(input = "02.Intermediate/Construct_DB1B/DB1B_Clarified.Rds",
@@ -372,6 +386,13 @@ merger_sim_data_generate(years_allowed = 2017:2019,
                          market_group = c("Year", "Quarter", "Origin.City", "Destination.City"),
               product_group = c("Year", "Quarter", "Origin.City", "Destination.City",
                                 "Carrier", "NonStop"))
+# View Instrument Fit
+instrument_comparison_table(input_file = "02.Intermediate/City_Market_Definition/Post_Pandemic_Product_Data.rds",
+                            output_file = "06.Tables/CityDefinition_postpandemic_InstrumentTable.tex")
+instrument_comparison_table(input_file = "02.Intermediate/City_Market_Definition/Pre_Pandemic_Product_Data.rds",
+                            output_file = "06.Tables/CityDefinition_prepandemic_InstrumentTable.tex")
+
+
 
 # Demand Estimation
 blp_rcl(additional_instruments = c(hub_interactions, exog_interactions,
