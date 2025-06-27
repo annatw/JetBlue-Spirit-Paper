@@ -366,12 +366,13 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
                                    integration = pyblp$Integration('halton', size = 250L,
                                                  specification_options = dict("seed" = 97L)))
  original_markets <- as.numeric(original_problem$unique_market_ids)
+ 
   cs_observed <- model$compute_consumer_surpluses()
-  original_cs <- data.table(market_ids = original_markets, ConsumerSurplus_Observed = cs_observed)
+  original_cs <- data.table(market_ids = original_markets, ConsumerSurplus_Observed_Normalized = as.numeric(cs_observed))
 
   data.new <- data %>% group_by(merger_carrier, Origin, Dest, Year,
                                 Quarter, Year_Quarter_Effect, NonStop, 
-                                market_ids, nesting_ids) %>%
+                                market_ids, Potential_Passengers, nesting_ids) %>%
     summarize(NonStopMiles = min(NonStopMiles),
               MktMilesFlown = min(MktMilesFlown),
               shares = sum(shares),
@@ -528,12 +529,19 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
   cs.worst <- as.numeric(simulation.max$compute_consumer_surpluses())
 
   cs_table <- data.table(market_ids = markets,
-                         CS_Best = cs.best,
-                         CS_Average = cs.avg,
-                         CS_Worst = cs.worst)
+                         CS_Best_Normalized = cs.best,
+                         CS_Average_Normalized = cs.avg,
+                         CS_Worst_Normalized = cs.worst)
 
   cs_table <- merge(cs_table, original_cs, by = "market_ids", all.x = TRUE)
   data.new <- merge(data.new, cs_table, by = "market_ids", all.x = TRUE)
+
+  # Unnormalize the Consumer Surplus Estimates
+  data.new <- as.data.table(data.new)
+  data.new[, ConsumerSurplus_Observed := ConsumerSurplus_Observed_Normalized * Potential_Passengers]
+  data.new[, CS_Best := CS_Best_Normalized * Potential_Passengers]
+  data.new[, CS_Avg := CS_Average_Normalized * Potential_Passengers]
+  data.new[, CS_Worst := CS_Worst_Normalized * Potential_Passengers]
 
   saveRDS(data.new, file = data_out)
 }

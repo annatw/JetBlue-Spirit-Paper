@@ -213,8 +213,6 @@ change_minimum_fare_dist <- function(merger_data = "03.Output/Adv_Merger_Sim_Dat
     
 }
 
-
-
 # Change in Passengers
 merger_change_pass_graph <- function(merger_data = "03.Output/Adv_Merger_Sim_Data.rds",
          observed_data = "02.Intermediate/Product_Data.rds",

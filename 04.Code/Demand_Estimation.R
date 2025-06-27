@@ -390,8 +390,8 @@ rcl_two_period_table <- function(post_in = "03.Output/random_coeff_nested_logit_
                            round(mean(model.post$extract_diagonal_means(model.post$compute_elasticities())), digits = 3))
   summary_statistics5 <- c("Spirit Mean Elasticity", spirit_jb_elasticity_pre[1], spirit_jb_elasticity_post[1])
   summary_statistics6 <- c("JetBlue Mean Elasticity", spirit_jb_elasticity_pre[2],  spirit_jb_elasticity_post[2])
-  summary_statistics7 <- c("Mean Markup", round(mean(model.pre$compute_markups(costs = model.pre$compute_costs())), digits = 3),
-                           round(mean(model.post$compute_markups(costs = model.post$compute_costs())), digits = 3))
+  summary_statistics7 <- c("Mean Markup (\\%)", round(mean(model.pre$compute_markups(costs = model.pre$compute_costs())), digits = 4) * 100,
+                           round(mean(model.post$compute_markups(costs = model.post$compute_costs())), digits = 4) * 100)
   
   table_out <- rbind(price, nonstop, miles, miles_sq, serviceRatio, extraMiles,
                      extraMiles_sq, tourist, prices.nonlinear,

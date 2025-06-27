@@ -132,18 +132,6 @@ create_demographic_data <- function(input = "01.Input/06.IPUMS_Population_Data/n
   saveRDS(census_data, output)
 }
 
-unify_fleet <- function(target = "02.Intermediate/Fleet_Compilation.rds"){
-  
-  saveRDS(compile, target)
-}
-
-# Airbus and Boeing Planes are listed under several names, this standardizes the 
-# manufacturers
-standardize_Makes <- function(input = "02.Intermediate/Fleet_Compilation.rds",
-                              output =  ""){
-
-  
-}
 
 clean_fleet <- function(output_file = "02.Intermediate/Fleet_Compilation.rds"){
   file_head <- "01.Input/07.Fleet_Data"
