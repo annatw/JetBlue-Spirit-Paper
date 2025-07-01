@@ -744,18 +744,17 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
 \pagebreak
 \FloatBarrier
     \subsection{Nested Logit Model Specification}
-    In this subsection, I estimate a nested logit demand model and then re-conduct the merger simulation. 
+    In this subsection, I estimate a nested logit demand model and then re-conduct the merger simulation. Mathematically, this model is equivalent to estimating the Demand model described in Section \ref{sec:Analysis_Demand} but with the additional constraint that each $\nu$ parameter is assumed equal to zero. As such, individual consumer deviations from the mean utility of a given product are determined solely by the random error term $\epsilon_{ijt}$. The results of this exercise are presented in Table \ref{tab:DemandEst_NestedLogit}. The estimated demand coefficients are broadly similar to the coefficients presented in Table \ref{tab:DemandEst}, but it is worth noting that the estimated elasticities are lower (higher)  in the pre-pandemic (post-pandemic) period for the nested-logit estimates than for the random coefficient nested logit estimates. 
 
     \begin{table}
         \caption{Demand Estimation Results - Nested Logit}
-        \label{tab:DemandEst}
+        \label{tab:DemandEst_NestedLogit}
         \vspace{-15mm}
         \begin{center}
         \include{06.Tables/NestedLogitResults}   
         \end{center}
         \vspace{-5mm}
                 \footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$ Products are defined as a Carrier-Nonstop pair within an Origin-Destination-Year-Quarter market. Origin Service Ratio is the fraction of direct routes out of the originating airport operated by the carrier divided by the total number of direct routes originating from that airport. Extra Miles is the average additional miles flown with a connecting itinerary minus the minimum miles flown within a market.  A tourist product has at least one endpoint in either the Las Vegas or Florida.}
-
     \end{table}
 
 
