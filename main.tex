@@ -746,6 +746,8 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
     \subsection{Nested Logit Model Specification}
     In this subsection, I estimate a nested logit demand model and then re-conduct the merger simulation. Mathematically, this model is equivalent to estimating the Demand model described in Section \ref{sec:Analysis_Demand} but with the additional constraint that each $\nu$ parameter is assumed equal to zero. As such, individual consumer deviations from the mean utility of a given product are determined solely by the random error term $\epsilon_{ijt}$. The results of this exercise are presented in Table \ref{tab:DemandEst_NestedLogit}. The estimated demand coefficients are broadly similar to the coefficients presented in Table \ref{tab:DemandEst}, but it is worth noting that the estimated elasticities are lower (higher)  in the pre-pandemic (post-pandemic) period for the nested-logit estimates than for the random coefficient nested logit estimates. 
 
+    Following the re-estimation of Demand, I once more simulate the JetBlue-Spirit merger across the three scenarios described in Section \ref{sec:Analysis_Merger}. The key results for these simulations are described within Tables \ref{tab:Simulation_Price_NestedLogit} and \ref{tab:MinimumPrice_NestedLogit}. The results are broadly consistent with the results presented within the main text.  
+
     \begin{table}
         \caption{Demand Estimation Results - Nested Logit}
         \label{tab:DemandEst_NestedLogit}
@@ -756,6 +758,29 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
         \vspace{-5mm}
                 \footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$ Products are defined as a Carrier-Nonstop pair within an Origin-Destination-Year-Quarter market. Origin Service Ratio is the fraction of direct routes out of the originating airport operated by the carrier divided by the total number of direct routes originating from that airport. Extra Miles is the average additional miles flown with a connecting itinerary minus the minimum miles flown within a market.  A tourist product has at least one endpoint in either the Las Vegas or Florida.}
     \end{table}
+
+      \begin{table}
+        \caption{Simulated Price Effects of Merger - Joint Markets, Nested Logit Demand}
+        \label{tab:Simulation_Price_NestedLogit}
+                \vspace{-15mm}
+        \begin{center}
+         \include{06.Tables/NestedLogit_Merger_Results}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. Corresponding results for demand estimated using a random coefficient nested logit model are included as Table \ref{tab:Simulation_Price} within the main text.}
+
+     \end{table}
+
+ \begin{table}
+        \caption{Change in Minimum Fare Available in Market (2017 USD), Nested Logit Demand}
+        \label{tab:MinimumPrice_NestedLogit}
+                \vspace{-15mm}
+        \begin{center}
+            \include{06.Tables/NestedLogit_MinimumFareChange}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars. Corresponding results for demand estimated using a random coefficient nested logit model are included as Table \ref{tab:Simulation_Price} within the main text.}
+    \end{table}    
 
 
     
