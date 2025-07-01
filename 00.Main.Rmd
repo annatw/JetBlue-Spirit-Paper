@@ -57,6 +57,7 @@ source("04.Code/Demand_Estimation.R")
 source("04.Code/Summary_Helper_Functions.R")
 source("04.Code/Merger_Anticipatory_Effects.R")
 source("04.Code/SummaryGraphs.R")
+source("04.Code/Simulation_Robustness.R")
 
 # Load In Needed Python Package
 # Set HiPerGator Path
@@ -86,7 +87,6 @@ linear_formula <- '0 + prices + NonStop + MktMilesFlown + I(MktMilesFlown**2) + 
 linear_component_rcl <- pyblp$Formulation(linear_formula)
 linear_component_logit <- pyblp$Formulation(linear_formula)
 
-# nonlinear_component <- pyblp$Formulation("1 + prices + NonStop")
  nonlinear_component <- pyblp$Formulation("0 + prices + NonStop + MktMilesFlown")
 
 # Instruments for Demand Estimation
@@ -270,12 +270,12 @@ sim_data[, Profits.MeanCost := (Prices.MeanCost.Sim - costs.mean) * 100 * Shares
 # Merger Simulation
 ```{r}
 # Post-Pandemic
-merger_simulation_advanced()
+merger_simulation_advanced(); gc(); gc();
 
 # Pre-Pandemic
 merger_simulation_advanced(model_in = "03.Output/prepandemic_random_coeff_nested_logit.pickle",
                            data_in = "02.Intermediate/prepandemic.rds",
-                           data_out = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds")
+                           data_out = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds"); gc(); gc(); 
 merger_results_table()
 minimum_fare_increase_table()
 merger_change_pass_graph()
@@ -297,7 +297,7 @@ merger_change_pass_graph(merger_data = "03.Output/PrePandemic_Adv_Merger_Sim_Dat
 
 minimum_fare_increase_table()
 merger_simulation_hhi_change()
-merger_simulation_cs_change()
+merger_simulation_cs_change_percent()
 change_average_fare_dist()
 change_average_fare_dist(merger_data.adv = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
                                      observed_data = "02.Intermediate/prepandemic.rds",
@@ -322,6 +322,12 @@ bankruptcy_simulation(model_in = "03.Output/prepandemic_random_coeff_nested_logi
     nonlinear = pyblp$Formulation("0 + prices + NonStop + MktMilesFlown"),
                                   mode = "rcl")
 ```
+
+# Spirit Exit Simulation
+```{r}
+spirit_exit_simulation()
+```
+
 
 # Generate Summary Statistics Tables
 ```{r}
@@ -364,6 +370,42 @@ minimum_fare_increase_table(mode = 5,
 minimum_fare_increase_table(mode = 10,
                             table_out = "06.Tables/MinimumFareChange_90.tex")
 
+```
+
+# Robustness Check: Logit Estimation
+```{r}
+# Post-Pandemic
+blp_logit_iv(model = linear_component_logit, 
+             additional_instruments = instruments, nested = TRUE)
+blp_logit_iv(input_file = "02.Intermediate/prepandemic.rds",
+            output_file = "03.Output/pre_pandemic_logit_iv.pickle",
+             model = linear_component_logit, 
+             additional_instruments = instruments, nested = TRUE)
+
+logit_two_period_table()
+
+merger_simulation_advanced(model_in = "03.Output/logit_iv.pickle",
+                                       data_in = "02.Intermediate/Product_Data.rds",
+                                       data_out = "03.Output/NestedLogit_Adv_Merger_Sim_Data.rds",
+                                       mode = "nl")
+merger_simulation_advanced(model_in = "03.Output/pre_pandemic_logit_iv.pickle",
+                data_in = "02.Intermediate/prepandemic.rds",
+                data_out = "03.Output/Prepandemic_NestedLogit_Adv_Merger_Sim_Data.rds",
+                                       mode = "nl")
+
+merger_results_table(merger_post = "03.Output/NestedLogit_Adv_Merger_Sim_Data.rds",
+                                 observed_post = "02.Intermediate/Product_Data.rds",
+                                 merger_pre = "03.Output/Prepandemic_NestedLogit_Adv_Merger_Sim_Data.rds",
+                                 observed_pre = "02.Intermediate/prepandemic.rds",
+            table_out = "06.Tables/NestedLogit_Merger_Results.tex",
+                                 mode = 0)
+
+minimum_fare_increase_table(merger_data.post = "03.Output/NestedLogit_Adv_Merger_Sim_Data.rds",
+                                        observed.post = "02.Intermediate/Product_Data.rds",
+                                        merger_data.pre =  "03.Output/Prepandemic_NestedLogit_Adv_Merger_Sim_Data.rds",
+                                        observed.pre = "02.Intermediate/prepandemic.rds",
+                                        table_out = "06.Tables/NestedLogit_MinimumFareChange.tex",
+                                        mode = 0)
 ```
 
 
@@ -419,5 +461,10 @@ rcl_two_period_table(
    output_table = "06.Tables/City_Market_Definition_RCL_Both_Period_Output.tex")
 
 
+```
+
+# Robustness - How Well Does My Model Predict Existing Shares, Prices?
+```{r}
+estimate_fare_simulation()
 ```
 
