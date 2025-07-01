@@ -741,9 +741,25 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
     
   %  \subsection{Alternative Market Definition}
   %  In this section, I consider an alternative market definition where markets are defined by origin and destination metropolitan statistical areas rather than airports. Individual products within markets are defined by carrier, nonstop status, and airports traveled between. 
-
+\pagebreak
+\FloatBarrier
     \subsection{Nested Logit Model Specification}
     In this subsection, I estimate a nested logit demand model and then re-conduct the merger simulation. 
+
+    \begin{table}
+        \caption{Demand Estimation Results}
+        \label{tab:DemandEst}
+        \vspace{-15mm}
+        \begin{center}
+        \include{06.Tables/NestedLogitResults}   
+        \end{center}
+        \vspace{-5mm}
+                \footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$ Products are defined as a Carrier-Nonstop pair within an Origin-Destination-Year-Quarter market. Origin Service Ratio is the fraction of direct routes out of the originating airport operated by the carrier divided by the total number of direct routes originating from that airport. Extra Miles is the average additional miles flown with a connecting itinerary minus the minimum miles flown within a market.  A tourist product has at least one endpoint in either the Las Vegas or Florida.}
+
+    \end{table}
+
+
+    
 \end{appendices}
 	
 \end{document}
