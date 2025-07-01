@@ -439,32 +439,59 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
 
   remove(model); gc()
 
-  simulation.best <- pyblp$Simulation(product_formulations = components,
-                                 product_data = data.new,
-                                 beta = beta_vec,
-                                 sigma = sigma_vec,
-                                 rho = rho_est,
-                                 integration = pyblp$Integration('product', 9L,
-                                            specification_options = dict("seed" = 97L)),
-                                 xi = data.new$unobserved.best)
-
-  simulation.avg <- pyblp$Simulation(product_formulations = components,
-                                      product_data = data.new,
-                                      beta = beta_vec,
-                                      sigma = sigma_vec,
-                                     rho = rho_est,
-                                      integration = pyblp$Integration('product', 9L,
-                                                                      specification_options = dict("seed" = 97L)),
-                                      xi = data.new$unobserved.avg)
-
-  simulation.worst <- pyblp$Simulation(product_formulations = components,
-                                      product_data = data.new,
-                                      beta = beta_vec,
-                                      sigma = sigma_vec,
-                                      rho = rho_est,
-                                      integration = pyblp$Integration('product', 9L,
-                                                                      specification_options = dict("seed" = 97L)),
-                                      xi = data.new$unobserved.worst)
+  if(mode == "rcl"){
+    simulation.best <- pyblp$Simulation(product_formulations = components,
+                                        product_data = data.new,
+                                        beta = beta_vec,
+                                        sigma = sigma_vec,
+                                        rho = rho_est,
+                                        integration = pyblp$Integration('product', 9L,
+                                                                        specification_options = dict("seed" = 97L)),
+                                        xi = data.new$unobserved.best)
+    
+    simulation.avg <- pyblp$Simulation(product_formulations = components,
+                                       product_data = data.new,
+                                       beta = beta_vec,
+                                       sigma = sigma_vec,
+                                       rho = rho_est,
+                                       integration = pyblp$Integration('product', 9L,
+                                                                       specification_options = dict("seed" = 97L)),
+                                       xi = data.new$unobserved.avg)
+    
+    simulation.worst <- pyblp$Simulation(product_formulations = components,
+                                         product_data = data.new,
+                                         beta = beta_vec,
+                                         sigma = sigma_vec,
+                                         rho = rho_est,
+                                         integration = pyblp$Integration('product', 9L,
+                                                                         specification_options = dict("seed" = 97L)),
+                                         xi = data.new$unobserved.worst)
+  } else {
+    simulation.best <- pyblp$Simulation(product_formulations = components,
+                                        product_data = data.new,
+                                        beta = beta_vec,
+                                        rho = rho_est,
+                                        integration = pyblp$Integration('product', 9L,
+                                                                        specification_options = dict("seed" = 97L)),
+                                        xi = data.new$unobserved.best)
+    
+    simulation.avg <- pyblp$Simulation(product_formulations = components,
+                                       product_data = data.new,
+                                       beta = beta_vec,
+                                       rho = rho_est,
+                                       integration = pyblp$Integration('product', 9L,
+                                                                       specification_options = dict("seed" = 97L)),
+                                       xi = data.new$unobserved.avg)
+    
+    simulation.worst <- pyblp$Simulation(product_formulations = components,
+                                         product_data = data.new,
+                                         beta = beta_vec,
+                                         rho = rho_est,
+                                         integration = pyblp$Integration('product', 9L,
+                                                                         specification_options = dict("seed" = 97L)),
+                                         xi = data.new$unobserved.worst)
+  }
+  
 
 
 

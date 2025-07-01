@@ -210,9 +210,9 @@ two_model_make <- function(model_a, model_b,
   return(rbind(row1, row2))
 }
 
-logit_two_period_table <- function(model.post.in = "03.Output/nested_logit_iv.pickle",
+logit_two_period_table <- function(model.post.in = "03.Output/logit_iv.pickle",
                                    product.post.in = "02.Intermediate/Product_Data.rds",
-                                   model.pre.in = "03.Output/pre_pandemic_nested_logit_iv.pickle",
+                                   model.pre.in = "03.Output/pre_pandemic_logit_iv.pickle",
                                    product.pre.in = "02.Intermediate/prepandemic.rds",
                                    output = "06.Tables/NestedLogitResults.tex"){
    model.post <- py_load_object(model.post.in)
@@ -253,82 +253,41 @@ logit_two_period_table <- function(model.post.in = "03.Output/nested_logit_iv.pi
   # Descriptive Statistics
   spirit_jb_elasticity_post <- sp_jb_elasticity_mean(model.post, product.post)
   spirit_jb_elasticity_pre <- sp_jb_elasticity_mean(model.pre, product.pre)
-  
-  spirit_e <- c("Mean Spirit Elasticity", spirit_jb_elasticity_pre[1], spirit_jb_elasticity_post[1],)
-  jetblue_e <- c("Mean JetBlue Elasticity", spirit_jb_elasticity_pre[2], spirit_jb_elasticity_post[2])
-  elasticity <- c("Mean Elasticity", round(mean(model.pre$extract_diagonal_means(model.pre$compute_elasticities())), digits = 3), 
+
+  summary_statistics1 <- c("Period", "2017Q1-2019Q4", "2021Q2-2023Q2")
+  summary_statistics2 <- c("N Products", nrow(product.post), nrow(product.pre))
+  summary_statistics3 <- c("N Markets", length(unique(product.post$market_ids)),
+                           length(unique(product.pre$market_ids)))
+  summary_statistics4 <- c("Mean Elasticity", round(mean(model.post$extract_diagonal_means(model.post$compute_elasticities())), digits = 3), 
                            round(mean(model.pre$extract_diagonal_means(model.pre$compute_elasticities())), digits = 3))
+  summary_statistics5 <- c("Spirit Mean Elasticity", spirit_jb_elasticity_post[1], spirit_jb_elasticity_pre[1])
+  summary_statistics6 <- c("JetBlue Mean Elasticity", spirit_jb_elasticity_post[2], spirit_jb_elasticity_pre[2])
+  summary_statistics7 <- c("Mean Markup", round(mean(model.post$compute_markups(costs = model.post$compute_costs())), digits = 3),
+                           round(mean(model.pre$compute_markups(costs = model.pre$compute_costs())), digits = 3))
   
-  # Summary Rows:
-  obs <- c("Observations", nrow(product.pre), nrow(product.post))
-  n_products <- c("Products", length(unique(product.pre$product_ids)),
-                  length(unique(product.post$product_ids)))
-  n_markets <- c("Markets", length(unique(product.pre$market_ids)),
-                 length(unique(product.post$market_ids)))
-  period <- c("Period", "2017Q1-2019Q4", "2021Q2-2023Q2")
+  table_out <- rbind(price, nonstop, miles, miles_sq, serviceRatio, extraMiles,
+                 extraMiles_sq, tourist, rho, summary_statistics1, summary_statistics2,
+                 summary_statistics3, summary_statistics4, summary_statistics5, summary_statistics6, 
+                 summary_statistics7)
   
-  table <- rbind(price, nonstop, miles, miles_sq, serviceRatio, extraMiles,
-                 extraMiles_sq, tourist, rho, spirit_e, 
-                 jetblue_e, elasticity, obs, n_products, n_markets, period)
+  rownames(table_out) <- NULL
   
-  kbl(table, row.names = FALSE, format= "latex",
-      col.names = c("Variable", "Pre-Pandemic", "Post-Pandemic"),
-      booktabs = TRUE, escape = FALSE, linesep = "") %>%
-    row_spec(16, hline_after = TRUE) %>%
+  kbl(table_out,
+      format = "latex", 
+      escape = FALSE, booktabs = TRUE,
+      col.names = c("Variable", "Pre-Pandemic",  "Post-Pandemic"))  %>%
+    row_spec(row = 16, hline_after = TRUE) %>%
+    row_spec(row = 18, hline_after = TRUE) %>%
+    pack_rows(group_label = "Linear Coefficients", 1,16) %>%
+    pack_rows(group_label = "Nesting Coefficient", 17, 18) %>%
+    pack_rows(group_label = "Summary Statistics", 19, 25) %>%
     save_kable(file = output)
 }
 
-logit_two_period_table_present <- function(model.post.in = "03.Output/nested_logit_iv.pickle",
-                                         product.post.in = "02.Intermediate/Product_Data.rds",
-                                         model.pre.in = "03.Output/pre_pandemic_nested_logit_iv.pickle",
-                                         product.pre.in = "02.Intermediate/prepandemic.rds",
-                                         output = "06.Tables/Presentation_NestedLogitResults.tex"){
-  model.post <- py_load_object(model.post.in)
-  product.post <- readRDS(product.post.in)
-  model.pre <- py_load_object(model.pre.in)
-  product.pre <- readRDS(product.pre.in)
-  
-  # First Group - Logit Means
-  price <- two_model_make(label = "Price", model_a = model.post$beta,
-                          model_b = model.pre$beta, se_a = model.post$beta_se,
-                          se_b = model.pre$beta_se, id = 1)
-  rho <- two_model_make(label = "Nesting Parameter", model_a = model.post$rho,
-                        model_b = model.pre$rho, se_a = model.post$rho_se,
-                        se_b = model.pre$rho_se,
-                        id = 1)
-  
-  # Descriptive Statistics
-  spirit_jb_elasticity_post <- sp_jb_elasticity_mean(model.post, product.post)
-  spirit_jb_elasticity_pre <- sp_jb_elasticity_mean(model.pre, product.pre)
-  
-  spirit_e <- c("Mean Spirit Elasticity", spirit_jb_elasticity_post[1], spirit_jb_elasticity_pre[1])
-  jetblue_e <- c("Mean JetBlue Elasticity", spirit_jb_elasticity_post[2],
-                 spirit_jb_elasticity_pre[2])
-  elasticity <- c("Mean Elasticity", round(mean(model.post$extract_diagonal_means(model.post$compute_elasticities())), digits = 3), 
-                  round(mean(model.pre$extract_diagonal_means(model.pre$compute_elasticities())), digits = 3))
-  
-  # Summary Rows:
-  obs <- c("Observations", nrow(product.post), nrow(product.pre))
-  n_products <- c("Products", length(unique(product.post$product_ids)),
-                  length(unique(product.pre$product_ids)))
-  n_markets <- c("Markets", length(unique(product.post$market_ids)),
-                 length(unique(product.pre$market_ids)))
-  period <- c("Period", "2021Q2-2023Q2", "2017Q1-2019Q4")
-  
-  table <- rbind(price, rho, spirit_e, 
-                 jetblue_e, elasticity, obs, n_products, n_markets, period)
-  
-  kbl(table, row.names = FALSE, format= "latex",
-      col.names = c("Variable", "Post-Pandemic", "Pre-Pandemic"),
-      booktabs = TRUE, escape = FALSE, linesep = "") %>%
-    row_spec(4, hline_after = TRUE) %>%
-    row_spec(7, hline_after = TRUE) %>%
-    save_kable(file = output)
-}
 
 rcl_two_period_table <- function(post_in = "03.Output/random_coeff_nested_logit_results.pickle",
                                  post_data_in = "02.Intermediate/Product_Data.rds",
-                                 pre_in = "03.Output/prepandemic_random_coeff_nested_logit.pickle",
+                                 pre_in = "03.Output/pre_pandemic_logit_iv.pickle",
                                  pre_data_in = "02.Intermediate/prepandemic.rds",
                                  output_table = "06.Tables/RCL_Both_Period_Output.tex"){
   model.post <- py_load_object(post_in)
