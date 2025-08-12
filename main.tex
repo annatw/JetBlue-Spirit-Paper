@@ -400,15 +400,23 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 	As part of the handling of price data, I modify prices in two ways. For Spirit itineraries completed before 2020, fares had an additional \$22.99 times the number of trip legs added to them to accounts for Spirit's additional usage fee placed on itineraries which were not booked in-person at the airport. As noted in \citet{shrago_spirit_2024}, the majority of Spirit's customers paid these fees and these fees were included in the base ticket price in DB1B releases following 2020. Furthermore, I re-express prices in terms of 2017 United States dollars to allow for easier comparisons between the two sample periods due to the high levels of inflation within the post-pandemic period.
 
     \FloatBarrier
-    \section{Merger Pre-Approval Effects}
+    \section{Merger Announcement Effects}
     \setcounter{table}{0}
     \setcounter{figure}{0}
 
-    Historically, airline mergers have had effects on airfares before the completion of the merger. Within this section, I estimate the effects of the announcement of the merger on fares in markets served by both JetBlue and Spirit through a modified version of the model in \citet{goolsbee_how_2008} and \citet{fan_when_2020}. For carrier $c$ serving unidirectional route $r$ during quarter $q$, its average fare $y_{crq}$ is described by 
+    Historically, airline mergers have had effects on airfares before the completion of the merger. Within this section, I estimate the effects of the announcement of the merger on fares in markets served by both JetBlue and Spirit through a modified version of the event study model used in \citet{goolsbee_how_2008} and \citet{fan_when_2020}. I use an alternative subsample of the data I use within the main text consisting of route-period-carrier level observations of the log average-fare offered by each carrier within two types of markets - those consistently served by both JetBlue and Spirit in the four quarters prior to the merger announcement and markets in which JetBlue and Spirit did not fly within the four quarters prior to the merger announcement. I further restrict this sample to only include markets after the first quarter of 2021. 
+    
+    For carrier $c$ serving unidirectional route $r$ at time $t$, its log-average fare $y_{crq}$ is described by 
 
-    \[\log(y_{crq}) = \sum_{i = - 4}^{4} \beta_{M,i}I[q = i] Merge_{c} + \sum_{i = - 8}^{4} \beta_{O,i}I[q = i] Other_{c}  + \mu_cr + \gamma X_{crq}+ \epsilon_{crq}\]
+    \[y_{crt} = Merge_{r} \sum_{i = - 4, i \neq -1}^{4} \beta_{i}I[t = i]  + \mu_{cr} + \mu_{t} + \epsilon_{crt}\]
 
-    where $I[q = i]$ is $1$ if $q = i$ and zero otherwise, $Merge_{c}$ is a dummy variable which is one if carrier $c$ is either JetBlue or Spirit, $Other_c$ is one if the carrier neither of the merging firms, $\mu_{cr}$ is carrier-route fixed effects, $X_{crq}$ is a vector of controls, and $\epsilon_{crq}$ is a random error term. As the Spirit-JetBlue merger was approved by Spirit's board in the third quarter of 2022, period $0$ is defined as the second quarter of 2022. Furthermore, quarters from the height of the coronavirus pandemic (2020 and the first quarter of 2021) are excluded. 
+    where $I[q = i]$ is $1$ if $q = i$ and zero otherwise, $Merge_{c}$ is a dummy variable which is one if both JetBlue and Spirit operate within the market, $Other_c$ is one if the carrier neither of the merging firms, $\mu_{cr}$ is vector containing fixed effects for both carrier and route, $X_{crq}$ is a vector of controls, and $\epsilon_{crq}$ is a random error term. As the Spirit-JetBlue merger was approved by Spirit's board in the third quarter of 2022, period $0$ is defined as the second quarter of 2022. Furthermore, quarters from the height of the coronavirus pandemic (2020 and the first quarter of 2021) are excluded. 
+
+    \begin{figure}
+    \caption{Merger Announcement Event Study}
+    \label{fig:MergerAnnoucnement_Plot}
+  %  \includegraphics[width = \linewidth]
+    \end{figure}
 
     \FloatBarrier
 	\section{Merger Comments Analysis}
@@ -444,7 +452,7 @@ This paper uses the pre-trained model documented in \citet{laurer_less_2024} to 
         \includegraphics{05.Figures/stance_strength_graph}
         \end{center}
 		\begin{minipage}{\textwidth} 
-			{\footnotesize Data is sourced from the Department of Transportation regulatory filing regarding the JetBlue-Spirit merger (DOT-OST-2023-0024). ``Probability Approve" is the probability that a comment approves of the merger.} 
+			{\footnotesize Data is sourced from the Department of Transportation regulatory filing regarding the JetBlue-Spirit merger (DOT-OST-2023-0024). ``Probability Approve" is the probability that a comment approves of the merger as asssed by the stance detection model.} 
 		\end{minipage}
 	\end{figure}
 	
@@ -455,7 +463,7 @@ This paper uses the pre-trained model documented in \citet{laurer_less_2024} to 
             \includegraphics{05.Figures/stance_strength_unique.pdf}
         \end{center}
 				\begin{minipage}{\textwidth} 
-			{\footnotesize Data is sourced from the Department of Transportation regulatory filing regarding the JetBlue-Spirit merger (DOT-OST-2023-0024). ``Probability Approve" is the probability that a comment approves of the merger.} 
+			{\footnotesize Data is sourced from the Department of Transportation regulatory filing regarding the JetBlue-Spirit merger (DOT-OST-2023-0024). ``Probability Approve" is the probability that a comment approves of the merger as asssed by the stance detection model.} 
 		\end{minipage}
 	\end{figure}
 
@@ -781,8 +789,7 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
         \vspace{-5mm}
         \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars. Corresponding results for demand estimated using a random coefficient nested logit model are included as Table \ref{tab:Simulation_Price} within the main text.}
     \end{table}    
-
-
+\FloatBarrier
     
 \end{appendices}
 	
