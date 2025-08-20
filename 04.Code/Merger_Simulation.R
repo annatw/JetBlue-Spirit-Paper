@@ -2,7 +2,7 @@ merger_sim_data_generate <- function(input_file = "02.Intermediate/DB1B_With_Con
                                      output_file = "02.Intermediate/Product_Data.rds",
                                      years_allowed = 2021:2023,
                                      fast = FALSE,
-                                     market_group=c("Year", "Quarter", "Origin", "Origin_MSA", "Dest", "Destination_MSA"),
+                                     market_group= c("Year", "Quarter", "Origin", "Origin_MSA", "Dest", "Destination_MSA"),
                                      product_group = c("Year", "Quarter", "Origin", "Origin_MSA", 
                                                         "Dest", "Destination_MSA", "Carrier", "NonStop")){
   # First, Generate Product Data
@@ -101,7 +101,7 @@ merger_sim_data_generate <- function(input_file = "02.Intermediate/DB1B_With_Con
   product_data[, JetBlue := as.numeric(Carrier == "JetBlue Airways")]
   product_data[, Other_Carrier := 1 - AmericanAir - Delta - Southwest - United - Spirit - JetBlue]
   
-  # Mkt Miles Flown in Hundreds
+  # Mkt Miles Flown in Thousands
   product_data[, MktMilesFlown := MktMilesFlown / 1000]
   
   # Squared Distance Term
@@ -311,9 +311,6 @@ merger_sim_data_generate <- function(input_file = "02.Intermediate/DB1B_With_Con
   product_data[, clustering_ids := as.numeric(as.factor(paste(Origin, Dest)))]
   
   write_rds(product_data, output_file)
-  # For Stata
-  write_csv(product_data, file = gsub(pattern = ".rds", replacement = ".csv",
-                                      x = output_file), na = ".")
 }
 
 airport_service_ratios_merger <- function(db1b){
@@ -447,7 +444,7 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
                                         rho = rho_est,
                                         integration = pyblp$Integration('product', 9L,
                                                                         specification_options = dict("seed" = 97L)),
-                                        xi = data.new$unobserved.best)
+                                       xi = data.new$unobserved.best)
     
     simulation.avg <- pyblp$Simulation(product_formulations = components,
                                        product_data = data.new,

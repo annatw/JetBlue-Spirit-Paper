@@ -196,18 +196,25 @@ clarify_DB1B <- function(input = "02.Intermediate/Construct_DB1B/DB1B_Initial.Rd
   saveRDS(DB1B, file = output)
 }
 
+# Condense observations into synthetic products
+# auxilary fee takes one of three values: "usage" "report" "scale" to adjust spirit prices
+# # if usage, uses the base internet charge for the observations prior to 2020.
+# # if report, uses the reported average fees for each year
+# # if scale, scales the auxilary fees to be proportional to the base fare
 condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000,
                           market_group = c("Year", "Quarter", "Origin", "Dest"),
                           product_group = c("Year", "Quarter", "Origin", "Dest",
-                                            "Carrier", "NonStop")){
+                                            "Carrier", "NonStop"),
+                          High_Legs_Cutoff = 4,
+                          auxilary_mode = "usage"){
   DB1B <- read_rds(input)
   
   # In line with Shrago (2022), remove fares less than $15 to remove point redemptions
   DB1B <- as.data.table(DB1B); gc(); gc();
   orig_count <- nrow(DB1B)
   
-  print(paste("Low Fares:", nrow(DB1B[MktFare < fares_min,]) / orig_count * 100, " Of Sample"))
-  print(paste("High Fares:", nrow(DB1B[MktFare > fares_max,]) / orig_count * 100, " Of Sample"))
+  print(paste("Low Fares:", nrow(DB1B[MktFare < fares_min,]) / orig_count * 100, "Percent Of Sample"))
+  print(paste("High Fares:", nrow(DB1B[MktFare > fares_max,]) / orig_count * 100, "Percent Of Sample"))
   
   DB1B[MktFare < fares_min, MktFare := NA] 
   DB1B[MktFare > fares_max, MktFare := NA]
@@ -224,9 +231,12 @@ condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000,
   DB1B[MktFare > Top.Fare.Cutoff, MktFare := NA]
   DB1B[Yield > Top.Yield.Cutoff, MktFare := NA]
   
-  # Restrict to three layovers or fewer
-  print(paste("High Legs:", nrow(DB1B[MktCoupons >= 4,]) / orig_count * 100, " Of Sample"))
-  DB1B[MktCoupons >= 4, MktFare := NA]
+  # Restrict to two layovers or fewer
+  print(paste("High Legs:", nrow(DB1B[MktCoupons >= High_Legs_Cutoff,]) / orig_count * 100, " Percent Of Sample"))
+  print(paste("High Legs:", sum(DB1B[!is.na(MktFare) & MktCoupons >= High_Legs_Cutoff,]$Passengers, rm.na = TRUE) / 
+                sum(DB1B[!is.na(MktFare),]$Passengers, rm.na = TRUE) * 100, "Percent Of Passengers"))
+  
+  DB1B[MktCoupons >= High_Legs_Cutoff, MktFare := NA]
   
   
   DB1B$NonStop <- DB1B$MktCoupons == 1
@@ -245,6 +255,30 @@ condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000,
   # print(paste("Small Markets:", length(unique(DB1B[Passengers.Inside.Market < 500,]$market_group)) / length(unique(DB1B$market_group)) * 100, " Of Sample"))
   
   DB1B[is.na(MktFare), Passengers := NA]
+  
+  
+  # CAPTURING SPIRIT USAGE FEE
+  if(auxilary_mode == "usage"){
+    DB1B[Carrier == "Spirit Air Lines" & Year < 2020, MktFare := MktFare + 22.99 * MktCoupons]
+  } else {
+    spirit_reported_revenue <- fread("01.Input/22.FinancialFilings/Summarized_Spirit_Revenue.csv")
+    spirit_reported_revenue$V1 <- NULL;
+    
+    if(auxilary_mode == "report"){
+      spirit_reported_revenue <- spirit_reported_revenue[,.(Year, Non_Ticket_Revenue_Per_Segment)]
+      colnames(spirit_reported_revenue) <- c("Year", "Spirit_Adjust")
+      
+      DB1B <- merge(DB1B, spirit_reported_revenue, by = "Year")
+      DB1B[Carrier == "Spirit Air Lines", MktFare := MktFare + Spirit_Adjust * MktCoupons]
+      DB1B$Spirit_Adjust <- NULL
+    } else if (auxilary_mode == "scale") {
+      colnames(spirit_reported_revenue) <- c("Year", "Spirit_Adjust", "Spirit_Fare_Avg")
+      DB1B[Carrier == "Spirit Air Lines", MktFare := MktFare + (Spirit_Adjust * MktFare / (MktCoupons * Spirit_Fare_Avg)) * MktCoupons]
+      DB1B$Spirit_Adjust <- NULL
+      DB1B$Spirit_Fare_Avg <- NULL
+    }
+  }
+  
   DB1B[, Avg.Fare := sum(MktFare * Passengers, na.rm= TRUE) / sum(Passengers, na.rm = TRUE),
        by = product_group]; gc(); gc();
   DB1B[, Firm.Avg.Fare := sum(MktFare * Passengers, na.rm= TRUE) / sum(Passengers, na.rm = TRUE),
@@ -256,9 +290,6 @@ condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000,
   DB1B <- DB1B[!is.nan(Avg.Fare),]
   DB1B[, Product_Name := paste(Origin, Dest, Carrier, NonStop)]
   DB1B[, Product_Name := factor(Product_Name)]
-  
-  # TESTING: CAPTURING SPIRIT USAGE FEE
-  DB1B[Carrier == "Spirit Air Lines" & Year < 2020, Avg.Fare := Avg.Fare + 22.99 * MktCoupons]
   
   DB1B <- DB1B %>% select(Year, Quarter, Origin, Origin.City, Dest, Destination.City, 
                           Carrier, MktMilesFlown, NonStop,

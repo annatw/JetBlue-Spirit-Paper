@@ -4,8 +4,9 @@ merger_results_table <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rd
                                  merger_pre = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
                                  observed_pre = "02.Intermediate/prepandemic.rds",
                                  table_out = "06.Tables/Merger_Results.tex",
-                                 mode = 0){
-  output_rows <- function(merger_in, observed_in){
+                                 mode = 0,
+                                 include_median = FALSE){
+  output_rows <- function(merger_in, observed_in, median_rows = include_median){
     merger <- readRDS(merger_in)
     observed <- readRDS(observed_in)
     
@@ -75,18 +76,25 @@ merger_results_table <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rd
       summarize(MedianBest = median(rep(Prices.MinCost.Sim, Passengers.BestCase), na.rm = TRUE),
                 MedianAvg = median(rep(Prices.MeanCost.Sim, Passengers.AvgCase), na.rm = TRUE),
                 MedianWorst = median(rep(Prices.MaxCost.Sim, Passengers.WorstCase), na.rm = TRUE))
-    observedMean <- observed %>% group_by(market_ids) %>%
+    observedMedian <- observed %>% group_by(market_ids) %>%
       summarize(Median = median(rep(prices, Passengers.Product)))
       
-    medianPrice.obs <- six_statistic_row_make("Observed", mergerPrice$MeanPrice.Real)
-    medianPrice.best <- six_statistic_row_make("Best Case", mergerPrice$MeanPrice.MinCost)
-    medianPrice.avg <- six_statistic_row_make("Average Case", mergerPrice$MeanPrice.MeanCost)
-    medianPrice.worst <- six_statistic_row_make("Worst Case", mergerPrice$MeanPrice.MaxCost)
+    medianPrice.obs <- six_statistic_row_make("Observed", observedMedian$Median)
+    medianPrice.best <- six_statistic_row_make("Best Case", mergerMedian$MedianBest)
+    medianPrice.avg <- six_statistic_row_make("Average Case", mergerMedian$MedianAvg)
+    medianPrice.worst <- six_statistic_row_make("Worst Case", mergerMedian$MedianWorst)
     
-    table <- rbind(price.obs, price.best, price.avg, price.worst,
-                   meanPrice.obs, meanPrice.best, meanPrice.avg, meanPrice.worst,
-                   change.best, change.avg, change.worst,
-                   medianPrice.obs, medianPrice.best, medianPrice.avg, medianPrice.worst)
+    if(median_rows == TRUE){
+      table <- rbind(price.obs, price.best, price.avg, price.worst,
+                     meanPrice.obs, meanPrice.best, meanPrice.avg, meanPrice.worst,
+                     change.best, change.avg, change.worst,
+                     medianPrice.obs, medianPrice.best, medianPrice.avg, medianPrice.worst)
+    } else {
+      table <- rbind(price.obs, price.best, price.avg, price.worst,
+                     meanPrice.obs, meanPrice.best, meanPrice.avg, meanPrice.worst,
+                     change.best, change.avg, change.worst)
+    }
+    
     rownames(table) <- NULL
     return(table)
   }
@@ -99,21 +107,37 @@ merger_results_table <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rd
   title_row <- c("", "N", "Mean", "(SD)", "Minimum", "Median", "Maximum")
   table <- rbind(pre_pandemic, post_pandemic)
   
-  kbl(table,
-      format = "latex", col.names = title_row,
-      escape = TRUE, booktabs = TRUE) %>%
-    pack_rows(group_label = "Pre-Pandemic", 1, 15) %>%
-    pack_rows(group_label = "Product Prices (100s, 2017 USD)", 1, 4) %>%
-    pack_rows(group_label = "Market Average Price (100s, 2017 USD)", 5, 8) %>%
-    pack_rows(group_label = "% Change Average Price", 9, 11) %>%
-    pack_rows(group_label = "Median Price (100s, 2017 USD)", 12, 15) %>%
-    pack_rows(group_label = "Post-Pandemic", 16, 30) %>%
-    pack_rows(group_label = "Product Prices  (100s, 2017 USD)", 16, 19) %>%
-    pack_rows(group_label = "Market Average Price (100s, 2017 USD)", 20, 23) %>%
-    pack_rows(group_label = "% Change Average Price", 24, 26) %>%
-    pack_rows(group_label = "Median Price (100s, 2017 USD)", 27, 30) %>%
-    row_spec(row = 15, hline_after = TRUE) %>%
-    save_kable(file = table_out)
+  if(include_median == TRUE){
+    kbl(table,
+        format = "latex", col.names = title_row,
+        escape = TRUE, booktabs = TRUE) %>%
+      pack_rows(group_label = "Pre-Pandemic", 1, 15) %>%
+      pack_rows(group_label = "Product Prices (100s, 2017 USD)", 1, 4) %>%
+      pack_rows(group_label = "Market Average Price (100s, 2017 USD)", 5, 8) %>%
+      pack_rows(group_label = "% Change Average Price", 9, 11) %>%
+      pack_rows(group_label = "Median Price (100s, 2017 USD)", 12, 15) %>%
+      pack_rows(group_label = "Post-Pandemic", 16, 30) %>%
+      pack_rows(group_label = "Product Prices  (100s, 2017 USD)", 16, 19) %>%
+      pack_rows(group_label = "Market Average Price (100s, 2017 USD)", 20, 23) %>%
+      pack_rows(group_label = "% Change Average Price", 24, 26) %>%
+      pack_rows(group_label = "Median Price (100s, 2017 USD)", 27, 30) %>%
+      row_spec(row = 15, hline_after = TRUE) %>%
+      save_kable(file = table_out)
+  } else {
+    kbl(table,
+        format = "latex", col.names = title_row,
+        escape = TRUE, booktabs = TRUE) %>%
+      pack_rows(group_label = "Pre-Pandemic", 1, 11) %>%
+      pack_rows(group_label = "Product Prices (100s, 2017 USD)", 1, 4) %>%
+      pack_rows(group_label = "Market Average Price (100s, 2017 USD)", 5, 8) %>%
+      pack_rows(group_label = "% Change Average Price", 9, 11) %>%
+      pack_rows(group_label = "Post-Pandemic", 12, 22) %>%
+      pack_rows(group_label = "Product Prices  (100s, 2017 USD)", 12, 15) %>%
+      pack_rows(group_label = "Market Average Price (100s, 2017 USD)", 16, 19) %>%
+      pack_rows(group_label = "% Change Average Price", 20, 22) %>%
+      row_spec(row = 11, hline_after = TRUE) %>%
+      save_kable(file = table_out)
+  }
 }
 
 merger_results_spirit_markets <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rds",

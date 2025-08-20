@@ -152,6 +152,39 @@ blp_rcl <- function(input_file = "02.Intermediate/Product_Data.rds",
   gc();
 }
 
+blp_rcl_optimal <- function(product_data = "02.Intermediate/Product_Data.rds",
+                            original_model = "03.Output/random_coeff_nested_logit_fs_results.pickle",
+                            output_file = "03.Output/Optimal_random_coeff_nested_logit_fs_results.pickle",
+                            nonlinearstart = NULL, linearstart = NULL,
+                            additional_instruments, linear, nonlinear, 
+                            optimality = "gradient",
+                            precision = 1e-8, se = "clustered"){
+  product <- readRDS(product_data)
+  model_original <- py_load_object(original_model)
+  
+  # Calculate Feasible Approximation of Optimal Instruments
+  problem_optimal_instruments <- model_original$compute_optimal_instruments()$to_problem()
+  remove(model_original); gc(); gc();
+  
+  # Use originally estimated parameters as starting values
+  sigma_matrix <- model_original$sigma
+  rho_start <- model_original$rho
+  beta_start <- model_original$beta
+  
+  optimization_parameter <- pyblp$Optimization('l-bfgs-b', dict('gtol', precision))
+  
+  
+ result <- problem_optimal_instruments$solve(sigma = sigma_matrix, 
+                                        #  sigma_bounds = tuple(nonlinear_lb, nonlinear_ub),
+                                        optimization = optimization_parameter,
+                                        check_optimality = optimality,
+                                        rho = rho_start,
+                                        rho_bounds = c(0.01, 0.99),
+                                        beta = beta_start,
+                                        shares_bounds = c(1e-200, 0.15),
+                                        se_type = se)
+  
+}
 
 sd_format <- function(num){
   return(paste("(", signif(num, digits = 2), ")", sep = ""))
@@ -287,7 +320,7 @@ logit_two_period_table <- function(model.post.in = "03.Output/logit_iv.pickle",
 
 rcl_two_period_table <- function(post_in = "03.Output/random_coeff_nested_logit_results.pickle",
                                  post_data_in = "02.Intermediate/Product_Data.rds",
-                                 pre_in = "03.Output/pre_pandemic_logit_iv.pickle",
+                                 pre_in = "03.Output/prepandemic_random_coeff_nested_logit.pickle",
                                  pre_data_in = "02.Intermediate/prepandemic.rds",
                                  output_table = "06.Tables/RCL_Both_Period_Output.tex"){
   model.post <- py_load_object(post_in)

@@ -374,6 +374,120 @@ graph_routes <- function(){
          width = 8, height = 5)
 }
 
+# For each Type of Carrier - What Share of 'Offerings" (Defined by AirportGroup) is Direct?
+graph_ticket_offerings <- function(input = "02.Intermediate/Construct_DB1B/DB1B_Clarified.Rds",
+                                   output = "05.Figures/Share_Direct_Products.pdf"){
+  db1b.sample <- readRDS(input)
+  
+  db1b.sample <- unique(db1b.sample[,.(Year, Quarter, Carrier, AirportGroup)])
+  gc(); gc(); 
+  
+  # Group Carriers By Type
+  db1b.sample[, Carrier_Type := "Invalid"]
+  db1b.sample[Carrier %in% c("Delta Air Lines Inc.",
+                             "United Air Lines Inc.",
+                             "American Airlines Inc."),
+              Carrier_Type := "Legacy"]
+  
+  db1b.sample[Carrier %in% c("JetBlue Airways",
+                             "Southwest Airlines Co."),
+              Carrier_Type := "Low-Cost Carrier"]
+  
+  db1b.sample[Carrier %in% c("Frontier Airlines Inc.",
+                             "Spirit Air Lines",
+                             "Allegiant Air"),
+              Carrier_Type := "Ultra-Low Cost"]
+  
+  db1b.sample <- db1b.sample[Carrier_Type != "Invalid",]
+  
+  # Now, for each Carrier Type - Number of Direct vs Connecting Products
+  db1b.sample[, Route_Type := "Connecting"]
+  db1b.sample[nchar(AirportGroup) == 7, Route_Type := "Direct"]
+  
+  db1b.summary <- db1b.sample %>%
+    group_by(Year, Quarter, Carrier_Type) %>%
+    summarize(NumberProducts = n(),
+              NumberDirect = sum(Route_Type == "Direct")) %>%
+    mutate(Direct_Share = NumberDirect / NumberProducts) %>%
+    as.data.table()
+  
+  # Configure Date
+  db1b.summary[, Month := ""]
+  db1b.summary[Quarter == 1, Month := "February"]
+  db1b.summary[Quarter == 2, Month := "May"]
+  db1b.summary[Quarter == 3, Month := "August"]
+  db1b.summary[Quarter == 4, Month := "October"]
+  db1b.summary[, Date := my(paste(Month, Year))]
+  
+  db1b.summary <- db1b.summary[Year >= 2017,]
+  
+  # Line Graph, with Panels
+  ggplot(db1b.summary, aes(x = Date, y = Direct_Share)) +
+    geom_line() +
+    facet_grid(rows = "Carrier_Type") +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") +
+    labs(x = "Time", y = "Share of Direct Products")
+  
+  ggsave(output, units = "in", width = 7, height = 5)
+  
+}
+
+graph_direct_ridership <- function(input = "02.Intermediate/Construct_DB1B/DB1B_Clarified.Rds",
+                                   output = "05.Figures/Share_Direct_Ridership.pdf"){
+  db1b.sample <- readRDS(input)
+  
+  db1b.sample[, NonStop := nchar(AirportGroup) == 7]
+  
+  # Group Carriers By Type
+  db1b.sample[, Carrier_Type := "Invalid"]
+  db1b.sample[Carrier %in% c("Delta Air Lines Inc.",
+                             "United Air Lines Inc.",
+                             "American Airlines Inc."),
+              Carrier_Type := "Legacy"]
+  
+  db1b.sample[Carrier %in% c("JetBlue Airways",
+                             "Southwest Airlines Co."),
+              Carrier_Type := "Low-Cost Carrier"]
+  
+  db1b.sample[Carrier %in% c("Frontier Airlines Inc.",
+                             "Spirit Air Lines",
+                             "Allegiant Air"),
+              Carrier_Type := "Ultra-Low Cost"]
+  
+  db1b.sample <- db1b.sample[Carrier_Type != "Invalid",]
+  
+  db1b.summary <- db1b.sample %>%
+    group_by(Carrier_Type, Year, Quarter) %>%
+    summarize(Share_NonStop = sum(Passengers * NonStop) / sum(Passengers)) %>%
+    as.data.table(); gc(); gc();
+
+  # Configure Date
+  db1b.summary[, Month := ""]
+  db1b.summary[Quarter == 1, Month := "February"]
+  db1b.summary[Quarter == 2, Month := "May"]
+  db1b.summary[Quarter == 3, Month := "August"]
+  db1b.summary[Quarter == 4, Month := "October"]
+  db1b.summary[, Date := my(paste(Month, Year))]
+  
+  db1b.summary <- db1b.summary[Year >= 2017,]
+  
+  # Line Graph, with Panels
+  ggplot(db1b.summary, aes(x = Date, y = Share_NonStop, 
+                           linetype = Carrier_Type)) +
+    geom_line() +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") +
+    scale_y_continuous(expand = c(0,0),
+                       limits = c(0.5, 1)) + 
+    labs(x = "Time", y = "Share of Passengers")
+  
+  ggsave(output, units = "in", width = 7, height = 5)
+}
 
 carrier_group_ridership <- function(){
   t100 <- as.data.table(readRDS("02.Intermediate/Compile_T100.Rds"))
@@ -608,4 +722,28 @@ correlation_matrix <- function(data_in = "02.Intermediate/Product_Data.rds"){
                                MktMilesSq_DestinationHub, NonStop_DestinationHub)]), type= "upper")
   
   corrplot(cor(product_data[,.()], method = "pearson"), type = "upper")
+}
+
+spirit_revenue_sources_over_time <- function(input = "01.Input/22.FinancialFilings/Summarized_Spirit_Revenue.csv",
+                                             output = "05.Figures/Spirit_Revenue_Sources.pdf"){
+  revenue <- fread(input)
+  revenue$V1 <- NULL
+  
+  revenue.melt <- melt(revenue,
+                       id.vars = "Year")
+  revenue.melt$Source <- factor(x = revenue.melt$variable,
+                                  levels = c("Non_Ticket_Revenue_Per_Segment", 
+                                             "Fare_Revenue_Per_Segment"),
+                                  labels = c("Non-Fare",
+                                             "Fare"))
+
+  ggplot(data = revenue.melt, aes(x = Year, y = value, fill = Source)) + 
+    geom_col(position = "dodge") + scale_fill_manual(values = c("grey", "black")) +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") + labs(x = "Year", y = "Revenue (Nominal USD)") +
+    scale_y_continuous(expand = c(0, 0), limits = c(0, 115))
+  
+  ggsave(output, units = "in", height = 3, width = 5)
 }
