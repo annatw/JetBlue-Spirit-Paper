@@ -707,18 +707,7 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
 			{\footnotesize Data is sourced from the Department of Transportation regulatory filing regarding the JetBlue-Spirit merger  (DOT-OST-2023-0024). Comments have the stance with the highest probability assigned to them.} 
 		\end{minipage}
 	\end{figure}
-	
-	
-	\FloatBarrier
-	\pagebreak
-	\section{Additional Figures and Tables}	
-    \setcounter{table}{0}
-    \setcounter{figure}{0}
-	\FloatBarrier
-	
-\FloatBarrier
-    \subsection{Additional Merger Figures}
-    
+	    
 
     \pagebreak 
 
@@ -817,10 +806,13 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
             \include{06.Tables/NestedLogit_MinimumFareChange}
         \end{center}
         \vspace{-5mm}
-        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars. Corresponding results for demand estimated using a random coefficient nested logit model are included as Table \ref{tab:Simulation_Price} within the main text.}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobservables. Prices are in 2017 dollars. Corresponding results for demand estimated using a random coefficient nested logit model are included as Table \ref{tab:Simulation_Price} within the main text.}
     \end{table}    
 \FloatBarrier
-    
+
+    \subsection{Spirit Auxiliary Fees Adjustment}
+
+    Within this section, I analyze the robustness of my results to two adjustments to Spirit's fares which intend to proxy for the true prices paid by its travelers. As part of this, I use Spirit's recorded average ``non-ticket revenue per passenger-segment" from its annual 10-K financial filings, or $NTR$. In the first, I estimate the final price paid for itinerary $i$ in year $y$ $\hat{P}_{iy}$, with the formula \[\hat{P}_{iy} = P_{iy} + NTR_{y} * L_{iy}\] where $L$ is the number of flights as part of the itinerary. As such, this assumes that each product has the same additional cost applied to it. In the second specification, I estimate the final price paid as \[\hat{P}_{iy} = P_{iy} + NTR_{y} * \frac{P_{iy}}{\bar{P}_{y}}\] where $\bar{P}_{y}$ is Spirit's reported average ``fare revenue per passenger-segment" from the 10-K filing for the financial year ending in $y$. This specification assumes that the auxiliary fees are higher on relatively more expensive product offerings offered by Spirit.
 \end{appendices}
 	
 \end{document}
