@@ -83,7 +83,7 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 	
 	Non-legacy airlines are divided into two groups: low-cost carriers and ultra-low-cost carriers. Low-cost carriers include Southwest and JetBlue, while the ultra-low-cost carriers are comprised of Spirit, Allegiant, and Frontier.\footnote{Alaska Airlines and Hawaiian Airlines are larger carriers with a regional focus. They operate a model closer to legacy carriers than that of low-cost carriers. Furthermore, there exist several smaller, more regional-focused low-cost carriers, such as Sun Country, that represent fringe supply within the industry. Later analyses within this paper treat products from these airlines as if they were offered by a single ``other" airline.} Low-cost carriers and ultra-low-cost carriers use route structures that are less centralized than those of legacy carriers (eschewing the use of hub airports) and more concentrated on serving the largest air travel markets. As such, more of these firms' customers fly on direct itineraries than customers of legacy carriers. This alternative route structure allows these carriers to avoid expenditures relating to the operation of hub airports and additional plane models. As such, fares for low-cost and ultra-low-cost carriers are typically lower than those for competing products offered by legacy carriers.
 
-	Ultra-low-cost carriers are distinguished from low-cost carriers through the practice of ``unbundling," wherein base ticket prices are lower but amenities traditionally included are additional purchases. While Ryanair in Europe has operated under this model since the 1990s, a United States firm would not successfully adopt the strategy until Spirit introduced fees for checked baggage in 2010 \citep{bachwich_emergence_2017}. While complaints regarding the quality of these airlines are well documented in consumer surveys and the press \citep{vasel_spirit_2016, elliott_jetblue_2022}, these airlines have managed a degree of success by targeting highly budget-conscious travelers who do not wish to pay more expensive fares. By the later part of the 2010s, trips on ultra-low-cost carriers represented over a tenth of total air travel within the United States.  Despite this growth, the industry is still dominated by the ``big four" carriers - the three legacy carriers who along with Southwest comprise approximately three-quarters of the overall passenger trips within the United States. 
+	Ultra-low-cost carriers are distinguished from low-cost carriers through the practice of ``unbundling," wherein base ticket prices are lower but amenities traditionally included within the price of a ticket are additional purchases. While Ryanair in Europe has operated under this model since the 1990s, a United States firm would not successfully adopt the strategy until Spirit introduced fees for checked baggage in 2010 \citep{bachwich_emergence_2017}. The total revenue derived from these fees is immense, and have come to represent about an even share of Spirit's revenue as the base ticket prices (Figure \ref{fig:Spirit_Revenue_Sources}). While complaints regarding the quality of these airlines are well documented in consumer surveys and the press \citep{vasel_spirit_2016, elliott_jetblue_2022}, these airlines have managed a degree of success by targeting highly budget-conscious travelers who do not wish to pay more expensive fares. By the later part of the 2010s, trips on ultra-low-cost carriers represented over a tenth of total air travel within the United States.  Despite this growth, the industry is still dominated by the ``big four" carriers - the three legacy carriers who along with Southwest comprise approximately three-quarters of the overall passenger trips within the United States. 
 
     Spirit rapidly grew within the post-recession domestic aviation landscape following its adoption of the ultra-low-cost carrier model. As documented in Figure \ref{fig:Both_fleet}, Spirit grew its fleet from under 50 planes before adopting the ultra-low-cost model to nearly 200 planes by 2022. As part of this expansion in operations, Spirit increasingly competed against JetBlue (Figure \ref{fig:JBSpirit_Airports_2022}). This trend is especially notable as very few markets have historically had multiple low-cost carriers operating within them \citep{kwoka_fringe_2016, ciliberto_market_2021}. However, in recent years, there are approximately a third as many markets with multiple low-cost carriers operating within them as there are markets with only a single low-cost carrier (Figure \ref{fig:LCC_Distribution}). Presently, both firms primarily operate in airports situated along the eastern seaboard of the United States in addition to Las Vegas and major cities in Texas and California.
 
@@ -316,10 +316,8 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 
 \begin{figure}[h]
 \caption{Spirit Revenue Sources Over Time}
-\label{fig:Spirit_Revenue}
-\begin{center}
+\label{fig:Spirit_Revenue_Sources}
     \includegraphics[width = \linewidth]{05.Figures/Spirit_Revenue_Sources.pdf}
-\end{center}
 \footnotesize{Source: Spirit Airlines 10-K Filings. Values are average revenue per passenger flight segment in nominal dollars. }
 \end{figure}
 
@@ -814,7 +812,38 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
     Within this section, I analyze the robustness of my results to two adjustments to Spirit's fares which intend to proxy for the true prices paid by its travelers. As part of this, I use Spirit's recorded average ``non-ticket revenue per passenger-segment" from its annual 10-K financial filings, or $NTR$. In the first, I estimate the final price paid for itinerary $i$ in year $y$ $\hat{P}_{iy}$, with the formula \[\hat{P}_{iy} = P_{iy} + NTR_{y} * L_{iy}\] where $L$ is the number of flights as part of the itinerary. As such, this assumes that each product has the same additional cost applied to it. In the second specification, I estimate the final price paid as \[\hat{P}_{iy} = P_{iy} + NTR_{y} * \frac{P_{iy}}{\bar{P}_{y}}\] where $\bar{P}_{y}$ is Spirit's reported average ``fare revenue per passenger-segment" from the 10-K filing for the financial year ending in $y$. This specification assumes that the auxiliary fees are higher on relatively more expensive product offerings offered by Spirit.
 
     \begin{table}
-        \caption{Demand Estimation Results - Uniform Auxillary Fee Fix}
+        \caption{Demand Estimation Results - Uniform Fee Fix}
+        \label{tab:Demand_Aux_Adjust}
+        \begin{center}
+        \include{06.Tables/Auxilary_Adjust_RCL_Both_Period_Output}
+        \end{center}
+    \end{table}
+
+    \begin{table}
+        \caption{Simulated Price Effects of Merger - Uniform Fee Fix}
+        \label{tab:Simulation_Price_Aux_Adjust}
+                \vspace{-15mm}
+        \begin{center}
+        \include{06.Tables/Auxilary_Adjust_Merger_Results}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded.}
+
+     \end{table}
+
+    \begin{table}
+        \caption{Change in Minimum Fare - Uniform Fee Fix (2017 USD)}
+        \label{tab:MinimumPrice_Aux_Adjust}
+                \vspace{-15mm}
+        \begin{center}
+\include{06.Tables/Auxilary_Adjust_MinimumFareChange}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars.}
+    \end{table}    
+
+
+           \caption{Demand Estimation Results - Uniform Auxillary Fee Fix}
 
         \begin{center}
         
