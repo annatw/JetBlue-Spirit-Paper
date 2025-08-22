@@ -58,6 +58,8 @@ source("04.Code/Summary_Helper_Functions.R")
 source("04.Code/Merger_Anticipatory_Effects.R")
 source("04.Code/SummaryGraphs.R")
 source("04.Code/Simulation_Robustness.R")
+source("04.Code/Merger_Simulation_Bootstrap.R")
+source("04.Code/Verbal_Descriptive_Functions.R")
 
 # Load In Needed Python Package
 # Set HiPerGator Path
@@ -150,7 +152,7 @@ identify_large_airports(input = "02.Intermediate/Construct_DB1B/DB1B_Clarified.R
               output = "03.Output/Large_Airports.csv")
 add_control_variables(input = "02.Intermediate/Construct_DB1B/DB1B_Condensed.rds",
                       output = "02.Intermediate/DB1B_With_Controls.Rds"); gc();
-  airport_service_ratios(input = "02.Intermediate/Construct_DB1B/DB1B_Clarified.Rds",
+airport_service_ratios(input = "02.Intermediate/Construct_DB1B/DB1B_Clarified.Rds",
                        output = "02.Intermediate/Merger_Service_Ratios.Rds",
                        merger = TRUE)
 
@@ -165,9 +167,11 @@ db1b_graphics(); gc()
 # overlap_graphs(); gc();
 firm_revenue_graphs(); gc();
 carrier_shares_graph(); 
+graph_ticket_offerings()
+graph_direct_ridership();
 ```
 
-# Descriptive Findings generate_airport_shares(); gc(); gc(); 
+# Descriptive Findings 
 ```{r}
 determine_market_firm_counts()
 markets_by_hhi_increase_table()
@@ -176,8 +180,15 @@ spirit_jetblue_overlap_cities()
 oil_compare_graph()
 lcc_in_market_graph()
 legacy_southwest_other_graph()
+spirit_revenue_sources_over_time()
 
 ```
+
+# Descriptive Figures to be Reported in Text
+```{r}
+spirit_jetblue_near_markets_share()
+```
+
 
 # Stance Detection Related Analyses
 ```{r}
@@ -313,14 +324,6 @@ change_minimum_fare_dist(merger_data = "03.Output/PrePandemic_Adv_Merger_Sim_Dat
 merger_results_table_10_efficiency()
 merger_results_table_5_efficiency()
 
-# Bankruptcy Simulation
-bankruptcy_simulation()
-bankruptcy_simulation(model_in = "03.Output/prepandemic_random_coeff_nested_logit.pickle",
-    data_in = "02.Intermediate/prepandemic.rds",
-    data_out = "03.Output/PrePandemic_Bankruptcy_Sim_Data.rds",
-    linear = pyblp$Formulation('0 + prices + NonStop + MktMilesFlown + I(MktMilesFlown**2) + Origin_Firm_Service_Ratio + Extra_Miles + Extra_Miles_Sq + Tourism + C(Year_Quarter_Effect) + C(Carrier)'),
-    nonlinear = pyblp$Formulation("0 + prices + NonStop + MktMilesFlown"),
-                                  mode = "rcl")
 ```
 
 # Spirit Exit Simulation
@@ -463,8 +466,196 @@ rcl_two_period_table(
 
 ```
 
-# Robustness - How Well Does My Model Predict Existing Shares, Prices?
+# Robustness Check - One Layover or Fewer
 ```{r}
-estimate_fare_simulation()
+condense_db1b(input = "02.Intermediate/Construct_DB1B/DB1B_Clarified.Rds",
+              output = "02.Intermediate/Construct_DB1B/Layover_Robustness_DB1B_Condensed.rds",
+              High_Legs_Cutoff = 3); gc(); gc()
+add_control_variables(input = "02.Intermediate/Construct_DB1B/Layover_Robustness_DB1B_Condensed.rds",
+                      output = "02.Intermediate/Layover_Robustness_DB1B_With_Controls.Rds"); gc(); gc()
+merger_sim_data_generate(years_allowed = 2021:2023,
+                         input_file = "02.Intermediate/Layover_Robustness_DB1B_With_Controls.Rds",
+                         output_file = "02.Intermediate/Layover_Robustness_Product_Data.rds")
+merger_sim_data_generate(years_allowed = 2017:2019,
+                          input_file = "02.Intermediate/Layover_Robustness_DB1B_With_Controls.Rds",
+                         output_file = "02.Intermediate/Layover_Robustness_Prepandemic_Product_Data.rds")
+
+# Instrument Comparison Tables
+instrument_comparison_table(input_file = "02.Intermediate/Layover_Robustness_Product_Data.rds",
+                            output_file = "06.Tables/Layover_Robustness_postpandemic_InstrumentTable.tex")
+instrument_comparison_table(input_file = "02.Intermediate/Layover_Robustness_Prepandemic_Product_Data.rds",
+                            output_file = "06.Tables/Layover_Robustness_prepandemic_InstrumentTable.tex")
+
+# Fit Demand Model
+blp_rcl(additional_instruments = c(hub_interactions, exog_interactions,
+                                        rho_instrument), 
+        linear = linear_component_rcl,
+        nonlinear = nonlinear_component, nested = TRUE,
+        input_file = "02.Intermediate/Layover_Robustness_Product_Data.rds",
+        output_file = "03.Output/Layover_Robustness_random_coeff_nested_logit_results.pickle",
+        precision = 1e-15); 
+blp_rcl(additional_instruments = c(hub_interactions, exog_interactions,
+                                        rho_instrument), 
+        input_file = "02.Intermediate/Layover_Robustness_Prepandemic_Product_Data.rds",
+        linear = linear_component_rcl,
+        nonlinear = nonlinear_component, 
+        nested = TRUE, precision = 1e-15,
+        output_file = "03.Output/Layover_Robustness_prepandemic_random_coeff_nested_logit.pickle")
+
+# Report Results
+rcl_two_period_table(post_in = "03.Output/Layover_Robustness_random_coeff_nested_logit_results.pickle",
+                                 post_data_in = "02.Intermediate/Layover_Robustness_Product_Data.rds",
+                                 pre_in = "03.Output/Layover_Robustness_prepandemic_random_coeff_nested_logit.pickle",
+                                 pre_data_in = "02.Intermediate/Layover_Robustness_Prepandemic_Product_Data.rds",
+                                 output_table = "06.Tables/Layover_Robustness_RCL_Both_Period_Output.tex")
+
+```
+
+# Robustness Check: Add Spirit Average Aux Revenue to Each Spirit Ticket
+```{r}
+condense_db1b(input = "02.Intermediate/Construct_DB1B/DB1B_Clarified.Rds",
+              output = "02.Intermediate/Construct_DB1B/Auxilary_Adjust_DB1B_Condensed.rds",
+              auxilary_mode = "report")
+add_control_variables(input = "02.Intermediate/Construct_DB1B/Auxilary_Adjust_DB1B_Condensed.rds",
+                      output = "02.Intermediate/Auxilary_Adjust_DB1B.Rds"); gc()
+
+# # Merger Sim Generate # #
+merger_sim_data_generate(years_allowed = 2021:2023,
+                         input_file = "02.Intermediate/Auxilary_Adjust_DB1B.Rds",
+                         output_file = "02.Intermediate/Auxilary_Adjust_postpandemic.rds")
+
+
+# Pre-Pandemic
+merger_sim_data_generate(years_allowed = 2017:2019,
+                         input_file = "02.Intermediate/Auxilary_Adjust_DB1B.Rds",
+                         output_file = "02.Intermediate/Auxilary_Adjust_prepandemic.rds")
+
+# Instrument Tables
+instrument_comparison_table(input_file = "02.Intermediate/Auxilary_Adjust_postpandemic.rds",
+      output_file = "06.Tables/Auxilary_Adjust_Instrument_Compare_Table.tex")
+instrument_comparison_table(input_file = "02.Intermediate/Auxilary_Adjust_prepandemic.rds",
+      output_file = "06.Tables/Auxilary_Adjust_Prepandemic_Instrument_Compare_Table.tex")
+
+# Estimate Models
+blp_rcl(additional_instruments = c(hub_interactions, exog_interactions,
+                                        rho_instrument), 
+        linear = linear_component_rcl,
+        nonlinear = nonlinear_component, nested = TRUE,
+        input_file = "02.Intermediate/Auxilary_Adjust_postpandemic.rds",
+        output_file = "03.Output/Auxilary_Adjust_postpandemic_model.pickle",
+        precision = 1e-15); 
+blp_rcl(additional_instruments = c(hub_interactions, exog_interactions,
+                                        rho_instrument), 
+        linear = linear_component_rcl,
+        nonlinear = nonlinear_component, nested = TRUE,
+        input_file = "02.Intermediate/Auxilary_Adjust_prepandemic.rds",
+        output_file = "03.Output/Auxilary_Adjust_prepandemic_model.pickle",
+        precision = 1e-15)
+
+rcl_two_period_table(post_in = "03.Output/Auxilary_Adjust_postpandemic_model.pickle",
+                                 post_data_in = "02.Intermediate/Auxilary_Adjust_postpandemic.rds",
+                                 pre_in = "03.Output/Auxilary_Adjust_prepandemic_model.pickle",
+                                 pre_data_in = "02.Intermediate/Auxilary_Adjust_prepandemic.rds",
+                                 output_table = "06.Tables/Auxilary_Adjust_RCL_Both_Period_Output.tex")
+
+# Merger Simulation
+merger_simulation_advanced(model_in = "03.Output/Auxilary_Adjust_prepandemic_model.pickle",
+                           data_in = "02.Intermediate/Auxilary_Adjust_prepandemic.rds",
+                           data_out = "03.Output/Auxilary_Adjust_Prepandemic_Merger.rds"); gc(); gc(); 
+merger_simulation_advanced(model_in = "03.Output/Auxilary_Adjust_postpandemic_model.pickle",
+                           data_in = "02.Intermediate/Auxilary_Adjust_postpandemic.rds",
+                           data_out = "03.Output/Auxilary_Adjust_Postpandemic_Merger.rds"); gc(); gc()
+
+merger_results_table(merger_post  = "03.Output/Auxilary_Adjust_Postpandemic_Merger.rds",
+                     observed_post = "02.Intermediate/Auxilary_Adjust_postpandemic.rds",
+                     merger_pre =  "03.Output/Auxilary_Adjust_Prepandemic_Merger.rds",
+                     observed_pre = "02.Intermediate/Auxilary_Adjust_prepandemic.rds",
+                     table_out = "06.Tables/Auxilary_Adjust_Merger_Results.tex")
+
+
+minimum_fare_increase_table(
+  merger_data.post = "03.Output/Auxilary_Adjust_Postpandemic_Merger.rds",
+  observed.post = "02.Intermediate/Auxilary_Adjust_postpandemic.rds",
+  merger_data.pre =  "03.Output/Auxilary_Adjust_Prepandemic_Merger.rds",
+  observed.pre = "02.Intermediate/Auxilary_Adjust_prepandemic.rds",
+  table_out = "06.Tables/Auxilary_Adjust_MinimumFareChange.tex")
+
+
+```
+
+# Robustness Check - Scale Auxilary Fares Added In
+```{r}
+condense_db1b(input = "02.Intermediate/Construct_DB1B/DB1B_Clarified.Rds",
+              output = "02.Intermediate/Construct_DB1B/Auxilary_Scale_DB1B_Condensed.rds",
+              auxilary_mode = "scale")
+add_control_variables(input = "02.Intermediate/Construct_DB1B/Auxilary_Scale_DB1B_Condensed.rds",
+                      output = "02.Intermediate/Auxilary_Scale_DB1B.Rds"); gc()
+
+# # Merger Sim Generate # #
+merger_sim_data_generate(years_allowed = 2021:2023,
+                         input_file = "02.Intermediate/Auxilary_Scale_DB1B.Rds",
+                         output_file = "02.Intermediate/Auxilary_Scale_postpandemic.rds")
+
+
+# Pre-Pandemic
+merger_sim_data_generate(years_allowed = 2017:2019,
+                         input_file = "02.Intermediate/Auxilary_Scale_DB1B.Rds",
+                         output_file = "02.Intermediate/Auxilary_Scale_prepandemic.rds")
+
+
+# Instrument Tables
+instrument_comparison_table(input_file = "02.Intermediate/Auxilary_Scale_postpandemic.rds",
+      output_file = "06.Tables/Auxilary_Scale_Instrument_Compare_Table.tex")
+instrument_comparison_table(input_file = "02.Intermediate/Auxilary_Scale_prepandemic.rds",
+      output_file = "06.Tables/Auxilary_Scale_Prepandemic_Instrument_Compare_Table.tex")
+
+
+# Estimate Models
+blp_rcl(additional_instruments = c(hub_interactions, exog_interactions,
+                                        rho_instrument), 
+        linear = linear_component_rcl,
+        nonlinear = nonlinear_component, nested = TRUE,
+        input_file = "02.Intermediate/Auxilary_Scale_postpandemic.rds",
+        output_file = "03.Output/Auxilary_Scale_postpandemic_model.pickle",
+        precision = 1e-15); 
+blp_rcl(additional_instruments = c(hub_interactions, exog_interactions,
+                                        rho_instrument), 
+        linear = linear_component_rcl,
+        nonlinear = nonlinear_component, nested = TRUE,
+        input_file = "02.Intermediate/Auxilary_Scale_prepandemic.rds",
+        output_file = "03.Output/Auxilary_Scale_prepandemic_model.pickle",
+        precision = 1e-15)
+
+rcl_two_period_table(post_in = "03.Output/Auxilary_Scale_postpandemic_model.pickle",
+                                 post_data_in = "02.Intermediate/Auxilary_Scale_postpandemic.rds",
+                                 pre_in = "03.Output/Auxilary_Scale_prepandemic_model.pickle",
+                                 pre_data_in = "02.Intermediate/Auxilary_Scale_prepandemic.rds",
+                                 output_table = "06.Tables/Auxilary_Scale_RCL_Both_Period_Output.tex")
+
+# Merger Simulation 
+
+merger_simulation_advanced(model_in = "03.Output/Auxilary_Scale_prepandemic_model.pickle",
+                           data_in = "02.Intermediate/Auxilary_Scale_prepandemic.rds",
+                           data_out = "03.Output/Auxilary_Scale_Prepandemic_Merger.rds"); gc(); gc(); 
+
+merger_simulation_advanced(model_in = "03.Output/Auxilary_Scale_postpandemic_model.pickle",
+                           data_in = "02.Intermediate/Auxilary_Scale_postpandemic.rds",
+                           data_out = "03.Output/Auxilary_Scale_Postpandemic_Merger.rds"); gc(); gc()
+# Output Tables
+merger_results_table(merger_post  = "03.Output/Auxilary_Scale_Postpandemic_Merger.rds",
+                     observed_post = "02.Intermediate/Auxilary_Scale_postpandemic.rds",
+                     merger_pre =  "03.Output/Auxilary_Scale_Prepandemic_Merger.rds",
+                     observed_pre = "02.Intermediate/Auxilary_Scale_prepandemic.rds",
+                     table_out = "06.Tables/Auxilary_Scale_Merger_Results.tex")
+
+
+minimum_fare_increase_table(
+  merger_data.post = "03.Output/Auxilary_Scale_Postpandemic_Merger.rds",
+  observed.post = "02.Intermediate/Auxilary_Scale_postpandemic.rds",
+  merger_data.pre =  "03.Output/Auxilary_Scale_Prepandemic_Merger.rds",
+  observed.pre = "02.Intermediate/Auxilary_Scale_prepandemic.rds",
+  table_out = "06.Tables/Auxilary_Scale_MinimumFareChange.tex")
+
+
 ```
 

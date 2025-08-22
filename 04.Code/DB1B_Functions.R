@@ -273,7 +273,10 @@ condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000,
       DB1B$Spirit_Adjust <- NULL
     } else if (auxilary_mode == "scale") {
       colnames(spirit_reported_revenue) <- c("Year", "Spirit_Adjust", "Spirit_Fare_Avg")
+      DB1B <- merge(DB1B, spirit_reported_revenue, by = "Year")
+      
       DB1B[Carrier == "Spirit Air Lines", MktFare := MktFare + (Spirit_Adjust * MktFare / (MktCoupons * Spirit_Fare_Avg)) * MktCoupons]
+      
       DB1B$Spirit_Adjust <- NULL
       DB1B$Spirit_Fare_Avg <- NULL
     }

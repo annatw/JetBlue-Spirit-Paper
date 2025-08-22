@@ -252,7 +252,7 @@ minimum_fare_increase_table <- function(merger_data.post = "03.Output/Adv_Merger
                                         observed.pre = "02.Intermediate/prepandemic.rds",
                                         table_out = "06.Tables/MinimumFareChange.tex",
                                         mode = 0){
-  period_table_make <- function(real, merger){
+  period_table_make <- function(real, merger, mode){
     real <- readRDS(real); merger <- readRDS(merger)
     
     real[, Spirit_Prescence := max(Spirit_Prescence), by = c("Year", "Quarter", "Origin",
@@ -294,32 +294,42 @@ minimum_fare_increase_table <- function(merger_data.post = "03.Output/Adv_Merger
     out[, Average := round(100*(Avg.Min - Prices.Real), digits = 2)]
     out[, Worst := round(100*(Worst.Min - Prices.Real), digits = 2)]
     
+    # Group fare increases into $20 increment categories
+    buckets <- c("$<$ 0", "0-20", "20-40", "40-60",
+                 "60-80", "80 $<$")
+    break_points <- c(-Inf, 0, 20, 40, 60, 80, Inf)
     out[, bucket.Best := cut(Best,
-                             breaks = c(-Inf, 0, 20, 40, 60, 80, Inf),
-                             labels = c("$<$ 0", "0-20", "20-40", "40-60",
-                                        "60-80", "80 $<$"))]
+                             breaks = break_points,
+                             labels = buckets)]
     out[, bucket.Average := cut(Average,
-                                breaks = c(-Inf, 0, 20, 40, 60, 80, Inf),
-                                labels = c("$<$ 0", "0-20", "20-40", "40-60",
-                                           "60-80", "80 $<$"))]
+                                breaks = break_points,
+                                labels = buckets)]
     out[, bucket.Worst := cut(Worst,
-                              breaks = c(-Inf, 0, 20, 40, 60, 80, Inf),
-                              labels = c("$<$ 0", "0-20", "20-40", "40-60",
-                                         "60-80", "80 $<$"))]
+                              breaks = break_points,
+                              labels = buckets)]
     best <- out[, .N, by = bucket.Best]; average <- out[, .N, by = bucket.Average];
     worst <- out[, .N, by = bucket.Worst]
     
     colnames(best) <- c("Bucket", "Best"); colnames(average) <- c("Bucket", "Average");
     colnames(worst) <- c("Bucket", "Worst")
     
-    out <- merge(best, average, by = "Bucket")
-    out <- merge(out, worst, by = "Bucket")
+    out <- merge(best, average, by = "Bucket", all = TRUE)
+    out <- merge(out, worst, by = "Bucket", all = TRUE)
+    
+    #Re-Order Rows, Fix Missing Rows
+    re_order_frame <- data.table(Bucket = buckets, Val = rep(0, times = length(buckets)))
+    out <- merge(re_order_frame, out, all.x = TRUE, all.y = TRUE)
+    out$Val <- NULL
+    
+    # Correct Any NA Values created by Merging to be 0's
+    col_correct <- c("Best", "Average", "Worst")
+    setDT(out)[, (col_correct) := lapply(.SD, replace_na, 0), .SDcols = col_correct]
     
     return(out)
   }
   
-  postPandemic <- period_table_make(real = observed.post, merger = merger_data.post)
-  prePandemic <- period_table_make(real = observed.pre, merger = merger_data.pre)
+  postPandemic <- period_table_make(real = observed.post, merger = merger_data.post, mode)
+  prePandemic <- period_table_make(real = observed.pre, merger = merger_data.pre, mode)
   
   colnames(postPandemic) <- c("Bucket", paste("Post.", colnames(postPandemic)[2:4], sep = ""))
   colnames(prePandemic) <- c("Bucket", paste("Pre.", colnames(prePandemic)[2:4], sep = ""))
