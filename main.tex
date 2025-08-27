@@ -265,13 +265,20 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 
     Now, I return to the issue of consumer welfare and the ancillary fees charged by Spirit as part of its unbundled fares. Figure \ref{fig:Spirit_Revenue_Sources} graphs the annual average passenger-segment earnings of Spirit's from fare and non-fare sources. From 2018 to the present, the average passenger-segment resulted in Spirit earning more revenue from non-fare sources than from the base fare. Furthermore, as noted in \citep{senate_permanent_committee_on_investigations_majority_2024}, the ancillary fees are algorithmically determined and change between markets and over time. As such, adjusting the price of the recorded fares in the data by simply adding the average annual ancillary fees to the recorded data is liable to induce bias into my calculations by overstating fees charged in more competitive markets and understating fees charged in less competitive markets. 
 
-    I now estimate the final price paid for Spirit itinerary $i$ in year $y$, $\hat{P}_{iy} $ as \begin{equation}
-        \hat{P}_{iy} = P_{iy} + NTR_{y} * \frac{P_{iy}}{\bar{P}_{y}}
-    \end{equation} where $\bar{P}_{y}$ is the reported fare paid for the itinerary in the DB1B, and $NTR_{y}$ is Spirit's reported average ``non-ticket revenue per passenger-segment" for year $y$ and $\bar{P}_{iy}$ is Spirit's reported average``fare revenue per passenger-segment" from the 10-K filing for the financial year ending in $y$. Within this calculation, I assume that customers paying for more expensive base-fares additionally pay for more ancillary fees on average. This could reflect either the competitive environment for travel within these markets or these customers having a greater willingness to pay than travelers purchasing less expensive base fares. 
+    Instead, I now estimate the final price paid for Spirit products by adding a term created by scaling the recorded non-fare revenue proportionally to the ratio of itinerary passenger-segment revenue to Spirit's fare passenger-segment revenue recorded in its annual financial filings. For Spirit itinerary $i$ in year $y$, $\hat{P}_{iy} $ as \begin{equation}
+    \begin{split}
+      P_{iy}' &= P_{iy} - 22.99 * I[y > 2020] * S_{i}\\
+     \hat{P}_{iy} &= P_{iy}' + NTR_{y} * \frac{\frac{P_{iy}'}{S_{i}}}{\bar{P}_{y}} * S_{i}
+    \end{split}
+    \end{equation} where ${P}_{iy}$ is the reported fare paid for the itinerary in the DB1B, $S_{i}$ is the number of legs of the trip, $I[y > 2020]$ is a dummy variable which is $1$ if the year is after 2020, $NTR_{y}$ is Spirit's reported average ``non-ticket revenue per passenger-segment" for year $y$, and $\bar{P}_{y}$ is Spirit's reported average``fare revenue per passenger-segment" from the 10-K filing for the financial year ending in $y$.\footnote{For ease of understanding of this estimation, I include the $S_{i}$ terms explicitly in the second equation despite them not being present in a simplified version of the second term. This is done to make explicit that I am scaling the average non-ticket revenue by the per-segment fare recorded in the DB1B. } The first equation serves to remove the online booking fees charged by Spirit from the recorded fare in the DB1B which were required to be included for submissions after the year 2020. Within this calculation, I assume that customers paying for more expensive base-fares additionally pay for more ancillary fees on average. This could reflect either the competitive environment for travel within these markets or these customers having a greater willingness to pay than travelers purchasing less expensive base fares. 
 
     Using these estimated prices, I then re-estimate my model of demand and supply. The results for this estimation are included within table \ref{tab:Demand_Aux_Scale}. The estimated demand model has coefficients following the same pattern as the model estimated in section \ref{sec:Analysis_Demand}. However, as Spirit's prices have been increased, the estimated own-price elasticity of Spirit's products are larger than in the previous estimation. 
 
-    Notably, as Spirit's prices are greater than in the earlier estimation, the use of Bertrand competition with differentiated products as my model of supply within the industry causes the estimated marginal costs of Spirit's products to increase as the shares of Spirit's products have not changed. These changes are graphed in percentage terms in Figures \ref{fig:}
+    Notably, as Spirit's prices are greater than in the earlier estimation, the use of Bertrand competition with differentiated products as my model of supply within the industry causes the estimated marginal costs of Spirit's products to increase as the shares of Spirit's products have not changed. These changes are graphed in percentage terms in Figures  \ref{tab:Fee_Fix_prepandemic_MC_PercentChange} and    \ref{tab:Fee_Fix_postpandemic_MC_PercentChange}.
+
+
+
+    % Limitation of Methodology - DB1B & Financial Statements Record Different Values
     
 	\section{Conclusion}
 	\label{sec:Conclusion}
@@ -595,7 +602,7 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
 
     \begin{figure}
         \caption{Change in Estimated Marginal Cost (Percent, Pre-Pandemic)}
-        \label{tab:Fee_Fix_MC_PercentChange}
+        \label{tab:Fee_Fix_prepandemic_MC_PercentChange}
         \includegraphics[width = \linewidth]{Fee_Fix_prepandemic_MC_Graph_Percent_JBMarket.pdf}
         \footnotesize{For each Spirit product offered in a post-pandemic market that JetBlue competed against Spirit within, this figure records the change in the estimated marginal cost between the model using the reported fares from the DB1B and the model using the adjusted fares to attempt to capture the impact of ancillary fees on Spirit's total prices.}
     \end{figure}
