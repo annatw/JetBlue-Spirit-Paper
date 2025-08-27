@@ -23,14 +23,14 @@ lcc_market_graph <- function(post_pandemic_in = "02.Intermediate/Product_Data.rd
     geom_bar() + 
     scale_y_continuous(expand = c(0,0),
                        labels = comma,
-                       limits = c(0, 48000)) +
-    facet_grid(rows = "Period") +
+                       limits = c(0, 90000)) +
+    # facet_grid(~Period) +
     theme(panel.background = element_blank(), 
           axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           legend.position = "bottom") +
     labs(x = "Low-Cost & Ultra-Low Cost Carriers in Market",
-         y = "Occurences")
+         y = "Markets")
   
-  ggsave(output, units = "in", width = 7, height = 4)
+  ggsave(output, units = "in", width = 7, height = 3)
 }

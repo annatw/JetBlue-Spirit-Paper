@@ -63,7 +63,7 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
                        labels = comma)
     
   ggsave(filename = graph_out.BestCase, 
-         units = "in", width = 5, height = 3)
+         units = "in", width = 7, height = 3)
   
   ggplot(data = average_case, aes(x = value)) + 
     geom_histogram(binwidth = 10, 
@@ -78,7 +78,7 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
                        labels = comma)
   
   ggsave(filename = graph_out.AverageCase, 
-         units = "in", width = 5, height = 3)
+         units = "in", width = 7, height = 3)
   
   ggplot(data = worst_case, aes(x = value)) + 
     geom_histogram(binwidth = 10, 
@@ -93,7 +93,7 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
                        labels = comma)
   
   ggsave(filename = graph_out.WorstCase, 
-         units = "in", width = 5, height = 3)
+         units = "in", width = 7, height = 3)
   
   ggplot(data = result_internalized, aes(x = Difference)) + 
     geom_histogram(binwidth = 10, 
@@ -108,7 +108,7 @@ change_minimum_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
                        labels = comma)
   
   ggsave(filename = graph_out.internalize, 
-         units = "in", width = 5, height = 3)
+         units = "in", width = 7, height = 3)
   
   # Now, three panel graph
   result.melt <- result.melt[variable %in% c("Low Cost Merge", "Mean Cost Merge",  "High Cost Merge"),]
@@ -270,7 +270,7 @@ merger_change_pass_graph <- function(merger_data = "03.Output/Adv_Merger_Sim_Dat
     scale_y_continuous(expand = c(0,0),
                        labels = comma) +
     scale_x_continuous(limits = c(-100000, 100000))
-  ggsave(graph_out.bestCase, units = "in", height = 3, width = 5)
+  ggsave(graph_out.bestCase, units = "in", height = 3, width = 7)
   
   ggplot(data = merged.melt[variable == "Change Mean Cost",], aes(x = value)) +
     geom_histogram(binwidth = 500) +
@@ -282,7 +282,7 @@ merger_change_pass_graph <- function(merger_data = "03.Output/Adv_Merger_Sim_Dat
     scale_y_continuous(expand = c(0,0),
                        labels = comma) +
     scale_x_continuous(limits = c(-100000, 100000))
-  ggsave(graph_out.averageCase, units = "in", height = 3, width = 5)
+  ggsave(graph_out.averageCase, units = "in", height = 3, width = 7)
   
   
   ggplot(data = merged.melt[variable == "Change Max Cost",], aes(x = value)) +
@@ -295,7 +295,7 @@ merger_change_pass_graph <- function(merger_data = "03.Output/Adv_Merger_Sim_Dat
     scale_y_continuous(expand = c(0,0),
                        labels = comma) +
     scale_x_continuous(limits = c(-100000, 100000))
-  ggsave(graph_out.worstCase, units = "in", height = 3, width = 5)
+  ggsave(graph_out.worstCase, units = "in", height = 3, width = 7)
 }
 
 change_average_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_Product_Data.rds",
@@ -366,7 +366,7 @@ change_average_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
   
   
   ggsave(filename = graph_out.BestCase, 
-         units = "in", width = 5, height = 3)
+         units = "in", width = 7, height = 3)
   
   ggplot(data = average_case, aes(x = value)) + 
     geom_histogram(binwidth = 1, 
@@ -382,7 +382,7 @@ change_average_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
     scale_x_continuous(limits = c(-20, 40))
   
   ggsave(filename = graph_out.AverageCase, 
-         units = "in", width = 5, height = 3)
+         units = "in", width = 7, height = 3)
   
   ggplot(data = worst_case, aes(x = value)) + 
     geom_histogram(binwidth = 1, 
@@ -398,7 +398,7 @@ change_average_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
     scale_x_continuous(limits = c(-20, 40))
   
   ggsave(filename = graph_out.WorstCase, 
-         units = "in", width = 5, height = 3)
+         units = "in", width = 7, height = 3)
   
   ggplot(data = result_internalized, aes(x = Difference)) + 
     geom_histogram(binwidth = 1, 
@@ -414,7 +414,7 @@ change_average_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
     scale_x_continuous(limits = c(-20, 40))
   
   ggsave(filename = graph_out.internalize, 
-         units = "in", width = 5, height = 3)
+         units = "in", width = 7, height = 3)
   
 }
 
@@ -474,7 +474,7 @@ change_average_fare_dist <- function(merger_data.adv = "03.Output/Adv_Merger_Sim
                       labels = comma) + facet_wrap(~Simulation, nrow = 2) +
    scale_x_continuous(limits = c(-25, 45))
   
-    ggsave(filename = graph_out.raw, width = 7, height = 4, units = "in")
+    ggsave(filename = graph_out.raw, width = 7, height = 3, units = "in")
  
     # Percent Change
     result.per <- result[, .(market_ids, `Low Cost %`, `Mean Cost %` , `High Cost %`)] %>% unique()
@@ -499,5 +499,5 @@ change_average_fare_dist <- function(merger_data.adv = "03.Output/Adv_Merger_Sim
                          labels = comma) + facet_wrap(~Simulation, nrow = 2) +
       scale_x_continuous(limits = c(-25, 45))
     
-    ggsave(graph_out.percent, units = "in", width = 7, height = 4)
+    ggsave(graph_out.percent, units = "in", width = 7, height = 3)
 }

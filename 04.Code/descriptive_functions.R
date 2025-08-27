@@ -745,5 +745,5 @@ spirit_revenue_sources_over_time <- function(input = "01.Input/22.FinancialFilin
           legend.position = "bottom") + labs(x = "Year", y = "Revenue (Nominal USD)") +
     scale_y_continuous(expand = c(0, 0), limits = c(0, 115))
   
-  ggsave(output, units = "in", height = 3, width = 5)
+  ggsave(output, units = "in", height = 3, width = 7)
 }

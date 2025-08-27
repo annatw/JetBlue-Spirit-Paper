@@ -273,6 +273,10 @@ condense_db1b <- function(input, output, fares_min = 15, fares_max = 2000,
       DB1B$Spirit_Adjust <- NULL
     } else if (auxilary_mode == "scale") {
       colnames(spirit_reported_revenue) <- c("Year", "Spirit_Adjust", "Spirit_Fare_Avg")
+      
+      # FOR TESTING - DOES REMOVING EXPECTED ONLINE BOOKING FEE MATTER?
+      DB1B[Carrier == "Spirit Air Lines" & Year > 2020, MktFare := MktFare - 22.99 * MktCoupons]
+      
       DB1B <- merge(DB1B, spirit_reported_revenue, by = "Year")
       
       DB1B[Carrier == "Spirit Air Lines", MktFare := MktFare + (Spirit_Adjust * MktFare / (MktCoupons * Spirit_Fare_Avg)) * MktCoupons]
