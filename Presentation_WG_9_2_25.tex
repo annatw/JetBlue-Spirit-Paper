@@ -1,0 +1,376 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{lscape}
+\usepackage{graphicx}
+\usepackage{silence}
+\usepackage{forest}
+\usepackage{hyperref}
+\usepackage{placeins}
+\usepackage{xcolor}
+\usepackage{textcomp} % Needed on Windows in Office
+\usepackage{derivative}
+\usepackage[style=apa]{biblatex}
+
+\makeatletter
+\g@addto@macro\normalsize{%
+	\setlength\abovedisplayskip{0pt}
+	\setlength\belowdisplayskip{-0pt}
+}
+
+
+\linespread{1.5}\selectfont
+
+\usepackage[toc,page]{appendix}
+
+
+\let\Oldsubsection\subsection
+\renewcommand{\subsection}{\FloatBarrier\Oldsubsection}
+
+\graphicspath{{05.Figures/}}
+
+\bibliography{airline}
+
+\author{Ann Atwater}
+\institute{University of Florida}
+
+\title{Distributional Effects of Mergers}
+\subtitle{Evidence from the Attempted JetBlue-Spirit Merger}
+\date{September 2, 2025}
+
+\usetheme{Berkeley}
+
+\begin{document}
+	\section{Introduction}
+	\frame{\titlepage}
+    \begin{frame}
+        \frametitle{Motivation}
+        \begin{itemize}
+            \item Horizontal mergers simultaneously possess pro-consumer and anti-consumer aspects.
+            \begin{enumerate}
+                \item Pro-Consumer: Shifting of assets from less productive uses to more productive uses, realization of economies of scale create more effective, competitive firms (\cite{williamson_economies_1968, farrell_horizontal_1990, kaplow_improving_2025})
+                \item Anti-Consumer: Two former rivals operate in a state of perfect collusion, creating lower competition. (\cite{stigler_theory_1964})
+            \end{enumerate}
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Motivation}
+        \begin{itemize}
+        \item As such, horizontal mergers may be good or bad for the overall economy.
+            \item Globally, antitrust regulators focus on consumer welfare to guide merger approval decisions. 
+            \begin{itemize}
+                \item Do the pro-consumer aspects outweigh the anti-consumer forces within a given merger. 
+        \end{itemize}
+        \item In general - mergers of larger firms are presumed anti-competitive.
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Motivation}
+        \begin{itemize}
+            \item Throughout the economy, firms are heterogeneous in their customer bases.
+            \begin{enumerate}
+                \item Consumer Preferences: Vegan, Fast-Food, Steakhouses 
+                \item Consumer Willingness to Pay: Legacy, Low-Cost Carrier, Ultra-Low-Cost Airlines
+            \end{enumerate}
+            \item Latter of these is the focus of this paper. 
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+    \frametitle{Questions}
+        \begin{itemize}
+        \item How does a merger of two firms which target different consumer segments impact overall consumer welfare?
+        \item How do mergers effect different groups of consumers?
+        \item Was the proposed JetBlue-Spirit merger pro-consumer?
+        \item How did the covid-19 pandemic change the airline industry?
+        \end{itemize}   
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Preview of Results}
+        \begin{itemize}
+            \item 
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+		\frametitle{Literature Review}			\begin{itemize}
+				\item Anti-competitive Conduct in Aviation (\cite{miller_did_2010, zou_assessing_2023})
+				\item Aviation Mergers 
+				\begin{itemize}
+					\item Completed Mergers (\cite{luo_price_2014, carlton_are_2019})
+					\item Simulated Mergers (\cite{ciliberto_market_2021, li_repositioning_2022})
+				\end{itemize}
+				\item Understanding Aviation Industry
+				\begin{itemize}
+					\item Role of Low-Cost Carriers (\cite{goolsbee_how_2008, shrago_spirit_2024})
+					\item Post-Pandemic Changes (\cite{zou_assessing_2023, ewen_zoom_2023})
+				\end{itemize}
+        \end{itemize}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{Presentation Roadmap}
+		\begin{enumerate}
+				\item Setting
+				\begin{itemize}
+					\item American Aviation Industry
+					\item JetBlue-Spirit Merger
+				\end{itemize}
+				\item Data and Summary Statistics
+				\item Model and Results 
+				\begin{itemize}
+					\item Demand Model
+                    \item Supply Model
+                    \item Merger Simulations
+                    \item Consumer Surplus
+				\end{itemize}
+                \item Conclusion
+			\end{enumerate}
+	\end{frame}
+
+    \section{Setting}
+	\begin{frame}
+		\frametitle{Types of Carrier}
+		\begin{itemize}
+			\item Three Types:
+			\begin{itemize}
+				\item Legacy % (Existed Pre-1978 Deregulation)
+				\item Low-Cost 
+				\begin{itemize}
+					\item Exemplified by Southwest Airlines
+					\item Focus on Direct Flights
+				\end{itemize}
+				\item Ultra-Low Cost
+				\begin{itemize}
+					\item Introduced by Spirit in 2010
+					\item `Unbundled' Tickets
+				\end{itemize}
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{Legacy Carriers}
+		\begin{itemize}
+			\item At present, Delta, United, and American
+			\item Characterized by higher fares, costs than the other carrier types
+			\item ``Hub-And-Spoke" Route Networks connect passengers from smaller markets to centralized hubs before another flight to the final destination.
+			\begin{itemize}
+				\item Firms have large costs of running these hubs and operate a wider variety of aircraft within their fleets
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{Low-Cost Carriers}
+		\begin{itemize}
+			\item Major low-cost carriers include Southwest and JetBlue
+			\begin{itemize}
+				\item Southwest is the largest low-cost carrier and originator of the model within the United States
+			\end{itemize}
+			\item Focus on  direct flights between larger markets to reduce costs, fares
+			\item This allows for streamlined fleets to reduce training, maintenance expenses
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{Ultra-Low Cost Carriers}
+		\begin{itemize}
+			\item Spirit, Allegiant, and Frontier
+			\item ``Unbundled Fares" - Traditional Amenities are now an extra fare on top of the seat price.
+			\begin{itemize}
+				\item Spirit was the first ULCC in the United States
+				\item Dates to April 2010 decision to charge for checked baggage. 
+			\end{itemize}
+		\end{itemize}
+	\end{frame}    
+
+    \begin{frame}
+        \frametitle{Airlines After Covid-19}
+        \begin{itemize}
+            \item 
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Quarterly Ridership, All Carriers}
+        \includegraphics[width = \linewidth]{Quarterly_DB1B_Itineraries}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Spirit}
+        
+    \end{frame}
+
+    \begin{frame}
+     \frametitle{Spirit - Revenue Sources over Time}
+        \includegraphics[width = \linewidth]{05.Figures/Spirit_Revenue_Sources.pdf}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{JetBlue}
+        
+    \end{frame}
+
+    \section{Data and Summary Statistics}
+
+    \begin{frame}
+		\frametitle{Data}
+		\begin{itemize}
+			\item Airline Origin and Destination Survey (DB1B)
+			\begin{itemize}
+				\item 10\% Sample of Domestic Passenger Itineraries 
+				\item Data on Origin, Destination, Fare, Route, Carrier
+                \item Does not include ancilliary fees charged by airlines. 
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+
+    \begin{frame}
+        \frametitle{Market, Product Definitions}
+        \begin{itemize}
+        	\item Markets defined as Year-Quarter-Origin-Destination 
+			\item Market Size is the Geometric Mean of the Population of Origin, Destination Metropolitan Statistical Areas
+			\item Products Further Defined by Carrier, Nonstop Status
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Summary Statistics - Product Level}
+        
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Summary Statistics - Market Level}
+        
+    \end{frame}
+
+    \section{Model and Results}
+    
+    \subsection{Demand}
+    \begin{frame}
+        \frametitle{Demand Model}
+        \begin{itemize}
+            \item Random-Coefficient Nested Logit Model 
+            \begin{itemize}
+                \item Historically, nested logit model or the random-coefficient logit model have been used to estimate airline demand 
+                (\cite{turner_access_2022, ciliberto_market_2021, gayle_efficiency_2013, aguirregabiria_dynamic_2012, berry_airline_2006})
+                \item Random coefficient nested-logit model outperforms other model types in simulations at estimating own-price and cross-price elasticities at increased computational costs (\cite{grigolon_nested_2014})
+            \end{itemize}
+            \item All air travel products are in one nest, while the outside good is the other nest. 
+        \end{itemize}
+    \end{frame}
+    
+    \begin{frame}
+        \frametitle{Demand Model}
+        \begin{itemize}
+        \item  Consumer $i$ in market $t$ has indirect utility from buying product $j$ as defined by 
+\[U_{ijt} = \delta_{jt} + \mu_{ijt} + \epsilon_{ijt}\]
+        \item $\delta_{jt}$ is the mean utility across consumers in market $t$ for product $j$
+		\item $\mu_{ijt}$ is the consumer's deviation from this mean utility
+		\item  $\epsilon_{ijt}$ is an unobserved consumer-level shock such that \[\epsilon_{ijt} = \bar{\epsilon}_{ih(j)t} + (1 - \rho)\bar{\epsilon}_{ijt}\] 
+
+        % WHAT DOES ABOVE MEAN AGAIN?
+        
+		\item $\rho$ is the nesting parameter. 
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Demand Model Parameterization}
+        \[\delta_{jt} = \alpha p_{jt} + x_{j} \beta + F_{jt}\gamma  +  \xi_{jt}\]
+         \vspace{-8mm}
+        \begin{itemize}
+            \item $p_{jt}$ is the price of product $j$ in market $t$
+            \item $x_j$ is product characteristics unresponsive to demand shocks (miles traveled, nonstop status, excess miles flown, tourism market dummy variable, etc.)
+            \item $F_{jt}$ contains fixed effects for carrier and time
+            \item $\xi_{jt}$ is market-level product shocks
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Demand Model Parameterization}
+             \[\mu_{ijt} = \sigma_{p} p_{jt} \nu_{ip} + \sigma_{n} n_{jt} \nu_{in} + \sigma_{m} m_{jt} \nu_{im} \] 
+             \vspace{-8mm}
+            \begin{itemize}
+                \item $p$ the product's price
+                \item $n$ the product's nonstop status
+                \item $m$ the miles flown for the product.
+                \item $\sigma$ is the standard deviation of the distribution of consumer preferences for this product trait. 
+                \item $\nu$ parameters drawn from a standard normal distribution 
+            \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Demand Estimation}
+        \begin{itemize}
+            \item Consumers will purchase the good with the highest utility
+            \item Utility of the outside good is normalized to zero, allowing for integration to recover estimated good shares.
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Demand Model Results}
+        
+    \end{frame}
+    
+    \subsection{Supply}
+    \begin{frame}
+        \frametitle{Supply Model}
+        \begin{itemize}
+            \item Assume each market operates under Bertrand competition with differentiated products following the exogenous determination of product offerings
+            \item Under this conduct model, firms choose prices such that  \vspace{-4mm} \[P = MC + \Delta^{-1} s\]
+             \vspace{-8mm}
+            \begin{itemize}
+                \item  $\Delta = - \mathcal{H} \cdot \frac{\partial s}{\partial p}^{'}$
+                \item $\mathcal{H}$ is an ownership matrix
+            \end{itemize}
+            \item As such, marginal costs (and markups) can be recovered under this supply assumption. 
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Supply Model Results}
+    \end{frame}
+
+    \subsection{Merger Simulation}
+   	\begin{frame}
+		\frametitle{Merger Simulation}
+			\begin{itemize}
+            \item Estimate three counterfactuals for each period.
+				\item JetBlue, Spirit Products Combine (better routing, JetBlue fixed effects)
+                \item Like products get combined with like products: Nonstop with Nonstop, Connecting with Connecting
+				\item Resulting Products Have Lower/Average/Greater Marginal Cost, Unobservables of the Two
+        \end{itemize}
+	\end{frame}
+
+    \subsection{Consumer Surplus}
+    \begin{frame}
+        \frametitle{Consumer Surplus}
+    \end{frame}
+
+
+
+    \frametitle
+
+     % CONSUMER LEVEL DEVIATION FROM MEAN UTILITY
+    
+    \section{Conclusion}
+    
+	\begin{frame}
+		\frametitle{Thank You}
+	\end{frame}
+
+    \printbibliography
+%	\bibliographystyle{abbrvnat.bst}
+	
+\end{document}
+
+
