@@ -196,9 +196,11 @@
 	\end{frame}    
 
     \begin{frame}
-        \frametitle{Airlines After Covid-19}
+        \frametitle{Airline Industry After Covid-19}
         \begin{itemize}
-            \item 
+            \item The Covid-19 Pandemic Caused a Large Decrease in Air Travel
+            \item Industry saw recovery to roughly 2016 levels of air travel in 2021Q2, after widespread vaccine availability.
+            \item Changes in Ridership Go Beyond Levels
         \end{itemize}
     \end{frame}
 
@@ -207,9 +209,60 @@
         \includegraphics[width = \linewidth]{Quarterly_DB1B_Itineraries}
     \end{frame}
 
+
+    \begin{frame}
+        \frametitle{Airline Industry After Covid-19}
+        \begin{itemize}
+         \item Consumer Base of Industry Changed
+            \begin{itemize}
+                \item Business Travelers Historically Roughly Third of Riders
+                \begin{itemize}
+                    \item Less Price Sensitive than Leisure Travelers
+                \end{itemize}
+                \item Business Travel Did Not Immediately Recover Post Pandemic
+                \item Simultaneously: Leisure Travelers Built Up Cash Returns
+                \begin{itemize}
+                    \item Revenge Travel
+                \end{itemize}
+                \item Demand Elasticity Change Apriori Ambiguous
+            \end{itemize}
+        \end{itemize}
+    \end{frame}
+
+
+    \begin{frame}
+        \frametitle{JetBlue}
+        \begin{itemize}
+            \item Second largest Low-Cost Carrier in the United States, behind Southwest
+            \item Primarily in Markets on the Eastern Seaboard
+            \item Increasingly Anti-Competitive Conduct
+            \begin{itemize}
+                \item Northeast Alliance with American Airlines - Coordination in Four Airports (NYC, Boston areas)
+            \end{itemize}
+            \item Saw Purchasing Spirit As Way to Bolster Fleet
+            \begin{itemize}
+                \item Both Fleets Primarily Airbus A320, but in Different Seating Configurations
+            \end{itemize}
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{JetBlue, Spirit Fleet Sizes}
+        \includegraphics[width = \linewidth]{Both_Planes.pdf}
+    \end{frame}
+
+
     \begin{frame}
         \frametitle{Spirit}
-        
+        \begin{itemize}
+            \item Largest Ultra-Low Cost Carrier in the United States
+            \item Focused on budget conscious travelers
+            \item Dramatic growth during the 2010s, through the pandemic
+            \item Non-Fare ``ancillary fees" for its ``unbundled" tickets
+            \begin{itemize}
+                \item Checked Baggage Fees, Online Booking Fees, etc.
+            \end{itemize}
+        \end{itemize}
     \end{frame}
 
     \begin{frame}
@@ -218,9 +271,9 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{JetBlue}
-        
+        \frametitle{JetBlue-Spirit Merger}
     \end{frame}
+
 
     \section{Data and Summary Statistics}
 
@@ -231,10 +284,12 @@
 			\begin{itemize}
 				\item 10\% Sample of Domestic Passenger Itineraries 
 				\item Data on Origin, Destination, Fare, Route, Carrier
-                \item Does not include ancilliary fees charged by airlines. 
+                \item Ancillary Fees Not Included 
 			\end{itemize}
 		\end{itemize}
 	\end{frame}
+
+    % Consequence of No-Ancillary Fees as Slide?
 
     \begin{frame}
         \frametitle{Market, Product Definitions}
@@ -259,7 +314,6 @@
            max width=\textwidth}
 \input{Presentation_Tables/25_09_02/SummaryStatistics_Product_PostPandemic}
 \end{adjustbox}
-
     \end{frame}
 
     \begin{frame}
@@ -286,7 +340,15 @@
 
     \begin{frame}
         \frametitle{Empirical Strategy}
-        
+        \begin{itemize}
+            \item For Pre-Pandemic Period, Post-Pandemic Periods:
+            \begin{itemize}
+                \item Estimate Demand
+                \item Impose Supply Assumption
+                \item Recover Marginal Costs
+                \item Estimate Merger Simulations
+            \end{itemize}
+        \end{itemize}
     \end{frame}
     
     \subsection{Demand}
@@ -377,7 +439,7 @@
 
     \begin{frame}
         \frametitle{Supply Model Results}
-                \tiny
+        \tiny
         \centering
         \begin{adjustbox}{max height=\dimexpr\textheight-5.5cm\relax,
            max width=\textwidth}
@@ -397,8 +459,18 @@
 	\end{frame}
 
     \begin{frame}
-        \frametitle{Merger Results}
-        
+        \frametitle{Merger Simulation Results - Pre-Pandemic}
+        \tiny
+        \centering
+        \begin{adjustbox}{max height=\dimexpr\textheight-5.5cm\relax,
+           max width=\textwidth}
+\input{Presentation_Tables/25_09_02/RCL_Supply_Recovery}
+\end{adjustbox}
+
+    \end{frame}
+    
+    \begin{frame}
+        \frametitle{Why Care about Minimum Market Fare?}
     \end{frame}
 
     \begin{frame}
