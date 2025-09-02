@@ -14,6 +14,9 @@
 \usepackage{xcolor}
 \usepackage{textcomp} % Needed on Windows in Office
 \usepackage{derivative}
+\usepackage{adjustbox}
+\usepackage{tabularx}
+
 \usepackage[style=apa]{biblatex}
 
 \makeatletter
@@ -253,6 +256,11 @@
     \end{frame}
 
     \section{Model and Results}
+
+    \begin{frame}
+        \frametitle{Empirical Strategy}
+        
+    \end{frame}
     
     \subsection{Demand}
     \begin{frame}
@@ -261,7 +269,6 @@
             \item Random-Coefficient Nested Logit Model 
             \begin{itemize}
                 \item Historically, nested logit model or the random-coefficient logit model have been used to estimate airline demand 
-                (\cite{turner_access_2022, ciliberto_market_2021, gayle_efficiency_2013, aguirregabiria_dynamic_2012, berry_airline_2006})
                 \item Random coefficient nested-logit model outperforms other model types in simulations at estimating own-price and cross-price elasticities at increased computational costs (\cite{grigolon_nested_2014})
             \end{itemize}
             \item All air travel products are in one nest, while the outside good is the other nest. 
@@ -318,7 +325,11 @@
 
     \begin{frame}
         \frametitle{Demand Model Results - Selected Coefficients}
-\include{Presentation_Tables/25_09_02/RCL_Price_Estimates}
+        \tiny
+        \centering
+        \begin{adjustbox}{width=\textwidth,center}
+\input{Presentation_Tables/25_09_02/RCL_Price_Estimates}
+\end{adjustbox}
     \end{frame}
     
     \subsection{Supply}
@@ -338,7 +349,7 @@
 
     \begin{frame}
         \frametitle{Supply Model Results}
-\include{Presentation_Tables/25_09_02/RCL_Supply_Recovery}
+\input{Presentation_Tables/25_09_02/RCL_Supply_Recovery}
     \end{frame}
 
     \subsection{Merger Simulation}
@@ -358,13 +369,19 @@
     \end{frame}
 
     \begin{frame}
-        \frametitle{Merger Results - Minimum Market Fare}
-\include{Presentation_Tables/25_09_02/MinimumFareChange}
+        \frametitle{Merger Results - Change Minimum Market Fare}
+    \vspace{-12mm}
+   \begin{table}
+   \resizebox{\linewidth}{!}{%}
+    \input{Presentation_Tables/25_09_02/MinimumFareChange}
+    }
+    \end{table}
     \end{frame}
 
     \subsection{Consumer Surplus}
     \begin{frame}
         \frametitle{Consumer Surplus}
+        
     \end{frame}
 
 
