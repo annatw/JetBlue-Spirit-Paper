@@ -89,16 +89,20 @@
     \frametitle{Questions}
         \begin{itemize}
         \item How does a merger of two firms which target different consumer segments impact overall consumer welfare?
-        \item How do mergers effect different groups of consumers?
+        \item How do mergers affect different groups of consumers?
         \item Was the proposed JetBlue-Spirit merger pro-consumer?
-        \item How did the covid-19 pandemic change the airline industry?
         \end{itemize}   
     \end{frame}
 
     \begin{frame}
         \frametitle{Preview of Results}
         \begin{itemize}
-            \item 
+            \item Merger would have had minimal effects on average market fares.
+            \item Merger would have increased at least 30 markets minimum available fare by over \$60 in even the best case scenario. 
+            \begin{itemize}
+                \item Over 200 markets in the worst-case scenario. 
+            \end{itemize}
+            \item Overall consumer surplus would have increased following the merger in the post-pandemic period.
         \end{itemize}
     \end{frame}
 
@@ -191,9 +195,23 @@
 			\begin{itemize}
 				\item Spirit was the first ULCC in the United States
 				\item Dates to April 2010 decision to charge for checked baggage. 
+                \item Legacy Carriers Now Offer ``Basic Economy" Fares to Compete with Spirit on Some of Their Seats
 			\end{itemize}
 		\end{itemize}
 	\end{frame}    
+
+    \begin{frame}
+        \frametitle{Why Was the Merger Blocked?}
+        \begin{itemize}
+            \item In ruling in the case \cite{william_g_young_findings_2024}:
+            \begin{enumerate}
+            \item ``The Defendant Airlines have also demonstrated that the product JetBlue offers, though more expensive on average, is higher quality, and provides consumers with an enhanced flying experience."
+            \item   However: ``It is... those [consumers] who must \underline{rely} on Spirit that this merger would harm."
+                \item Growth rates of other ultra-low cost airlines unlikely to make up for the loss of Spirit
+                \item 5 Years to Make up For Loss of Spirit's National Capacity
+            \end{enumerate}
+        \end{itemize}
+    \end{frame}
 
     \begin{frame}
         \frametitle{Airline Industry After Covid-19}
@@ -272,6 +290,20 @@
 
     \begin{frame}
         \frametitle{JetBlue-Spirit Merger}
+        \begin{itemize}
+        \item 2022:
+        \begin{itemize}
+            \item February: Frontier Attempts to Acquire Spirit
+            \item April: JetBlue Intervenes with own Offer
+            \item October: Spirit Shareholders Approve Merger with JetBlue
+        \end{itemize}
+        \item 2023: 
+        \begin{itemize}
+            \item March: DOJ, States File Suit
+            \item October-December: Trial
+        \end{itemize}
+        \item 2024, January: Merger Blocked
+        \end{itemize}
     \end{frame}
 
 
@@ -347,6 +379,11 @@
                 \item Impose Supply Assumption
                 \item Recover Marginal Costs
                 \item Estimate Merger Simulations
+            \end{itemize}
+            \item Why two periods? Post-Pandemic had
+            \begin{itemize}
+                \item Irregular Demand Patterns 
+                \item Irregular Routing (Northeast Alliance)
             \end{itemize}
         \end{itemize}
     \end{frame}
@@ -464,13 +501,27 @@
         \centering
         \begin{adjustbox}{max height=\dimexpr\textheight-5.5cm\relax,
            max width=\textwidth}
-\input{Presentation_Tables/25_09_02/RCL_Supply_Recovery}
+\input{Presentation_Tables/25_09_02/Merger_Results_PrePandemic}
+\end{adjustbox}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Merger Simulation Results - Post-Pandemic}
+        \tiny
+        \centering
+        \begin{adjustbox}{max height=\dimexpr\textheight-5.5cm\relax,
+           max width=\textwidth}
+\input{Presentation_Tables/25_09_02/Merger_Results_PostPandemic}
 \end{adjustbox}
 
     \end{frame}
     
     \begin{frame}
         \frametitle{Why Care about Minimum Market Fare?}
+        \begin{itemize}
+            \item In the judgment blocking the merger, the core element of consumer harm was the existence of consumers who'd exit the market without Spirit's unbundled fares being offered.
+            \item By analyzing the change in the simulated minimum fare after the merger, we can gain an understanding of how realistic this issue is.
+        \end{itemize}
     \end{frame}
 
     \begin{frame}
@@ -478,7 +529,7 @@
     \vspace{-12mm}
    \begin{table}
    \resizebox{\linewidth}{!}{%}
-    \input{Presentation_Tables/25_09_02/MinimumFareChange}
+      \input{Presentation_Tables/25_09_02/MinimumFareChange}
     }
     \end{table}
     \end{frame}
@@ -486,17 +537,139 @@
     \subsection{Consumer Surplus}
     \begin{frame}
         \frametitle{Consumer Surplus}
-        
+        \begin{itemize}
+            \item Calculating consumer surplus with my data is hindered by the lack of data on ancillary fees.\begin{itemize}
+            \item A customer who will pay for checked bags when flying with Spirit (and gets that with the ticket price with JetBlue) will have her change in consumer surplus over-estimated.    
+            \end{itemize}
+            \item At the same time, Spirit's marginal costs are liable to be underestimated if they use final consumer-paid prices when setting their markups.
+            \begin{itemize}
+                \item Not a big liability for my merger simulations - JetBlue indicated an intention to retire the Spirit model and adjust acquired airframes to the JetBlue seating configurations.
+                \item Still - not clear which of these effects is stronger for biasing welfare calculations.
+            \end{itemize}
+        \end{itemize}
     \end{frame}
 
+    \begin{frame}
+        \frametitle{Consumer Surplus}
+        \begin{itemize}
+            \item To gain a feel for how the lack of data on ancillary fees impacts my estimates (and gain some consumer surplus estimates), I adjust observed prices using data from Spirit's annual 10-K financial filings.
+            \item Spirit, unusually, reports average fare revenue and non-fare revenue per passenger-segment on its financial filings.
+            \item Notably Spirit varies these fees between markets algorithmically
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Ancillary Fee Adjustment}
+    \begin{equation*}
+    \begin{split}
+      P_{iy}' &= P_{iy} - 22.99 * I[y > 2020] * S_{i}\\
+     \hat{P}_{iy} &= P_{iy}' + NTR_{y} * \frac{P_{iy}'}{\bar{P}_{y}} 
+    \end{split}
+    \end{equation*} 
+        
+        \begin{itemize}
+            \item Spirit itinerary $i$ in year $y$ has its price adjusted in two steps: 
+            \begin{enumerate}
+                \item Remove online booking fee (charged per-segment) for post 2020 observations.
+                \item Add Non-Ticket Revenue scaled by ratio of the first-stage price divided by the average passenger-segment price. 
+            \end{enumerate}
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{After Adjustment}
+        \begin{itemize}
+            \item Re-estimate Demand, Supply, Simulations
+            \begin{itemize}
+                \item Demand coefficients are largely similar to those from the original data.
+                \item Spirit products have higher own-price elasticity, as would be expected. 
+            \end{itemize}
+            \item Estimate Changes in Consumer Surplus for Non-Adjusted and Adjusted Data
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Change in Consumer Surplus Estimates}
+        \tiny
+        \centering
+        \begin{adjustbox}{max height=\dimexpr\textheight-5.5cm\relax,
+           max width=\textwidth}
+    \begin{tabular}[t]{lrr}
+\toprule
+& \multicolumn{2}{c}{\textbf{Total Change in Consumer Surplus}} \\
+\cmidrule(lr){2-3}
+& \textbf{Pre-Pandemic} & \textbf{Post-Pandemic} \\
+\midrule
+\addlinespace[0.3em]
+\multicolumn{3}{l}{\textbf{Main Merger Analysis}} \\
+\addlinespace[0.1em]
+\hspace{1em}Best Case & 3,740,089,657 & 6,943,764,751 \\
+\hspace{1em}Average Case & -355,595,347 & 1,665,903,471 \\
+\hspace{1em}Worst Case & -1,294,518,659 & 515,351,671 \\
+\addlinespace[0.3em]
+\multicolumn{3}{l}{\textbf{Ancillary Fee Adjustment Merger Analysis}} \\
+\addlinespace[0.1em]
+\hspace{1em}Best Case & -161,377,502 & 2,019,197,851 \\
+\hspace{1em}Average Case & -1,174,813,263 & 765,481,251 \\
+\hspace{1em}Worst Case & -1,500,841,809 & 379,642,080 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
 
 
-    \frametitle
+    (Note: JetBlue, Spirit Markets Only)
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Change in Consumer Surplus Findings}
+        \begin{itemize}
+            \item Change in consumer surplus is greater without the adjustment for ancillary fees
+            \item However, merger is consistently estimated to be favorable (unfavorable) to consumer welfare in the post-pandemic (pre-pandemic) period.
+            \begin{itemize}
+                \item Increases of over \$350 million in even the worst case simulation for the post-pandemic period.
+            \end{itemize}
+        \end{itemize}
+    \end{frame}
 
      % CONSUMER LEVEL DEVIATION FROM MEAN UTILITY
     
     \section{Conclusion}
-    
+    \begin{frame}
+        \frametitle{Conclusion: On the Merger}
+        \begin{itemize}
+            \item Some consumers would have been harmed had the merger been approved, plausibly forced out of the market.
+            \begin{itemize}
+                \item Over 35 markets had minimum fares increase by \$60 or more in even the best-case scenario each period.
+            \end{itemize}
+            \item However, in the post-pandemic period, merger would have increased consumer surplus within JetBlue-Spirit markets.
+            \begin{itemize}
+                \item Consumers prefer JetBlue products to Spirit products ceteris paribus.
+            \end{itemize}
+        \end{itemize}
+    \end{frame} 
+
+    \begin{frame}
+        \frametitle{Conclusion: Consumer Welfare Standard}
+        \begin{itemize}
+            \item Under the consumer welfare standard, mergers should be blocked if they would lead to quality decreases or price increases.
+            \item If every consumer effectively gets veto power over a merger, then it makes perfect sense for this merger to have been blocked.
+            \item However, under a cost-benefit analysis, depends on how likely the policy maker believes the post-pandemic travel environment is to continue.
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Conclusion: Consumer Welfare Standard}
+        \begin{itemize}
+            \item Can imagine cases where products differentiated on tastes may harm some consumers in non-price ways.
+            \begin{itemize}
+                \item Perhaps consumers have nostalgia for an acquired brand.
+                \item Should taste based harm be protected against?
+                \item If no, what is the difference with consumers on the exterior of a market in regards to price?
+            \end{itemize}
+            \item These issues are more for policy makers than for economists, but are interesting to consider.
+        \end{itemize}
+    \end{frame}
+
 	\begin{frame}
 		\frametitle{Thank You}
 	\end{frame}
