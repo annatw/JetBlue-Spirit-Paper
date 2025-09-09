@@ -75,7 +75,7 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 	
 	\subsection{United States Airline Industry}
 	\label{sec:Setting_Aviation}
-	Three major types of airlines operate within the United States: legacy carriers, low-cost carriers, and ultra-low-cost carriers. This paper studies a proposed merger between JetBlue (a low-cost carrier) and Spirit (an ultra-low-cost carrier). As such, it is worth spending time on the differences between the types of airlines, as they inform later analyses within this paper. 	
+	Three major types of airlines operate within the United States: legacy carriers, low-cost carriers, and ultra-low-cost carriers. This paper studies a proposed merger between JetBlue (a low-cost carrier) and Spirit (an ultra-low-cost carrier). Within this section, I detail the differences in firm structure for each of the three types of firm before describing JetBlue and Spirit in more detail.
     
 	Legacy carriers operated interstate air service prior to fare deregulation in 1978. Delta, American, and United are the only legacy carriers still operating after a series of mergers occurred over the last few decades. These carriers operate hub-and-spoke route networks which require customers to connect through centralized hub airports to reach smaller destinations. These firms use more varied fleets than the other carrier types so that they can serve a wider variety of market types. While this practice allows for the servicing of smaller markets with lower excess capacity than if they flew uniform fleets, the additional variety in aircraft leads to additional crew training and maintenance expenditures.    
 	
@@ -85,13 +85,14 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 
     Spirit rapidly grew within the post-recession domestic aviation landscape following its adoption of the ultra-low-cost carrier model. As documented in Figure \ref{fig:Both_fleet}, Spirit grew its fleet from under 50 planes before adopting the ultra-low-cost model to nearly 200 planes by 2022. As part of this expansion in operations, Spirit increasingly competed against JetBlue (Figure \ref{fig:JBSpirit_Airports_2022}). This trend is especially notable as very few markets have historically had multiple low-cost carriers operating within them \citep{kwoka_fringe_2016, ciliberto_market_2021}. However, within my sample, I observe approximately one market with multiple low-cost or ultra-low-cost carriers for every three markets with a single of these carriers (Figure \ref{fig:LCC_Distribution}). Presently, both firms primarily operate in airports situated along the eastern seaboard of the United States in addition to Las Vegas and major cities in Texas and California.
     
-	In 2020,  JetBlue's began its ``Northeast Alliance" (NEA) with American Airlines wherein the firms coordinated on flights originating from or departing to airports within the New York City and Boston areas: LaGuardia Airport (LGA), John F. Kennedy International Airport (JFK), Newark Liberty International Airport (EWR), and Boston Logan International Airport (BOS). This alliance was found to be an anti-competitive violation of the Sherman Antitrust Act in 2023, and was gradually unwound.  I further elaborate on the NEA and its impacts on my estimation strategy in section \ref{sec:Setting_NEA}.
+	In 2020,  JetBlue's began its ``Northeast Alliance" (NEA) with American Airlines wherein the firms coordinated on flights originating from or departing to airports within the New York City and Boston areas: LaGuardia Airport (LGA), John F. Kennedy International Airport (JFK), Newark Liberty International Airport (EWR), and Boston Logan International Airport (BOS). This alliance was found to be an anti-competitive violation of the Sherman Antitrust Act in 2023, and was gradually unwound.  I further elaborate on the NEA and its impacts on my estimation strategy in Appendix \ref{sec:Setting_NEA}.
 	
 	Spirit competed aggressively and would be characterized by the United States Department of Justice as a ``maverick firm" within the airline industry. It consistently grew its fleet throughout the 2010s and into the 2020s (as graphed in Figure \ref{fig:Both_fleet}) despite the shock to air travel caused by the COVID-19 pandemic.\footnote{As depicted in the aforementioned figure, JetBlue's fleet stagnated following the pandemic due to it negotiating delayed fulfillment of orders placed before the pandemic \citep{bellamy_iii_jetblue_2020, sipinski_jetblue_2020}.} This growth in its fleet was required for expansion into new markets. As shown in \citet{shrago_spirit_2024}, Spirit causes increased variance in fares within markets that it enters by inducing legacy carriers to compete for the highly cost-conscious travelers targeted by Spirit by offering "basic economy" fares with similar characteristics to Spirit's ``unbundled'' fares. As such, 
-	
-	Finally, it is important to note the impact of the coronavirus pandemic on the airline industry.  A severe drop in air travel occurred almost immediately as consumers and businesses canceled travel plans due to both virus concerns and government mandates. While widespread vaccine availability allowed for recovery to 2016 levels of air travel by the second quarter of 2021, passenger levels would not recover to 2019 levels of air travel until halfway into 2022 (Figure \ref{fig:QuarterlyPass}). 
 
-	However, this recovery in ridership did not mark a return to the prior market conditions for the industry. Historically, approximately a third of air travel is motivated by business \citep{berry_tracing_2010, bet_market_2021}). However, following the pandemic, business travel decreased as businesses switched to telecommunications for meetings rather than face-to-face interactions \citep{semuels_business_2021}. Meanwhile, leisure travelers built savings during the decline in travel, allowing them to behave less price-sensitively following the pandemic. As such, the overall change in price elasticity is a priori ambiguous.\footnote{In a recent working paper, \citet{ewen_zoom_2023}, estimates that leisure travelers were less price-sensitive than before the pandemic. In Table \ref{tab:DemandEst}, I find evidence that the demand for airfare has become slightly less elastic following the pandemic, consistent with the idea that this change in leisure traveler behavior was enough to offset the changes from business travel on demand elasticity.}  As such, consumption patterns are liable to differ between the pre-pandemic and post-pandemic periods despite the recovery in passenger levels. 
+    \subsection{Airlines and the Coronavirus Pandemic}
+    The advent of the coronavirus pandemic in March 2020 strongly disrupted the airline industry. A severe drop in air travel occurred almost immediately as consumers and businesses canceled travel plans due to both virus concerns and government mandates. While widespread vaccine availability allowed for recovery to 2016 levels of air travel by the second quarter of 2021, passenger levels would not recover to 2019 levels of air travel until halfway into 2022, after a full year of vaccine availability and the subsidence of the omicron wave (Figure \ref{fig:QuarterlyPass}). 
+
+	Despite the recovery in ridership, demand for airline travel changed in critical ways following the pandemic.  Historically, approximately a third of air travel is motivated by business \citep{berry_tracing_2010, bet_market_2021}). However, following the pandemic, business travel decreased as businesses switched to telecommunications for meetings rather than face-to-face interactions \citep{semuels_business_2021}. Meanwhile, leisure travelers were able to build savings during the decline in travel, allowing them to potentially behave less price-sensitively following the pandemic. The net combination of these two factors results in an a priori ambiguous overall change in price elasticity for airline travel.\footnote{In a recent working paper, \citet{ewen_zoom_2023}, estimates that leisure travelers were less price-sensitive than before the pandemic. In Table \ref{tab:DemandEst}, I find evidence that the demand for airfare has become slightly less elastic following the pandemic, consistent with the idea that this change in leisure traveler behavior was enough to offset the changes from business travel on demand elasticity.} As such, consumption patterns are liable to differ between the pre-pandemic and post-pandemic periods despite the recovery in passenger levels. In my later analyses of consumer welfare, I identify that these changes are sufficient to cause potentially different policy recommendations for the merger under the consumer welfare standard had the merger been proposed in the pre-pandemic period rather than the post-pandemic period.
 
     
 	\subsection{Attempted JetBlue-Spirit Merger}
@@ -131,52 +132,7 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
     This paper estimates the counterfactual increase in market concentration and increase in prices in Section \ref{sec:Analysis_Merger}. 
 
     	
-	\subsection{Northeast Alliance}
-	\label{sec:Setting_NEA}
-	
-	Prior to its attempted merger with Spirit, JetBlue entered into the Northeast Alliance (NEA) with American Airlines at the start of 2021. The NEA saw the two firms coordinate operations to behave as a single carrier for routes that touched upon airports serving the New York City and Boston markets. They jointly decided their network for these routes, and operated them intending for consumers to be indifferent between the two carriers, worked to minimize overlap in product offerings on these routes, and shared revenue from products within the agreement. The United States Department of Justice along with six states and the District of Columbia brought a lawsuit against the agreement in September 2021 alleging violations of the Sherman Antitrust Act. Following a 2022 trial, the agreement would be found to violate the Sherman Antitrust Act in May 2023 and it was subsequently unwound \citep{rennison_jetblue-american_2023, rains_what_2023}.\footnote{Table \ref{tab:NEA_Timeline} details a timeline of key events relating to the NEA. Notably, some landing slot leases between the two airlines related to the merger experienced a gradual reversion to their original owners.} With this timeline outlined, I will briefly discuss the NEA's differences from traditional airline alliances and the issues it presents for the estimation of the counterfactual merger effects of the JetBlue-Spirit merger. 
-
-    \begin{table}[tb]
-		\caption{Northeast Alliance Timeline}
-		\label{tab:NEA_Timeline}
-		\begin{center}
-			\begin{tabular}{ccc}
-				\hline
-				Year & Date & Event \\
-				\hline
-				2020 & Quarter 1-2 & JetBlue and American Negotiate Alliance \\ 
-				& July 16 & Northeast Alliance Announced \\
-				& July 22 & Alliance Agreement submitted to DOT \\
-				\hline 
-				2021 & January 10 & DOT Terminates Antitrust Review \\
-				& February 24 & Codesharing Agreement Begins on {X} Routes \\
-				& May 26 & Reciprocal Loyalty Earnings Begins \\
-				& Early September & NEA Shuttle at JFK Opens \\
-				& September 21 & DOJ Files Lawsuit Against NEA \\  
-				\hline
-				2022 & September 27 - November 18 & Trial \\
-				\hline 
-				2023 & May 19 & NEA Ruled Anti-Competitive \\
-				& July 5 & JetBlue Drops Appeal Plans \\
-				& July 21 & NEA Codesharing Ends \\
-				& October 31 & JFK Shuttle Ceases Operation\\
-				& October 31 & 12 Slot Leases to JetBlue Terminate \\
-				\hline 
-				2024 &  March 31  & 27 Slot Leases to JetBlue Terminate \\ 
-				& March 31 & 1 Slot Lease to American Terminates \\
-				& October 26 & Remaining NEA Slot Leases Terminate				 \end{tabular}
-		\end{center}
-	\end{table}
-
-	Alliances between airlines are commonplace within the industry. Two prominent examples of these alliances are the ``SkyTeam Alliance" (which includes Delta) and the ``Star Alliance" which includes United. One key feature of these alliances are code-sharing agreements which allow member firms to sell seats on flights operated by other members of the alliances. Alliances are primarily operated between carriers situated in different countries to allow for better access to foreign markets than would otherwise be possible. Alliances benefit consumers through the increased ability to earn frequent flier miles, easier handling of baggage, and simpler booking processes. Meanwhile, alliances benefit airlines through allowing them to offer travel to a wider variety of destinations than would otherwise be possible without participation in an alliance. 
-	
-	Domestic alliances are presently rare. Unlike alliances between domestic and foreign carriers, these agreements are generally unable to receive waivers from antitrust proceedings through the Department of Transportation and as such face additional regulatory scrutiny. One common way for firms to operate domestic alliances is by structuring the agreement to only cover markets without both firms and by requiring that member firms otherwise maintain separate routing decisions, operations, and planning. One example of a currently active domestic airline alliance is the West Coast Alliance between American and Alaska Airlines.  
-	
-	Contrasting this approach, the NEA was structured to act more similarly to a merger on routes covered by the agreement. The two firms jointly scheduled flights within the impacted markets, minimized overlap on routes operated by both firms\footnote{It is not clear how effective this was. As documented in Figure \ref{fig:NEA_Operating}, the levels of shared routes at each of the four impacted airports was within historically normal ranges.}, and coordinated operations at the airports impacted by the agreement.\footnote{One example of this coordination is a shuttle operated by the two airlines at JFK to allow customers to transfer between the terminals used by each airline without having to clear security on connecting itineraries \citep{griff_riding_2021}.} Furthermore, as two of the impacted airports featured slot and gate controls\footnote{A slot-controlled airport is one in which airlines are assigned specified time slots by the FAA for departures and arrivals to allow for better coordination of runway usage in congested airports. These slots are set in advance of individual operation days and can be transferred between airlines as if they were property of the airline which holds them.}, the member firms shared slot permits and shared gates. This would be found by the trial court to have increased barriers to entering the New York City air travel market by deterring these firms by selling off these assets to other firms. 
-    
-    The NEA impacts the evaluation of the counterfactual effects of the JetBlue-Spirit merger through its effects on the product offerings of JetBlue. Through jointly optimizing its network structure with American Airlines, JetBlue operated flights in different markets than it otherwise would have. As my simulation of the JetBlue-Spirit merger treats product offerings as exogenous, my post-pandemic results should be understood as estimating the world where the merger took place while the NEA was still in effect. 
-
-    Beyond the changes to market structures, the NEA results in products within my sample that are considered JetBlue products despite being operated solely by or jointly with American. The majority of the NEA's existence saw over thirty products a quarter that fits these characteristics within markets both JetBlue and Spirit competed within (Table \ref{tab:NEA_Codesharing_Table}. As such, the recovery of marginal costs for these products is liable to be incorrect.  
+  
 
 	\section{Data and Summary Statistics}
 	\label{sec:Data}
@@ -332,16 +288,6 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 \end{figure}
 
 
-\begin{table}[h]
-		\caption{American, JetBlue Overlap at NEA Airports}
-		\label{tab:NEA_Airport_Presence}
-        \vspace{-15mm}
-        \begin{center}
-         \include{06.Tables/NEA_Zou_TB1_Replicate.tex}
-        \end{center}
-                \vspace{-5mm}
-		\footnotesize{Each cell is the percent of markets originating from the specified airport with both carriers present in the market as either the ticketing carrier or operating carrier. Ticketing carriers are responsible for buying and selling of tickets while the operating carrier handles flight operations. Data for the first quarter of 2021 should be interpreted cautiously as this was before widespread vaccination availability.}
-\end{table}
 
 \begin{figure}
 	\caption{JetBlue, Spirit Airports - 2022}
@@ -357,36 +303,6 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 		\include{06.Tables/OverlapCities}
 		\footnotesize{Derived from DB1B Data. Cities are ordered by the combined share of passengers who used JetBlue or Spirit flights as a share of the total passengers departing from the city within 2022. Cities in which only one firm operates are excluded.}
 	\end{table}
-
-
-    \begin{figure}
-        \caption{Northeast Alliance Passenger Uptake}
-        \label{fig:NEA_Uptake}
-        \begin{center}
-        \includegraphics[width = \linewidth]{05.Figures/NEA_OperationsGraph}
-        \end{center}
-        \vspace{-8mm}
-        \footnotesize{A joint itinerary is one in which both JetBlue and American Airlines operated flights on one or more legs of the unidirectional trip. The ticketing carrier collects fares and issues tickets, the operating carrier operates the flights. Itineraries are classified as an "AA Ticket, JB Operator" if the entire itinerary was issued by American Airlines and JetBlue operated at least one leg of the trip.}
-    \end{figure}
-
-\begin{landscape}
-    \begin{table}
-        \caption{NEA Codesharing Products}
-        \label{tab:NEA_Codesharing_Table}
-        \vspace{-15mm}
-        \begin{center}
-        \include{06.Tables/NEA_Product_Requirements}
-        \end{center}
-        \vspace{-5mm}
-        \footnotesize{Each row indicates the number of products within a given quarter that belong to each classification. A "Firm Only" product is one in which the product had no codesharing flights included within it. A "JetBlue American Required" product is one in which all itineraries credited to the JetBlue for that quarter had all legs operated by American. A "JetBlue-American Joint" product is one where at least one leg was operated by each firm. A Spirit Market is one in which Spirit operated within it during the given quarter of interest. }
-    \end{table}
-\end{landscape}
-    \begin{figure}[h]
-        \caption{NEA: Overlapped Operating Routes}
-        \label{fig:NEA_Operating}
-        \includegraphics[width = \linewidth]{05.Figures/NEA_Operating_Graph.pdf}
-        \footnotesize{Figure plots the number of routes operated by both JetBlue and American within a given quarter. The vertical line represents the start of the Northeast Alliance in January 2021.}
-    \end{figure}
 \FloatBarrier
 \subsection{Summary Statistics}
    \begin{table}
@@ -553,14 +469,14 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
     \caption{Simulated Change in Pre-Pandemic Minimum Market Fares}
     \includegraphics[width = \linewidth]{PrePandemic_Merger_Change_MinimumFare_Dist}
     \label{fig:PrePan_MinimumFare_Dist}
-    \footnotesize{The mean change in markets' minimum fares is 7.25 (19.36) [26.15] in the best (average) [worst] case merger simulations respectively.}  
+    \footnotesize{The mean change in markets' minimum fares is \$7.25 (\$19.36) [\$26.15] in the best (average) [worst] case merger simulations respectively. Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars.}  
     \end{figure}    
 
     \begin{figure}
     \caption{Simulated Change in Post-Pandemic Minimum Market Fares}
     \includegraphics[width = \linewidth]{Merger_Change_MinimumFare_Dist}
     \label{fig:PostPan_MinimumFare_Dist}
-    \footnotesize{The mean change in markets' minimum fares is 6.51 (21.45) [29.21] in the best (average) [worst] case merger simulations respectively.}  
+    \footnotesize{The mean change in markets' minimum fares is \$6.51 (\$21.45) [\$29.21] in the best (average) [worst] case merger simulations respectively. Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars.}
     \end{figure}    
 
     
@@ -570,6 +486,8 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
         \begin{center}
         \includegraphics[width = \linewidth]{PrePandemic_Merger_Change_AverageFare_Dist.pdf}
         \end{center}
+        \footnotesize{The mean change in markets' average fares is \$2.81 (\$7.46) [\$12.27] in the best (average) [worst] case merger simulations respectively. Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars.}     
+
     \end{figure}
 
     \begin{figure}
@@ -578,6 +496,7 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
         \begin{center}
         \includegraphics[width = \linewidth]{Merger_Change_AverageFare_Dist.pdf}
         \end{center}
+            \footnotesize{The mean change in markets' average fares is \$4.08 (\$8.78) [\$13.64] in the best (average) [worst] case merger simulations respectively. Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars.}     
     \end{figure}
 
     \begin{table}
@@ -700,6 +619,96 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
 	
 	As part of the handling of price data, I modify prices in two ways. For Spirit itineraries completed before 2020, fares had an additional \$22.99 times the number of trip legs added to them to accounts for Spirit's additional usage fee placed on itineraries which were not booked in-person at the airport. As noted in \citet{shrago_spirit_2024}, the majority of Spirit's customers paid these fees and these fees were included in the base ticket price in DB1B releases following 2020. Furthermore, I re-express prices in terms of 2017 United States dollars to allow for easier comparisons between the two sample periods due to the high levels of inflation within the post-pandemic period.
 
+    \FloatBarrier
+    
+    \section{Northeast Alliance}
+	\label{sec:Setting_NEA}
+	
+	Prior to its attempted merger with Spirit, JetBlue entered into the Northeast Alliance (NEA) with American Airlines at the start of 2021. The NEA saw the two firms coordinate operations to behave as a single carrier for routes that touched upon airports serving the New York City and Boston markets. They jointly decided their network for these routes, and operated them intending for consumers to be indifferent between the two carriers, worked to minimize overlap in product offerings on these routes, and shared revenue from products within the agreement. The United States Department of Justice along with six states and the District of Columbia brought a lawsuit against the agreement in September 2021 alleging violations of the Sherman Antitrust Act. Following a 2022 trial, the agreement would be found to violate the Sherman Antitrust Act in May 2023 and it was subsequently unwound \citep{rennison_jetblue-american_2023, rains_what_2023}.\footnote{Table \ref{tab:NEA_Timeline} details a timeline of key events relating to the NEA. Notably, some landing slot leases between the two airlines related to the merger experienced a gradual reversion to their original owners.} With this timeline outlined, I will briefly discuss the NEA's differences from traditional airline alliances and the issues it presents for the estimation of the counterfactual merger effects of the JetBlue-Spirit merger. 
+
+    \begin{table}[tb]
+		\caption{Northeast Alliance Timeline}
+		\label{tab:NEA_Timeline}
+		\begin{center}
+			\begin{tabular}{ccc}
+				\hline
+				Year & Date & Event \\
+				\hline
+				2020 & Quarter 1-2 & JetBlue and American Negotiate Alliance \\ 
+				& July 16 & Northeast Alliance Announced \\
+				& July 22 & Alliance Agreement submitted to DOT \\
+				\hline 
+				2021 & January 10 & DOT Terminates Antitrust Review \\
+				& February 24 & Codesharing Agreement Begins on {X} Routes \\
+				& May 26 & Reciprocal Loyalty Earnings Begins \\
+				& Early September & NEA Shuttle at JFK Opens \\
+				& September 21 & DOJ Files Lawsuit Against NEA \\  
+				\hline
+				2022 & September 27 - November 18 & Trial \\
+				\hline 
+				2023 & May 19 & NEA Ruled Anti-Competitive \\
+				& July 5 & JetBlue Drops Appeal Plans \\
+				& July 21 & NEA Codesharing Ends \\
+				& October 31 & JFK Shuttle Ceases Operation\\
+				& October 31 & 12 Slot Leases to JetBlue Terminate \\
+				\hline 
+				2024 &  March 31  & 27 Slot Leases to JetBlue Terminate \\ 
+				& March 31 & 1 Slot Lease to American Terminates \\
+				& October 26 & Remaining NEA Slot Leases Terminate				 \end{tabular}
+		\end{center}
+	\end{table}
+
+	Alliances between airlines are commonplace within the industry. Two prominent examples of these alliances are the ``SkyTeam Alliance" (which includes Delta) and the ``Star Alliance" which includes United. One key feature of these alliances are code-sharing agreements which allow member firms to sell seats on flights operated by other members of the alliances. Alliances are primarily operated between carriers situated in different countries to allow for better access to foreign markets than would otherwise be possible. Alliances benefit consumers through the increased ability to earn frequent flier miles, easier handling of baggage, and simpler booking processes. Meanwhile, alliances benefit airlines through allowing them to offer travel to a wider variety of destinations than would otherwise be possible without participation in an alliance. 
+	
+	Domestic alliances are presently rare. Unlike alliances between domestic and foreign carriers, these agreements are generally unable to receive waivers from antitrust proceedings through the Department of Transportation and as such face additional regulatory scrutiny. One common way for firms to operate domestic alliances is by structuring the agreement to only cover markets without both firms and by requiring that member firms otherwise maintain separate routing decisions, operations, and planning. One example of a currently active domestic airline alliance is the West Coast Alliance between American and Alaska Airlines.  
+	
+	Contrasting this approach, the NEA was structured to act more similarly to a merger on routes covered by the agreement. The two firms jointly scheduled flights within the impacted markets, minimized overlap on routes operated by both firms\footnote{It is not clear how effective this was. As documented in Figure \ref{fig:NEA_Operating}, the levels of shared routes at each of the four impacted airports was within historically normal ranges.}, and coordinated operations at the airports impacted by the agreement.\footnote{One example of this coordination is a shuttle operated by the two airlines at JFK to allow customers to transfer between the terminals used by each airline without having to clear security on connecting itineraries \citep{griff_riding_2021}.} Furthermore, as two of the impacted airports featured slot and gate controls\footnote{A slot-controlled airport is one in which airlines are assigned specified time slots by the FAA for departures and arrivals to allow for better coordination of runway usage in congested airports. These slots are set in advance of individual operation days and can be transferred between airlines as if they were property of the airline which holds them.}, the member firms shared slot permits and shared gates. This would be found by the trial court to have increased barriers to entering the New York City air travel market by deterring these firms by selling off these assets to other firms. 
+    
+    The NEA impacts the evaluation of the counterfactual effects of the JetBlue-Spirit merger through its effects on the product offerings of JetBlue. Through jointly optimizing its network structure with American Airlines, JetBlue operated flights in different markets than it otherwise would have. As my simulation of the JetBlue-Spirit merger treats product offerings as exogenous, my post-pandemic results should be understood as estimating the world where the merger took place while the NEA was still in effect. 
+
+    Beyond the changes to market structures, the NEA results in products within my sample that are considered JetBlue products despite being operated solely by or jointly with American. The majority of the NEA's existence saw over thirty products a quarter that fits these characteristics within markets both JetBlue and Spirit competed within (Table \ref{tab:NEA_Codesharing_Table}. As such, the recovery of marginal costs for these products is liable to be incorrect.
+    
+
+\begin{table}[h]
+		\caption{American, JetBlue Overlap at NEA Airports}
+		\label{tab:NEA_Airport_Presence}
+        \vspace{-15mm}
+        \begin{center}
+         \include{06.Tables/NEA_Zou_TB1_Replicate.tex}
+        \end{center}
+                \vspace{-5mm}
+		\footnotesize{Each cell is the percent of markets originating from the specified airport with both carriers present in the market as either the ticketing carrier or operating carrier. Ticketing carriers are responsible for buying and selling of tickets while the operating carrier handles flight operations. Data for the first quarter of 2021 should be interpreted cautiously as this was before widespread vaccination availability.}
+\end{table}
+
+
+    \begin{figure}
+        \caption{Northeast Alliance Passenger Uptake}
+        \label{fig:NEA_Uptake}
+        \begin{center}
+        \includegraphics[width = \linewidth]{05.Figures/NEA_OperationsGraph}
+        \end{center}
+        \vspace{-8mm}
+        \footnotesize{A joint itinerary is one in which both JetBlue and American Airlines operated flights on one or more legs of the unidirectional trip. The ticketing carrier collects fares and issues tickets, the operating carrier operates the flights. Itineraries are classified as an "AA Ticket, JB Operator" if the entire itinerary was issued by American Airlines and JetBlue operated at least one leg of the trip.}
+    \end{figure}
+
+\begin{landscape}
+    \begin{table}
+        \caption{NEA Codesharing Products}
+        \label{tab:NEA_Codesharing_Table}
+        \vspace{-15mm}
+        \begin{center}
+        \include{06.Tables/NEA_Product_Requirements}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Each row indicates the number of products within a given quarter that belong to each classification. A "Firm Only" product is one in which the product had no codesharing flights included within it. A "JetBlue American Required" product is one in which all itineraries credited to the JetBlue for that quarter had all legs operated by American. A "JetBlue-American Joint" product is one where at least one leg was operated by each firm. A Spirit Market is one in which Spirit operated within it during the given quarter of interest. }
+    \end{table}
+\end{landscape}
+    \begin{figure}[h]
+        \caption{NEA: Overlapped Operating Routes}
+        \label{fig:NEA_Operating}
+        \includegraphics[width = \linewidth]{05.Figures/NEA_Operating_Graph.pdf}
+        \footnotesize{Figure plots the number of routes operated by both JetBlue and American within a given quarter. The vertical line represents the start of the Northeast Alliance in January 2021.}
+    \end{figure}
     \FloatBarrier
     \section{Merger Announcement Effects}
     \setcounter{table}{0}
