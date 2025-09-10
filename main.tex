@@ -66,7 +66,7 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 
     Finally, through the use of more recent data, I examine the evolution of the airline industry through the period following the COVID-19 pandemic. I find that despite the documented decline in business travel caused by the pandemic, demand only became slightly more elastic post-pandemic, consistent with research estimating less price sensitivity among leisure travelers post-pandemic \citep{ewen_zoom_2023}. Furthermore, I document changes in the role that low-cost carriers and ultra-low-cost carriers play within the industry. Historically, low-cost carriers and ultra-low-cost carriers have only rarely competed in the same markets \citep{ciliberto_market_2021}. Despite this, within my sample, there exists a market with more than two low-cost carriers for every two markets with only a single low-cost carrier within it. This is consistent with the large growth of these carriers over the course of the previous decade.
     
-    With these findings outlined, I will briefly discuss the structure of the remainder of the paper. Section \ref{sec:Setting} details the economically relevant features of consumer airlines and the proposed JetBlue-Spirit merger. Section \ref{sec:Data} elaborates on my data sources and presents summary statistics. Section \ref{sec:Analysis} contains my analysis of the JetBlue-Spirit merger and includes separate subsections for the demand model (section \ref{sec:Analysis_Demand}), supply model (section \ref{sec:Analysis_Supply}), my simulation results (section \ref{sec:Analysis_Merger}), and my analysis of consumer surplus (section \ref{sec:Analysis_Welfare}).  I briefly conclude my paper in section \ref{sec:Conclusion} with a brief discussion of the findings of this paper and examination of their implications for antitrust policy. 
+    With these findings outlined, I will briefly discuss the structure of the remainder of the paper. Section \ref{sec:Setting} details the economically relevant features of consumer airlines and the proposed JetBlue-Spirit merger. I detail the data used within the analyses of this paper and present summary statistics within Section \ref{sec:Data}. I analyze the JetBlue-Spirit merger within Section \ref{sec:Analysis}.  I briefly conclude my paper in Section \ref{sec:Conclusion} with a brief discussion of the findings of this paper and examination of their implications for antitrust policy. 
 
   
 	
@@ -83,12 +83,12 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 
 	Ultra-low-cost carriers are distinguished from low-cost carriers through the practice of ``unbundling," wherein base ticket prices are lower but amenities traditionally included within the price of a ticket are additional purchases. While Ryanair in Europe has operated under this model since the 1990s, a United States firm would not successfully adopt the strategy until Spirit introduced fees for checked baggage in 2010 \citep{bachwich_emergence_2017}. The total revenue derived from these fees is immense, and have come to represent about an even share of Spirit's revenue as the base ticket prices (Figure \ref{fig:Spirit_Revenue_Sources}). While complaints regarding the quality of these airlines are well documented in consumer surveys and the press \citep{vasel_spirit_2016, elliott_jetblue_2022}, these airlines have managed a degree of success by targeting highly budget-conscious travelers who do not wish to pay more expensive fares. By the later part of the 2010s, trips on ultra-low-cost carriers represented over a tenth of total air travel within the United States.  Despite this growth, the industry is still dominated by the ``big four" carriers - the three legacy carriers who along with Southwest comprise approximately three-quarters of the overall passenger trips within the United States. 
 
-    Spirit rapidly grew within the post-recession domestic aviation landscape following its adoption of the ultra-low-cost carrier model. As documented in Figure \ref{fig:Both_fleet}, Spirit grew its fleet from under 50 planes before adopting the ultra-low-cost model to nearly 200 planes by 2022. As part of this expansion in operations, Spirit increasingly competed against JetBlue (Figure \ref{fig:JBSpirit_Airports_2022}). This trend is especially notable as very few markets have historically had multiple low-cost carriers operating within them \citep{kwoka_fringe_2016, ciliberto_market_2021}. However, within my sample, I observe approximately one market with multiple low-cost or ultra-low-cost carriers for every three markets with a single of these carriers (Figure \ref{fig:LCC_Distribution}). Presently, both firms primarily operate in airports situated along the eastern seaboard of the United States in addition to Las Vegas and major cities in Texas and California.
-    
-	In 2020,  JetBlue's began its ``Northeast Alliance" (NEA) with American Airlines wherein the firms coordinated on flights originating from or departing to airports within the New York City and Boston areas: LaGuardia Airport (LGA), John F. Kennedy International Airport (JFK), Newark Liberty International Airport (EWR), and Boston Logan International Airport (BOS). This alliance was found to be an anti-competitive violation of the Sherman Antitrust Act in 2023, and was gradually unwound.  I further elaborate on the NEA and its impacts on my estimation strategy in Appendix \ref{sec:Setting_NEA}.
-	
-	Spirit competed aggressively and would be characterized by the United States Department of Justice as a ``maverick firm" within the airline industry. It consistently grew its fleet throughout the 2010s and into the 2020s (as graphed in Figure \ref{fig:Both_fleet}) despite the shock to air travel caused by the COVID-19 pandemic.\footnote{As depicted in the aforementioned figure, JetBlue's fleet stagnated following the pandemic due to it negotiating delayed fulfillment of orders placed before the pandemic \citep{bellamy_iii_jetblue_2020, sipinski_jetblue_2020}.} This growth in its fleet was required for expansion into new markets. As shown in \citet{shrago_spirit_2024}, Spirit causes increased variance in fares within markets that it enters by inducing legacy carriers to compete for the highly cost-conscious travelers targeted by Spirit by offering "basic economy" fares with similar characteristics to Spirit's ``unbundled'' fares. As such, 
+    Spirit rapidly grew within the post-recession domestic aviation landscape following its adoption of the ultra-low-cost carrier model and by the end of my sample period it served 8 million quarterly passengers (Figure \ref{fig:Quarterly_Pass_JB_SP}). To serve these passengers, Spirit grew its fleet from under 50 planes before adopting the ultra-low-cost model to nearly 200 planes by 2022 (Figure \ref{fig:Both_fleet}).\footnote{As depicted in the aforementioned figure, JetBlue's fleet stagnated following the pandemic due to it negotiating delayed fulfillment of orders placed before the pandemic \citep{bellamy_iii_jetblue_2020, sipinski_jetblue_2020}. JetBlue publicly stated that it viewed the proposed Spirit merger as a way to increase its fleet size despite the delayed orders.}  As part of this expansion in operations, Spirit increasingly competed against JetBlue (Figure \ref{fig:JBSpirit_Airports_2022}). This trend is especially notable as very few markets have historically had multiple low-cost carriers operating within them \citep{kwoka_fringe_2016, ciliberto_market_2021}. However, within my sample, I observe approximately one market with multiple low-cost or ultra-low-cost carriers for every three markets with a single of these carriers (Figure \ref{fig:LCC_Distribution}). Presently, both firms primarily operate in airports situated along the eastern seaboard of the United States in addition to Las Vegas and major cities in Texas and California.
 
+    % JetBlue Paragraph
+    
+	In 2020,  JetBlue's began its ``Northeast Alliance" (NEA) with American Airlines wherein the firms coordinated on flights originating from or departing to airports within the New York City and Boston areas: LaGuardia Airport (LGA), John F. Kennedy International Airport (JFK), Newark Liberty International Airport (EWR), and Boston Logan International Airport (BOS). This alliance was found to be an anti-competitive violation of the Sherman Antitrust Act in 2023, and was gradually unwound.  I further elaborate on the NEA and its impacts on my estimation strategy in Appendix \ref{sec:Setting_NEA}. 
+	    
     \subsection{Airlines and the Coronavirus Pandemic}
     The advent of the coronavirus pandemic in March 2020 strongly disrupted the airline industry. A severe drop in air travel occurred almost immediately as consumers and businesses canceled travel plans due to both virus concerns and government mandates. While widespread vaccine availability allowed for recovery to 2016 levels of air travel by the second quarter of 2021, passenger levels would not recover to 2019 levels of air travel until halfway into 2022, after a full year of vaccine availability and the subsidence of the omicron wave (Figure \ref{fig:QuarterlyPass}). 
 
@@ -99,35 +99,12 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 	\label{sec:Setting_Merger}
 	Spirit announced its intention to merge with fellow ultra-low-cost carrier Frontier in February 2022 \citep{schaper_frontier-spirit_2022}. This prompted a counteroffer from JetBlue in April for ownership of Spirit, leading the Spirit and Frontier merger to be called off in July \citep{josephs_jetblue_2022, josephs_spirit_2022}. By mid-October, Spirit shareholders approved the acquisition by JetBlue \citep{koenig_spirit_2022}.  United States Department of Justice, the District of Columbia, Massachusetts, and New York Attorneys General filed suit to block the merger in March 2023 \citep{chokshi_justice_2023}. Following a trial in the winter of 2023, the merger would be blocked on January 16, 2024, on the grounds that highly price-conscious travelers ``who must rely on Spirit" would face harm in the form of higher prices from the merger \citep{william_g_young_findings_2024}. These events are summarized in Table \ref{tab:JetBlue_Spirit_Timeline}. 
 
-    	\begin{table}[tb]
-		\caption{JetBlue-Spirit Merger Timeline}
-		\label{tab:JetBlue_Spirit_Timeline}
-		\begin{center}
-			\begin{tabular}{ccc}
-				\hline
-				Year & Date & Event \\
-				\hline
-				2022 & February 7 & Frontier-Spirit Merger Announced \\
-				& April 5 &  First JetBlue Offer for Spirit Released\\
-				& May 6 & Spirit Rejects JetBlue Offer \\
-				& July 27 &  Frontier-Spirit Merger Attempt Collapses\\
-				& July 28 &  Spirit Board Approves JetBlue Merger\\
-				& October 19 & Spirit Shareholders Approve Merger \\
-				\hline
-				2023 & March 7 &  Department of Justice Files Suit\\
-				& October 31 - December 5 &  JetBlue-Spirit Merger Trial \\
-				\hline
-				2024 & January 16 & JetBlue-Spirit Merger Blocked \\
-				& March 4 & JetBlue, Spirit Drop Appeal Plans \\
-			\end{tabular}
-		\end{center}
-	\end{table}
 
 	JetBlue publicly considered the acquisition of Spirit to be a top priority for the company, choosing to not appeal the ruling blocking its Northeast Alliance with American Airlines in favor of focusing its resources on overcoming the lawsuit seeking to block the merger with Spirit \citep{aratani_jetblue_2023}. Beyond these legal resources, it directed resources toward trying to win public favor over the merger. Notably, it coordinated comment submissions to a Department of Transportation regulatory filing regarding the merger with pro-merger comments sourced from its employees.\footnote{Some employees went on to dispute that these comments accurately reflected their views \citep{birnbaum_elizabeth_2023, birnbaum_jet-blue_2023}. In Appendix \ref{sec:NaturalLanguage}, I use stance detection techniques to analyze comments left on this filing in more detail.} Despite this, following the ruling against the merger it would ultimately choose to drop its appeals, with some financial analysts noting a significant deterioration of Spirit's financial stability between 2022 and 2024 \citep{sider_jetblue_2024}. 
 	
 	 I now turn my attention to the ruling in the case \citep{william_g_young_findings_2024} which ultimately blocked the JetBlue-Spirit merger attempt. The judgment identifies five key cities for his ruling: Orlando, San Juan, Miami and Fort Lauderdale (termed ``South Florida"), New York City, and Boston. These cities were identified on the basis that the majority of passengers in markets with competition between JetBlue and Spirit departed from these cities. These largely align with the cities in which the two firms would have the largest share of departing passengers within 2022 (Table \ref{tab:KeyCities}). However, the cities indicated ignores the firms' role in multiple smaller markets within Puerto Rico, namely Ponce and Aguadilla, where the two firms comprise the vast majority of the market. 
 	
-	 In section 2.F of the judgment, the potential effects of the merger are listed as decreased airline seats, increased market concentration, increased debt for JetBlue, and increased prices for consumers. Table \ref{tab:JetBlueSpirit_Fleet} documents the aircraft in JetBlue and Spirit's fleets in 2022. Both airlines predominantly fly aircraft manufactured by Airbus. JetBlue's fleet is slightly more varied than Spirit's as it uses five different versions of the Airbus A321 aircraft\footnote{Two of these configurations reflect solely different seat configurations. The other three configurations are on the Airbus A321neo, a revision of the earlier aircraft.} Should Spirit's Airbus A320 and Airbus A321 have been adjusted to the predominant seat configurations of JetBlue's aircraft, a total of 20 seats would be lost on each Airbus A320 and 69 seats would be lost on each Airbus A321, for a total of 4,799 seats lost. This would reflect a loss of approximately 13\% of the seats on Spirit's aircraft.\footnote{If instead, Spirit's Airbus A321 were adjusted to the 200 seat configuration rather than the 159 configuration, then this would be 3500 seats lost or a loss of approximately 9.9\% of Spirit's seat capacity.} These rough calculations closely track the estimate of an 11\% reduction in seats accepted by the trial court in its decision.\footnote{The court further estimated a decline in annual departures of over 6.1 million. As I neither possess data on flight schedules nor model flight schedules endogenously, I am unable to assess this claim.} 
+	The judgment blocking the merger identifies the core possible negative effects as decreased airline seats, increased market concentration, increased debt for JetBlue, and increased prices for consumers. Table \ref{tab:JetBlueSpirit_Fleet} documents the aircraft in JetBlue and Spirit's fleets in 2022. Both airlines predominantly fly aircraft manufactured by Airbus. JetBlue's fleet is slightly more varied than Spirit's as it uses five different versions of the Airbus A321 aircraft\footnote{Two of these configurations reflect solely different seat configurations. The other three configurations are on the Airbus A321neo, a revision of the earlier aircraft.} Should Spirit's Airbus A320 and Airbus A321 have been adjusted to the predominant seat configurations of JetBlue's aircraft, a total of 20 seats would be lost on each Airbus A320 and 69 seats would be lost on each Airbus A321, for a total of 4,799 seats lost. This would reflect a loss of approximately 13\% of the seats on Spirit's aircraft.\footnote{If instead, Spirit's Airbus A321 were adjusted to the 200 seat configuration rather than the 159 configuration, then this would be 3500 seats lost or a loss of approximately 9.9\% of Spirit's seat capacity.} These rough calculations closely track the estimate of an 11\% reduction in seats accepted by the trial court in its decision.\footnote{The court further estimated a decline in annual departures of over 6.1 million. As I neither possess data on flight schedules nor model flight schedules endogenously, I am unable to assess this claim.} 
 
     This paper estimates the counterfactual increase in market concentration and increase in prices in Section \ref{sec:Analysis_Merger}. 
 
@@ -136,22 +113,23 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 
 	\section{Data and Summary Statistics}
 	\label{sec:Data}
-	The primary dataset used in the creation of this paper is the Bureau of Transportation Statistics' Airline Origin and Destination Survey (DB1B). The DB1B is a 10\% sample of all domestic airline itineraries within the United States that includes each sampled itinerary's fare, distance, origin airport, destination airport, carrier, and number of flights. The economic literature examining the airline industry has used this as the preferred data for studying domestic air travel for decades (e.g. \citet{ciliberto_market_2021, berry_tracing_2010, goolsbee_how_2008, peters_evaluating_2006}). In particular, I use a subsample of the DB1B covering the years from 2017 to 2023.  
+	The primary dataset used in the creation of this paper is the Bureau of Transportation Statistics' Airline Origin and Destination Survey (DB1B). The DB1B is a 10\% sample of all domestic airline itineraries within the United States that includes each sampled itinerary's fare, distance, origin airport, destination airport, carrier, and number of flights. The economic literature examining the airline industry has used this as the preferred data for studying domestic air travel for decades (e.g. \citet{ciliberto_market_2021, berry_tracing_2010, goolsbee_how_2008, peters_evaluating_2006}). In particular, I use a subsample of the DB1B covering the years from 2017 to 2023 which excludes 2020 and the first quarter of 2021 to avoid capturing results driven by the coronavirus pandemic induced decrease in air travel.  
 
-    The DB1B has one key limitation - recorded fares comprise solely the base airfare. As such, the recorded fares paid for the ``unbundled" products offered by Spirit and other ultra-low-cost carriers are systematically lower than the true value.\footnote{Legacy carriers have instituted a tier of fare known within the industry as ``basic economy" to compete with Spirit through a limited amount of unbundled fares. As such, these fares are likewise lower than the true amount paid by consumers. The DB1B does not include reliable information on fare class, and as such, these fares cannot be detected.} This inhibits a proper simulation of changes to consumer surplus following the merger, as discussed in more detail in Section \ref{sec:Analysis_Merger}. 
+    The DB1B has one key limitation - recorded fares comprise solely the base airfare. As such, the recorded fares paid for the ``unbundled" products offered by Spirit and other ultra-low-cost carriers are systematically lower than the total price paid by consumers.\footnote{Legacy carriers have instituted a tier of fare known within the industry as ``basic economy" to compete with Spirit through a limited amount of unbundled fares. As such, these fares are likewise lower than the true amount paid by consumers. The DB1B does not include reliable information on fare class, and as such, these fares cannot be detected.}  This inhibits a proper simulation of changes to consumer surplus following the merger, as discussed in more detail in Section \ref{sec:Analysis_Merger}. 
     	
-	Air travel markets are defined by origin airport, destination airport, year, and quarter. Within this definition, I treat originating and terminating airports as the determinants of markets rather than airports' metropolitan statistical areas. This distinction is common within the literature (e.g. \citet{ciliberto_does_2014, luo_price_2014, tan_incumbent_2016,ciliberto_market_2021}). It is known within the literature that consumers do not treat airports within a metropolitan statistical area as interchangeable.\citet{goolsbee_how_2008}, for example, observes differential impacts on pricing of possible firm entry at the airport level than would be expected if airports within a metropolitan statistical area were treated as interchangeable by consumers. Within this paper, products within a market are further defined by both their ticketing carrier and non-stop status. As such, each carrier can have zero, one, or two products within a market. Appendix \ref{sec:DataProcessing} details my sample construction methodology and the restrictions I place on markets and itineraries included within the sample.
+	I define airline markets by origin airport, destination airport, year, and quarter. Within this definition, I treat originating and terminating airports as the determinants of markets rather than airports' metropolitan statistical areas. It is known within the literature that consumers do not treat airports within a metropolitan statistical area as interchangeable. \citet{goolsbee_how_2008}, for example, observes differential impacts on pricing of possible firm entry at the airport level than would be expected if airports within a metropolitan statistical area were treated as interchangeable by consumers. As such, the decision to assign travel markets by airports is common within the literature (e.g. \citet{ciliberto_does_2014, luo_price_2014, tan_incumbent_2016,ciliberto_market_2021}). Within this paper, products within a market are further defined by both their ticketing carrier and non-stop status. As such, each carrier can have zero, one, or two products within a market. Appendix \ref{sec:DataProcessing} details my sample construction methodology and the restrictions I place on markets and itineraries included within the sample.
 	
-	I additionally use the United States Census Bureau's annual estimates of metropolitan statistical area population to calculate the potential size of markets within the sample. 
+	I additionally use the United States Census Bureau's estimates of metropolitan statistical area population to calculate the potential size of markets within the sample. 
 
-    I present summary statistics for product-level characteristics in Table \ref{tab:Summary_Statistics_Product}. Both product prices and ridership fell on average following the pandemic, with the average itinerary became \$21 cheaper in real terms while having 700 fewer passengers. Notably, despite the high levels of inflation within the post-pandemic period, nominal fares increased by only \$6 between the two periods.  Delta's representation within the samples decreased by 3 percentage points while Southwest, Spirit, and the `Other' carrier\footnote{The `Other' carrier contains the products of minor carriers that operate within the industry, such as Sun Country. I do not include products from Alaska Airlines, Allegiant Air, and Frontier Airlines within this category.} increased their product offerings by approximately one percentage point each. As such, the mix of firms is broadly similar between the two periods. Finally, products are slightly less likely to include an intermediate stop following the pandemic and cover slightly smaller distances. 
+    I present summary statistics for product-level characteristics in Table \ref{tab:Summary_Statistics_Product}. Both product prices and ridership fell on average following the pandemic, with the average itinerary becoming \$21 cheaper in real terms while having 700 fewer passengers. Notably, despite the high levels of inflation within the post-pandemic period, nominal fares increased by only \$6 between the two periods.  Delta's representation within the samples decreased by 3 percentage points while Southwest, Spirit, and the `Other' carrier\footnote{The `Other' carrier contains the products of minor carriers that operate within the industry, such as Sun Country. I do not include products from Alaska Airlines, Allegiant Air, and Frontier Airlines within this category.} increased their product offerings by approximately one percentage point each. As such, the mix of firms is broadly similar between the two periods. Finally, products are slightly less likely to include an intermediate stop following the pandemic and cover slightly smaller distances. 
 
-    I present summary statistics for market-level characteristics in Table \ref{tab:Summary_Statistics_Market}. Despite the post-pandemic period including fewer overall markets due to its shorter duration, the post-pandemic sample includes over a hundred additional markets contested by both JetBlue and Spirit than the pre-pandemic sample. The increased competition within the post-pandemic period is not limited to these markets, as evidenced by the roughly a third of an additional firm in the average market. This increase is driven by additional firms that offer only one product within a given market. Even with the lower real prices observed within the post-pandemic sample, the average market has approximately 16,000 fewer customers in the post-pandemic sample than in the pre-pandemic sample. The miles flown within markets is broadly consistent between the two periods. This is not surprising, as it would seem unlikely that the pandemic would lead to large scale rerouting of air networks. 
+    I present summary statistics for market-level characteristics in Table \ref{tab:Summary_Statistics_Market}. Despite the post-pandemic period including fewer overall markets due to its shorter duration, the post-pandemic sample includes over a hundred additional markets contested by both JetBlue and Spirit than the pre-pandemic sample. The increased competition within the post-pandemic period is not limited to these markets, as evidenced by the roughly a third of an additional firm in the average market. This increase is driven by additional firms that offer only one product within a given market. Even with the lower real prices observed within the post-pandemic sample, the average market has approximately 16,000 fewer customers in the post-pandemic sample than in the pre-pandemic sample. The miles flown within markets are broadly consistent between the two periods, consistent with a lack of large-scale rerouting following the pandemic.  
  
 
 	\section{Analysis}
 	\label{sec:Analysis} 	 
- 	 	 
+ 	I organize my analysis into four parts. In Subsection \ref{sec:Analysis_Demand}, I explain my demand estimation strategy and detail my results. In Subsection \ref{sec:Analysis_Supply}, I describe the assumptions that I place on supply and detail the resulting implications for estimated firm marginal costs. I then estimate the JetBlue-Spirit merger across three simulation specifications in Subsection \ref{sec:Analysis_Merger}. Finally, in Subsection \ref{sec:Analysis_Welfare}, I analyze consumer surplus and estimate the final product fares of Spirit's productions to perform a robustness check on my core results. 
+    
 	\subsection{Demand Model}
 	\label{sec:Analysis_Demand}
 	I estimate demand using the random coefficient nested logit model formalized in \citet{grigolon_nested_2014}, which extends the random coefficient logit model introduced by \citet{berry_automobile_1995} to include a nested component.  Adopting the standardized model notation from \citet{conlon_best_2020}, each consumer $i$ in market $t$ receives indirect utility from buying product $j$ parameterized by 
@@ -164,13 +142,15 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 	
 	Consumer $i$ purchases itinerary $j$ if it has greater utility than all other products in the market. As such, market shares can be obtained by integrating over the consumers within the market. Mathematically, these shares are \[s_{jt} = \int \frac{\exp[V_{ijt} / (1-\rho)}{\exp [V_{i h(j) t} / (1 - \rho)]} \frac{\exp[V_{ih(j)t}]}{1 + \sum_{h \in H \exp V_{iht}}} d{{i}}\] where \[V_{iht} = (1 - \rho) \log\left[\sum \exp[V_{ikt} / 1 - \rho]\right] \] 
 
-    Within the literature, economists analyzing the airline industry generally estimate demand through the application of either the nested logit model (such as in \citet{turner_access_2022,ciliberto_market_2021, aguirregabiria_dynamic_2012}) or the random coefficient logit model originally described in \citet{berry_automobile_1995}.\footnote{\citet{bet_market_2021} is an example of existing literature which uses the random coefficient nested logit model.} Examples of the use of the nested logit model include   \citet{turner_access_2022,ciliberto_market_2021, aguirregabiria_dynamic_2012}; examples of the use of the random coefficient logit model include \citet{ gayle_efficiency_2013, berry_tracing_2010}. Through the use of random coefficients and a nested logit structure for the random errors, the random coefficient nested logit model better approximates own-price and cross-price elasticities than the other models, at the cost of increased computational requirements \citep{grigolon_nested_2014}. That the random coefficient nested logit model estimates each type of price elasticity more reliably than the other models is of particular importance to this work as price elasticities are the primary input used for the estimation of marginal costs and shares within the merger simulation detailed in Section \ref{sec:Analysis_Merger}. 
+    Within the literature, economists analyzing the airline industry generally estimate demand through the application of either the nested logit model or the random coefficient logit model originally described in \citet{berry_automobile_1995}.\footnote{\citet{bet_market_2021} is an example of an existing working paper which uses the random coefficient nested logit model.} Examples of the use of the nested logit model include   \citet{turner_access_2022,ciliberto_market_2021, aguirregabiria_dynamic_2012}; examples of the use of the random coefficient logit model include \citet{ gayle_efficiency_2013, berry_tracing_2010}. Through the use of random coefficients and a nested logit structure for the random errors, the random coefficient nested logit model better approximates own-price and cross-price elasticities than the other models, at the cost of increased computational requirements \citep{grigolon_nested_2014}. That the random coefficient nested logit model estimates each type of price elasticity more reliably than the other models is of particular importance to this work as price elasticities are the primary input used for the estimation of marginal costs and shares within the merger simulation detailed in Section \ref{sec:Analysis_Merger}. 
 	
-	I use four sets of instruments to account for the endogeneity of prices and shares within air-travel markets. The first set consists of a dummy variable which is 1 if at least one of the endpoint airports is a hub of the ticketing carrier, the product of this variable with the miles traveled, and the product of this with the square of the miles traveled. These serve as cost shifters.\footnote{In constructing the data, a round-trip itinerary is divided into two unidirectional itineraries each, with an imputed fare equal to half of the overall cost of the itinerary. As the majority of observations within my data are from round-trip itineraries, I treat both origin hubs and destination hubs symmetrically in the construction of these instruments.} The second set of instruments, employed to account for the endogeneity of market shares, consists of the differentiation instruments described in \citet{gandhi_measuring_2019} constructed from a dummy variable for nonstop flight status, the distance traveled, the square of the distance, and the service ratio of the ticketing carrier out of the originating airport. These instruments serve to capture the level of product differentiation within a market, as this serves as a potential limiting factor for firms' ability to set prices. Within the literature, the differentiation instruments have been found to outperform the ``BLP Instruments" constructed from sums of product characteristics, which have traditionally been used to instrument for shares but become weak in the presence of a large number of products (as in my setting) \citep{conlon_best_2020}.  The third set of instruments, employed to instrument for the nesting parameter $\lambda$ consists solely of the number of products within a market to assist in model convergence. Finally, all remaining exogenous regressors and their interactions comprise the final set of instruments.\footnote{Other instruments for price were considered, including interactions between the gas miles variable and characteristics of the origin airport and interactions between the exogenous variables. However, the selection of price shifters used in the final model had the best performance across the tests documented in Table \ref{tab:Instrument_Compare_Pre}. The final specification chosen (column 4) has the benefit of passing the Wu-Hausman test while failing the Test of Over Identification by the least amount of the tested models. As noted in \citet{nevo_measuring_2001}, when using data containing large amounts of observations, it is virtually impossible to pass this test, and as such, I am not concerned with the result. For comparison purposes, the instrument comparison table for the post-pandemic period is included as Table \ref{tab:PostPand_Instrument_Compare}.}
+	I use four sets of instruments to account for the endogeneity of prices and shares within air-travel markets. The first set consists of a dummy variable which is 1 if at least one of the endpoint airports is a hub of the ticketing carrier, the product of this variable with the miles traveled, and the product of this with the square of the miles traveled. These serve as cost shifters.\footnote{In constructing the data, a round-trip itinerary is divided into two unidirectional itineraries each, with an imputed fare equal to half of the overall cost of the itinerary. As the majority of observations within my data are from round-trip itineraries, I treat both origin hubs and destination hubs symmetrically in the construction of these instruments.} The second set of instruments, employed to account for the endogeneity of market shares, consists of the differentiation instruments described in \citet{gandhi_measuring_2019} constructed from a dummy variable for nonstop flight status, the distance traveled, the square of the distance, and the service ratio of the ticketing carrier out of the originating airport. These instruments serve to capture the level of product differentiation within a market, as this serves as a potential limiting factor for firms' ability to set prices. Within the literature, the differentiation instruments have been found to outperform the ``BLP Instruments" constructed from sums of product characteristics, which have traditionally been used to instrument for shares but become weak in the presence of a large number of products (as in my setting) \citep{conlon_best_2020}.  The third set of instruments, employed to instrument for the nesting parameter $\lambda$ consists solely of the number of products within a market to assist in model convergence. Finally, all remaining exogenous regressors and their interactions comprise the final set of instruments.\footnote{Other instruments for price were considered, including interactions between the gas miles variable and characteristics of the origin airport and interactions between the exogenous variables. However, the selection of price shifters used in the final model had the best performance across the tests documented in Table \ref{tab:Instrument_Compare_Pre}. The final specification chosen (column 4) has the benefit of passing the Wu-Hausman test while failing the Test of Over Identification by the least amount of the tested models. As noted in \citet{nevo_measuring_2001}, when using data containing large amounts of observations, it is virtually impossible to pass this test, and as such, I am not concerned with the result. For comparison purposes, the equivalent table for the post-pandemic period is included as Table \ref{tab:PostPand_Instrument_Compare}.}
 	
-    Results for the estimation of this model's coefficients for both periods are included in Table \ref{tab:DemandEst}. With the exception of nonstop flight status, the square of the extra-miles flown, and the tourist route dummy variable, all variables are predicted to influence consumer demand in both periods. That the estimated coefficient on nonstop flight status is insignificant is not concerning as the model additionally includes variables that account for the responsiveness of consumers to extra miles traveled over the minimum in the market, which were strongly significant. Therefore, consumer preferences over nonstop flights are not different than would be expected.  
+    Results for the estimation of this model's coefficients for both periods are included in Table \ref{tab:DemandEst}. With the exception of nonstop flight status, the square of the extra-miles flown, and the tourist route dummy variable, all variables are predicted to influence consumer demand in both periods. That the estimated coefficient on nonstop flight status is insignificant is not concerning as the model additionally includes variables that account for the responsiveness of consumers to extra miles traveled over the minimum in the market, which were strongly significant. Therefore, consumer preferences over nonstop flights are not different than would be expected.  Of the estimated random effects, only price takes a significant coefficient, of roughly $0.6$ in both periods. 
     
-    Of the estimated random effects, only price takes a significant coefficient, of roughly $0.6$ in both periods. Finally, I estimate a nesting parameter of a little over a tenth in both periods. This is consistent with high degrees of substitutability between air travel and the outside good, which is inconsistent with most previous literature's estimates of the nesting parameter for similar models. As such, consumers are predicted to have a high willingness to enter (leave) the market in response to a price decrease (increase).
+    I estimate a nesting parameter of a little over a tenth in both periods. This is consistent with high degrees of substitutability between air travel and the outside good, which is lower than most previous estimates of the nesting parameter for similar models within the literature. As such, my model predicts that consumers have a high willingness to enter (leave) the market in response to a price decrease (increase).  
+
+    While the relative size of this parameter is potentially alarming, I believe that it reflects the different characteristics of my sample than that of most previous literature analyzing airlines. It is common within the literature for samples to treat all low-cost carriers and ultra-low cost carriers as a single carrier to better focus on legacy carriers (e.g. \citet{turner_access_2022, ciliberto_market_2021}). By including a wider selection of ultra-low cost and low-cost carriers within my sample, I suspect that I am able to capture products that target customers who may not be as strongly attached to a given air travel market, whether due to being interested in vacation generally or who are more willing to look at other airports within a given metropolitan statistical area. 
 
      JetBlue's products face more elastic demand than Spirit's, consistent with the firm targeting less budget-conscious travelers than Spirit. Consumer preferences are estimated to have become less price elastic between the pre-pandemic and post-pandemic periods. This suggests that despite the decline in business travel following the pandemic, leisure travelers' spending patterns changed to be less price sensitive, perhaps due to excess savings acquired during the pandemic period or the desire to make up for lost vacations.\footnote{A working paper, \citet{ewen_zoom_2023}, which uses structural modeling on data from 2019 and 2022 observes similar patterns.}  The estimated coefficient on tourist routes is consistent with this change in consumption patterns.  It is strongly significant in the post-pandemic period but not the pre-pandemic period, consistent with the notion of increased tourism levels. 
     
@@ -203,23 +183,23 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
      
      The estimated change in minimum market fares within markets that both Spirit and JetBlue competed in is detailed in Table \ref{tab:MinimumPrice}. Across the simulations of price changes within markets that both firms competed in, at least 30 (of the 1418 (1554) markets that both firms competed in within the pre-pandemic (post-pandemic) period), markets in each period are estimated to have the minimum price within the market increase by over \$60. Within both periods, these markets are primarily between airports in the New York and Boston areas and various destinations within the Southern portion of the United States (such as Houston and Dallas). As such, the estimated markets with the largest changes in minimum prices is consistent with the finding of the key markets of concern within the trial. 
 
-    I graph the distribution of the estimated changes to the minimum market fares in figures \ref{fig:PrePan_MinimumFare_Dist} and \ref{fig:PostPan_MinimumFare_Dist}. In the pre-pandemic (post-pandemic) period there exists roughly 300 (200) markets estimated to have decreases of under \$5 in the minimum market fare in all specifications. However, beyond an increase in price of approximately \$15, each simulation has a roughly uniform distribution of the changes to minimum market fares, with the relative end point of this distribution changing between simulation specifications. Importantly, these figures reveal the highly heterogeneous nature of the estimated changes under each simulation specification.
+    I graph the distribution of the estimated changes to the minimum market fares in Figure \ref{fig:PrePan_MinimumFare_Dist} and Figure \ref{fig:PostPan_MinimumFare_Dist}. In the pre-pandemic (post-pandemic) period there exists roughly 300 (200) markets estimated to have decreases of under \$5 in the minimum market fare in all specifications. However, beyond an increase in price of approximately \$15, each simulation has a roughly uniform distribution of the changes to minimum market fares, with the relative end point of this distribution changing between simulation specifications. Importantly, these figures reveal the highly heterogeneous nature of the estimated changes under each simulation specification.
 
     \subsection{Ancillary Fees and Consumer Welfare}
     \label{sec:Analysis_Welfare}
-    Now, I return to the issue of consumer welfare and the ancillary fees charged by Spirit as part of its unbundled fares. Figure \ref{fig:Spirit_Revenue_Sources} graphs Spirit's annual average passenger-segment earnings from fare and non-fare sources. From 2018 to the present, the average passenger-segment resulted in Spirit earning more revenue from non-fare sources than from the base fare. Furthermore, as noted in \citep{senate_permanent_committee_on_investigations_majority_2024}, the ancillary fees are algorithmically determined and change between markets and over time. As such, adjusting the price of the recorded fares in the data by simply adding the average annual ancillary fees to the recorded data is liable to induce bias into my calculations by overstating fees charged in more competitive markets and understating fees charged in less competitive markets. 
+    Now, I return to the issue of consumer welfare and the ancillary fees charged by Spirit as part of its unbundled fares. From 2018 to the present, Spirit documented in its annual financial filings that it earned more from non-fare sources than from the base fare on average. Therefore, I cannot observe the true final price of Spirit's products for the majority of its customers. Complicating matters is that spirit's ancillary fees are algorithmically determined and change between markets and over time \citep{senate_permanent_committee_on_investigations_majority_2024}. Adjusting the price of the recorded fares in the data by simply adding the average annual ancillary fees to the recorded data is thus liable to induce bias into my calculations by overstating fees charged in more competitive markets and understating fees charged in less competitive markets.
 
-    Instead, I now estimate the final price paid for Spirit products by adding a term created by scaling the recorded non-fare revenue proportionally to the ratio of itinerary passenger-segment revenue to Spirit's fare passenger-segment revenue recorded in its annual financial filings. For Spirit itinerary $i$ in year $y$, $\hat{P}_{iy} $ as \begin{equation}
+    Instead, I now estimate the final price paid for Spirit products by adding a term created by scaling the recorded non-fare revenue proportionally to the ratio of itinerary passenger-segment revenue to Spirit's fare passenger-segment revenue recorded in its annual financial filings. For Spirit itinerary $i$ in year $y$, $\hat{P}_{iy} $ is estimated by \begin{equation}
     \begin{split}
       P_{iy}' &= P_{iy} - 22.99 * I[y > 2020] * S_{i}\\
  \hat{P}_{iy} &= P_{iy}' + NTR_{y} * \frac{P_{iy}'}{\bar{P}_{y}}     \end{split}
-    \end{equation} where ${P}_{iy}$ is the reported fare paid for the itinerary in the DB1B, $S_{i}$ is the number of legs of the trip, $I[y > 2020]$ is a dummy variable which is $1$ if the year is after 2020, $NTR_{y}$ is Spirit's reported average ``non-ticket revenue per passenger-segment" for year $y$, and $\bar{P}_{y}$ is Spirit's reported average``fare revenue per passenger-segment" from the 10-K filing for the financial year ending in $y$.\footnote{For ease of understanding of this estimation, I include the $S_{i}$ terms explicitly in the second equation despite them not being present in a simplified version of the second term. This is done to make explicit that I am scaling the average non-ticket revenue by the per-segment fare recorded in the DB1B. } The first equation intends to remove the online booking fees charged by Spirit from the recorded fare in the DB1B, which were required to be included for submissions after the year 2020. Within this calculation, I assume that customers paying for more expensive base fares additionally pay for more ancillary fees on average. This would reflect both the market environment of individual air travel markets as well as the preferences of individual consumers. 
+    \end{equation} where ${P}_{iy}$ is the reported fare paid for the itinerary in the DB1B, $S_{i}$ is the number of legs of the trip, $I[y > 2020]$ is a dummy variable which is $1$ if the year is after 2020, $NTR_{y}$ is Spirit's reported average ``non-ticket revenue per passenger-segment" for year $y$, and $\bar{P}_{y}$ is Spirit's reported average``fare revenue per passenger-segment" from the 10-K filing for the financial year ending in $y$. The first equation intends to remove the online booking fees charged by Spirit from the recorded fare in the DB1B, which the Department of Transportation required to be included in filings after 2020. Within this calculation, I assume that customers paying for more expensive base fares additionally pay for more ancillary fees on average. This could reflect both the market environment of individual air travel markets as well as the preferences of individual consumers. This runs the risk of introducing bias if Spirit systematically charged lower ancillary fees within markets with higher ticket prices. As I do not possess any data on the true fares paid by Spirit's customers, I cannot assess this risk.
 
-    Using these estimated prices, I then re-estimate my model of demand and supply. The results for this estimation are included within table \ref{tab:Demand_Aux_Scale}. The estimated demand model has coefficients following the same pattern as the model estimated in section \ref{sec:Analysis_Demand}. However, as Spirit's prices are greater than in the previous analysis, the estimated own-price elasticities of Spirit's products are necessarily larger than in the previous estimation. 
+    Using these estimated prices, I then re-estimate my model of demand and supply. The results for this estimation are included within Table \ref{tab:Demand_Aux_Scale}. The estimated demand model has coefficients following the same pattern as the model estimated in Section \ref{sec:Analysis_Demand}. However, as Spirit's prices are greater than in the previous analysis, the estimated own-price elasticities of Spirit's products are necessarily larger than in the previous estimation. 
 
-    Notably, as Spirit's prices are greater than in the earlier estimation, the use of Bertrand competition with differentiated products as my model of supply within the industry causes the estimated marginal costs of Spirit's products to increase, as the shares of Spirit's products have not changed. These changes are graphed in percentage terms in Figures  \ref{tab:Fee_Fix_prepandemic_MC_PercentChange} and    \ref{tab:Fee_Fix_postpandemic_MC_PercentChange}. The average Spirit product within these markets has its estimated marginal cost increase by 62.9 percent in the pre-pandemic period and by 64.2 percent in the post-pandemic period. 
+    Notably, as Spirit's prices are greater than in the earlier estimation, the use of Bertrand competition with differentiated products as my model of supply within the industry causes the estimated marginal costs of Spirit's products to increase, as the shares of Spirit's products have not changed. These changes are graphed in percentage terms in Figure  \ref{tab:Fee_Fix_prepandemic_MC_PercentChange} and    Figure \ref{tab:Fee_Fix_postpandemic_MC_PercentChange}. The average Spirit product within these markets has its estimated marginal cost increase by 62.9 percent in the pre-pandemic period and by 64.2 percent in the post-pandemic period. 
     
-    Now, I perform the three simulations discussed in Section \ref{sec:Analysis_Merger}for this alternative sample. Notably, as JetBlue's estimated marginal costs are generally larger than those for Spirit, we would expect this analysis to be more favorable to the merger's approval because the difference in marginal costs between each firm will be lower for this analysis. This expectation is aligned with the simulated changes in average market prices in Table \ref{tab:Simulation_Price_Aux_Scale}.\footnote{For continuity with prior results, I present the estimated changes to the available ``minimum" market price in Table \ref{tab:MinimumPrice_Aux_Scale}. However, as this minimum market price is constructed using an adjustment to include ancillary fares, it is realistically not the true minimum price within the market.}  
+    Now, I perform the three simulations discussed in Section \ref{sec:Analysis_Merger} for this alternative sample. Notably, as JetBlue's estimated marginal costs are generally larger than those for Spirit, we would expect this analysis to be more favorable to the merger's approval because the difference in marginal costs between each firm will be lower for this analysis. This expectation is aligned with the simulated changes in average market prices in Table \ref{tab:Simulation_Price_Aux_Scale}.\footnote{For continuity with prior results, I present the estimated changes to the available ``minimum" market price in Table \ref{tab:MinimumPrice_Aux_Scale}. However, as this minimum market price is constructed using an adjustment to include ancillary fares, it is realistically not the true minimum price within the market.}  
 
     My model estimated on the adjusted data predicts declines in the average market price within the average JetBlue-Spirit market during the pre-pandemic period of over 2.5 percentage points under even the worst-case simulation. Within the post-pandemic period, my model predicts an increase in the average market fare within these markets of under 1 percentage point under the assumptions governing the worst-case simulation. 
 
@@ -247,21 +227,40 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 	
 \pagebreak 
 \FloatBarrier
-\section{Tables and Figures}
-\subsection{Setting}
-\begin{figure}[h]
-	\caption{Quarterly Passengers, All Carriers}
-	\label{fig:QuarterlyPass}
-	\includegraphics[width = \linewidth]{Quarterly_DB1B_Itineraries}
-	\footnotesize{Source: DB1B Data. Shaded region depicts the duration of the coronavirus pandemic before widespread vaccine availability within the United States, namely, from the first quarter of 2020 through the first quarter of 2021.}
-\end{figure}
+\section{Main Tables and Figures}
+\subsection{Tables}
 
-\begin{figure}[h]
-\caption{Quarterly Passengers, JetBlue and Spirit}
-\label{fig:Quarterly_Pass_JB_SP}
-\includegraphics[width = \linewidth]{Spirit_JetBlue_Ridership.pdf}
-\footnotesize{Source: DB1B Data. Shaded region depicts the duration of the coronavirus pandemic before widespread vaccine availability within the United States, namely, from the first quarter of 2020 through the first quarter of 2021.}
-\end{figure}
+\begin{table}[tb]
+		\caption{JetBlue-Spirit Merger Timeline}
+		\label{tab:JetBlue_Spirit_Timeline}
+		\begin{center}
+			\begin{tabular}{ccc}
+				\hline
+				Year & Date & Event \\
+				\hline
+				2022 & February 7 & Frontier-Spirit Merger Announced \\
+				& April 5 &  First JetBlue Offer for Spirit Released\\
+				& May 6 & Spirit Rejects JetBlue Offer \\
+				& July 27 &  Frontier-Spirit Merger Attempt Collapses\\
+				& July 28 &  Spirit Board Approves JetBlue Merger\\
+				& October 19 & Spirit Shareholders Approve Merger \\
+				\hline
+				2023 & March 7 &  Department of Justice Files Suit\\
+				& October 31 - December 5 &  JetBlue-Spirit Merger Trial \\
+				\hline
+				2024 & January 16 & JetBlue-Spirit Merger Blocked \\
+				& March 4 & JetBlue, Spirit Drop Appeal Plans \\
+			\end{tabular}
+		\end{center}
+	\end{table}
+
+    	\begin{table}
+		\caption{JetBlue and Spirit: Overlap Cities - 2022}
+		\label{tab:KeyCities}
+		\include{06.Tables/OverlapCities}
+		\footnotesize{Derived from DB1B Data. Cities are ordered by the combined share of passengers who used JetBlue or Spirit flights as a share of the total passengers departing from the city within 2022. Cities in which only one firm operates are excluded.}
+	\end{table}
+
 
    \begin{table}[h]
       \begin{center}
@@ -273,45 +272,8 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
         \footnotesize{Source: B-43 Inventory Data.}
     \end{table}
 
-\begin{figure}[h]
-        \caption{Distribution of Low-Cost and Ultra-Low-Cost Carriers}
-        \label{fig:LCC_Distribution}
-        \includegraphics[width = \linewidth]{05.Figures/LCC_Market_Graph.pdf}
-        \footnotesize{Derived from the sample with construction methodology described in Appendix \ref{sec:DataProcessing}. Each market is a Year-Quarter-Origin Airport-Destination Airport ordered quartet. Carriers included in the count of low-cost and ultra-low-cost carriers are Southwest, JetBlue, Spirit, Frontier, and Allegiant.}
-    \end{figure}
+    
 
-\begin{figure}[h]
-\caption{Spirit Revenue Sources Over Time}
-\label{fig:Spirit_Revenue_Sources}
-    \includegraphics[width = \linewidth]{05.Figures/Spirit_Revenue_Sources.pdf}
-\footnotesize{Source: Spirit Airlines 10-K Filings. Values are average revenue per passenger flight segment in nominal dollars. }
-\end{figure}
-
-    	\begin{figure}[h]
-	\caption{JetBlue, Spirit Fleet Size Over Time}
-	\label{fig:Both_fleet}
-	\includegraphics[width = \linewidth]{Both_Planes.pdf}
-	\footnotesize{Source: B-43 Inventory Data. Each bar is the number of airplanes in a given firm's inventory within a given year.}
-\end{figure}
-
-
-
-\begin{figure}
-	\caption{JetBlue, Spirit Airports - 2022}
-	\label{fig:JBSpirit_Airports_2022}
-	\includegraphics[width = \linewidth]{Map_Mainland_Both_2022.pdf}
-	\footnotesize{Derived from DB1B Data. Beyond the United States mainland, both carriers operated in Puerto Rico.}
-\end{figure}
-
-
-	\begin{table}
-		\caption{JetBlue and Spirit: Overlap Cities - 2022}
-		\label{tab:KeyCities}
-		\include{06.Tables/OverlapCities}
-		\footnotesize{Derived from DB1B Data. Cities are ordered by the combined share of passengers who used JetBlue or Spirit flights as a share of the total passengers departing from the city within 2022. Cities in which only one firm operates are excluded.}
-	\end{table}
-\FloatBarrier
-\subsection{Summary Statistics}
    \begin{table}
     \caption{Product Level Summary Statistics}
     \label{tab:Summary_Statistics_Product}
@@ -335,19 +297,9 @@ In 2024, the attempted merger between JetBlue Airways and Spirit Airlines was bl
 
     \end{table}
 
-        \begin{table}
-        \caption{Market Level Summary Statistics (By Market Structure)}
-        \label{fig:Market_Type_Summary}
-                  \vspace{-15mm}
-        \begin{center}
-        \include{06.Tables/SummaryStatistics_MarketTypes}
-        \end{center}
-    \end{table}
+   
 
 
-    \FloatBarrier
-
-    \subsection{Analysis: Demand Estimation}
     \begin{table}
         \caption{Demand Estimation Results}
         \label{tab:DemandEst}
@@ -433,10 +385,6 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
     }
 \end{table}
 
-\FloatBarrier
-
-\subsection{Analysis: Merger Simulation}
-
     \begin{table}
         \caption{Simulated Price Effects of Merger - Joint Markets}
         \label{tab:Simulation_Price}
@@ -445,7 +393,7 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
          \include{06.Tables/Merger_Results}
         \end{center}
         \vspace{-5mm}
-        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. Distribution of changes of average market fares are graphed in Figures \ref{fig:AverageFare_ChangeDist_PrePandemic} and \ref{fig:AverageFare_ChangeDist_PostPandemic} for the pre-pandemic and post-pandemic periods respectively.}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Distribution of changes of average market fares are graphed in Figures \ref{fig:AverageFare_ChangeDist_PrePandemic} and \ref{fig:AverageFare_ChangeDist_PostPandemic} for the pre-pandemic and post-pandemic periods respectively.}
 
      \end{table}
 
@@ -470,8 +418,134 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
         \end{center}
         \vspace{-5mm}
         \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars. A version of this table which reports the change in minimum fares in percent terms is included as Table        \ref{tab:MinimumPrice_Percent}.}
+    \end{table} 
+
+    
+    \begin{table}
+        \caption{Change in Minimum Fare Available in Market (Percent)}
+       \label{tab:MinimumPrice_Percent}
+       \vspace{-15mm}
+       \begin{center}
+           \include{06.Tables/MinimumFareChange_Percent}
+       \end{center}
+       \vspace{-5mm}
+       \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobservables. A version of this table which reports the change in minimum fares in terms of 2017 dollars is included as Table \ref{tab:MinimumPrice}.}
+    \end{table}
+
+
+    \begin{table}
+        \caption{Demand Estimation Results - Ancillary Fix}
+        \label{tab:Demand_Aux_Scale}
+         \vspace{-15mm}
+        \begin{center}
+        \include{06.Tables/Auxilary_Scale_RCL_Both_Period_Output}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$ Products are defined as a Carrier-Nonstop pair within an Origin-Destination-Year-Quarter market. Origin Service Ratio is the fraction of direct routes out of the originating airport operated by the carrier divided by the total number of direct routes originating from that airport. Extra Miles is the average additional miles flown with a connecting itinerary minus the minimum miles flown within a market.  A tourist product has at least one endpoint in either the Las Vegas or Florida. This table uses the data set wherein Spirit's fares have been adjusted in an attempt to proxy for ancillary fees. }
+    \end{table}
+
+    
+    \begin{table}
+        \caption{Simulated Price Effects of Merger - Ancillary Fix}
+        \label{tab:Simulation_Price_Aux_Scale}
+                \vspace{-15mm}
+        \begin{center}
+        \include{06.Tables/Auxilary_Scale_Merger_Results}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded.}
+
+     \end{table}
+
+    \begin{table}
+        \caption{Change in Minimum Fare - Ancillary Fix (2017 USD)}
+        \label{tab:MinimumPrice_Aux_Scale}
+                \vspace{-15mm}
+        \begin{center}
+\include{06.Tables/Auxilary_Scale_MinimumFareChange}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars. A version of this table which reports the change in minimum fares in terms of percentages is included as Table \ref{tab:MinimumPrice_Percent_Aux_Scale}.}
     \end{table}    
 
+
+\begin{table}
+        \caption{Change in Consumer Surplus}
+        \label{tab:Change_CS}
+                \vspace{-15mm}
+        \begin{center}
+\include{06.Tables/Merger_CS_Results.tex}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. }
+    \end{table}    
+
+\begin{table}
+        \caption{Change in Consumer Surplus - Ancillary Fix}
+        \label{tab:Change_CS_Anc_Fix}
+                \vspace{-15mm}
+        \begin{center}
+\include{06.Tables/Ancillary_Scale_Merger_CS_Results.tex}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables.}
+    \end{table} 
+
+        \begin{table}
+        \caption{Change in Minimum Fare - Ancillary Fix (Percent)}
+        \label{tab:MinimumPrice_Percent_Aux_Scale}
+                \vspace{-15mm}
+        \begin{center}
+\include{06.Tables/Auxilary_Scale_MinimumFareChange_Percent}
+        \end{center}
+        \vspace{-5mm}
+        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. A version of this table which reports the change in minimum fares in terms of 2017 dollars is included as Table \ref{tab:MinimumPrice_Aux_Scale}.}
+    \end{table}    
+ 
+\FloatBarrier
+\subsection{Figures}
+\begin{figure}[h]
+\caption{Spirit Revenue Sources Over Time}
+\label{fig:Spirit_Revenue_Sources}
+    \includegraphics[width = \linewidth]{05.Figures/Spirit_Revenue_Sources.pdf}
+\footnotesize{Source: Spirit Airlines 10-K Filings. Values are average revenue per passenger flight segment in nominal dollars. }
+\end{figure}
+
+\begin{figure}[h]
+\caption{Quarterly Passengers, JetBlue and Spirit}
+\label{fig:Quarterly_Pass_JB_SP}
+\includegraphics[width = \linewidth]{Spirit_JetBlue_Ridership.pdf}
+\footnotesize{Source: DB1B Data. Shaded region depicts the duration of the coronavirus pandemic before widespread vaccine availability within the United States, namely, from the first quarter of 2020 through the first quarter of 2021.}
+\end{figure}
+
+\begin{figure}[h]
+	\caption{JetBlue, Spirit Fleet Size Over Time}
+	\label{fig:Both_fleet}
+	\includegraphics[width = \linewidth]{Both_Planes.pdf}
+	\footnotesize{Source: B-43 Inventory Data. Each bar is the number of airplanes in a given firm's inventory within a given year.}
+\end{figure}
+
+\begin{figure}
+	\caption{JetBlue, Spirit Airports - 2022}
+	\label{fig:JBSpirit_Airports_2022}
+	\includegraphics[width = \linewidth]{Map_Mainland_Both_2022.pdf}
+	\footnotesize{Derived from DB1B Data. Beyond the United States mainland, both carriers operated in Puerto Rico.}
+\end{figure}
+
+\begin{figure}[h]
+        \caption{Distribution of Low-Cost and Ultra-Low-Cost Carriers}
+        \label{fig:LCC_Distribution}
+        \includegraphics[width = \linewidth]{05.Figures/LCC_Market_Graph.pdf}
+        \footnotesize{Derived from the sample with construction methodology described in Appendix \ref{sec:DataProcessing}. Each market is a Year-Quarter-Origin Airport-Destination Airport ordered quartet. Carriers included in the count of low-cost and ultra-low-cost carriers are Southwest, JetBlue, Spirit, Frontier, and Allegiant.}
+    \end{figure}
+
+\begin{figure}[h]
+	\caption{Quarterly Passengers, All Carriers}
+	\label{fig:QuarterlyPass}
+	\includegraphics[width = \linewidth]{Quarterly_DB1B_Itineraries}
+	\footnotesize{Source: DB1B Data. Shaded region depicts the duration of the coronavirus pandemic before widespread vaccine availability within the United States, namely, from the first quarter of 2020 through the first quarter of 2021.}
+\end{figure}
+    
       \begin{figure}
     \caption{Simulated Change in Pre-Pandemic Minimum Market Fares}
     \includegraphics[width = \linewidth]{PrePandemic_Merger_Change_MinimumFare_Dist}
@@ -506,30 +580,6 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
             \footnotesize{The mean change in markets' average fares is \$4.08 (\$8.78) [\$13.64] in the best (average) [worst] case merger simulations respectively. Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars.}     
     \end{figure}
 
-    \begin{table}
-        \caption{Change in Minimum Fare Available in Market (Percent)}
-       \label{tab:MinimumPrice_Percent}
-       \vspace{-15mm}
-       \begin{center}
-           \include{06.Tables/MinimumFareChange_Percent}
-       \end{center}
-       \vspace{-5mm}
-       \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobservables. A version of this table which reports the change in minimum fares in terms of 2017 dollars is included as Table \ref{tab:MinimumPrice}.}
-    \end{table}
-\FloatBarrier
-
-\subsection{Analysis: Ancillary Fees and Consumer Welfare}
-
-    \begin{table}
-        \caption{Demand Estimation Results - Ancillary Fix}
-        \label{tab:Demand_Aux_Scale}
-         \vspace{-15mm}
-        \begin{center}
-        \include{06.Tables/Auxilary_Scale_RCL_Both_Period_Output}
-        \end{center}
-        \vspace{-5mm}
-        \footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$ Products are defined as a Carrier-Nonstop pair within an Origin-Destination-Year-Quarter market. Origin Service Ratio is the fraction of direct routes out of the originating airport operated by the carrier divided by the total number of direct routes originating from that airport. Extra Miles is the average additional miles flown with a connecting itinerary minus the minimum miles flown within a market.  A tourist product has at least one endpoint in either the Las Vegas or Florida. This table uses the data set wherein Spirit's fares have been adjusted in an attempt to proxy for ancillary fees. }
-    \end{table}
 
     \begin{figure}
         \caption{Change in Estimated Marginal Cost (Percent, Pre-Pandemic)}
@@ -544,64 +594,7 @@ Num. obs.                   & $265196$      & $265196$      & $265196$      & $2
         \label{tab:Fee_Fix_postpandemic_MC_PercentChange}
         \includegraphics[width = \linewidth]{Fee_Fix_MC_Graph_Percent_JBMarket.pdf}
         \footnotesize{For each Spirit product offered in a post-pandemic market that JetBlue competed against Spirit within, this figure records the change in the estimated marginal cost between the model using the reported fares from the DB1B and the model using the adjusted fares to attempt to capture the impact of ancillary fees on Spirit's total prices. The mean increase in estimated marginal costs is 64.2 percent.}
-    \end{figure}
-
-
-    \begin{table}
-        \caption{Simulated Price Effects of Merger - Ancillary Fix}
-        \label{tab:Simulation_Price_Aux_Scale}
-                \vspace{-15mm}
-        \begin{center}
-        \include{06.Tables/Auxilary_Scale_Merger_Results}
-        \end{center}
-        \vspace{-5mm}
-        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded.}
-
-     \end{table}
-
-    \begin{table}
-        \caption{Change in Minimum Fare - Ancillary Fix (2017 USD)}
-        \label{tab:MinimumPrice_Aux_Scale}
-                \vspace{-15mm}
-        \begin{center}
-\include{06.Tables/Auxilary_Scale_MinimumFareChange}
-        \end{center}
-        \vspace{-5mm}
-        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. Prices are in 2017 dollars. A version of this table which reports the change in minimum fares in terms of percentages is included as Table \ref{tab:MinimumPrice_Percent_Aux_Scale}.}
-    \end{table}    
-
-        \begin{table}
-        \caption{Change in Minimum Fare - Ancillary Fix (Percent)}
-        \label{tab:MinimumPrice_Percent_Aux_Scale}
-                \vspace{-15mm}
-        \begin{center}
-\include{06.Tables/Auxilary_Scale_MinimumFareChange_Percent}
-        \end{center}
-        \vspace{-5mm}
-        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. A version of this table which reports the change in minimum fares in terms of 2017 dollars is included as Table \ref{tab:MinimumPrice_Aux_Scale}.}
-    \end{table}    
-
-\begin{table}
-        \caption{Change in Consumer Surplus}
-        \label{tab:Change_CS}
-                \vspace{-15mm}
-        \begin{center}
-\include{06.Tables/Merger_CS_Results.tex}
-        \end{center}
-        \vspace{-5mm}
-        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. }
-    \end{table}    
-
-\begin{table}
-        \caption{Change in Consumer Surplus - Ancillary Fix}
-        \label{tab:Change_CS_Anc_Fix}
-                \vspace{-15mm}
-        \begin{center}
-\include{06.Tables/Ancillary_Scale_Merger_CS_Results.tex}
-        \end{center}
-        \vspace{-5mm}
-        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobserveables. }
-    \end{table}    
+    \end{figure}  
 
 \FloatBarrier
 \pagebreak
@@ -762,7 +755,7 @@ The stance detection problem should not be confused with that of the sentiment a
     \footnotesize{Each cell includes the number of comments with the given stance and sentiment. Only unique comments are included within this table. }
 \end{table}
 
-This paper uses the pre-trained model documented in \citet{laurer_less_2024} to detect the stances of each comment left on the docket. Each comment is assessed for the probability that each comment agrees with the statements ``The author of this comment \{approves of, disagrees with\} the merger." As these statements are mutually exclusive, the probabilities assigned for each comment sum to 1. As documented in Figures \ref{fig:ProbabilityApprove} and \ref{fig:ProbabilityApprove_Unique}, most comments are strongly polarized, suggesting that the language model had little difficulty in assigning stances to comments. Looking over a sample of fifty unique comments, all are sorted as would be expected based on my understanding of the text. As such, I believe that this model is well suited for analyzing the public comments.  
+This paper uses the pre-trained model documented in \citet{laurer_less_2024} to detect the stances of each comment left on the docket. Each comment is assessed for the probability that each comment agrees with the statements ``The author of this comment \{approves of, disagrees with\} the merger." As these statements are mutually exclusive, the probabilities assigned for each comment sum to 1. As documented in Figure \ref{fig:ProbabilityApprove} and Figure \ref{fig:ProbabilityApprove_Unique}, most comments are strongly polarized, suggesting that the language model had little difficulty in assigning stances to comments. Looking over a sample of fifty unique comments, all are sorted as would be expected based on my understanding of the text. As such, I believe that this model is well suited for analyzing the public comments.  
 
 	\begin{figure}
 		\caption{Probability Comments Approve}
@@ -820,7 +813,7 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
     \setcounter{figure}{0}
     \subsection{Assumed Merger Efficiencies}
     \label{App:Efficiencies}
-    In this section, I consider an alternative simulation method where for each case identified in the main text (Section \ref{sec:Analysis_Merger}), I additionally assume that the merged firm realizes efficiencies of either 5\% or 10\%. The results of this simulation for the 5\% case are reported in Table \ref{tab:Simulation_Price_5} and the results for the 10\% case in Table \ref{tab:Simulation_Price_10}. Minimum fare in market changes are reported in Tables \ref{tab:MinimumPrice_5} and \ref{tab:MinimumPrice_10}. 
+    In this section, I consider an alternative simulation method where for each case identified in the main text (Section \ref{sec:Analysis_Merger}), I additionally assume that the merged firm realizes efficiencies of either 5\% or 10\%. The results of this simulation for the 5\% case are reported in Table \ref{tab:Simulation_Price_5} and the results for the 10\% case in Table \ref{tab:Simulation_Price_10}. Minimum fare in market changes are reported in Table \ref{tab:MinimumPrice_5} and Table \ref{tab:MinimumPrice_10}. 
 
         \begin{table}
         \caption{Simulated Price Effects of Merger with 5\% Efficiency Gain - Joint Markets}
@@ -872,49 +865,18 @@ Figure \ref{fig:CommentTimeline} plots the distribution of submitted comments on
   %  \subsection{Alternative Market Definition}
   %  In this section, I consider an alternative market definition where markets are defined by origin and destination metropolitan statistical areas rather than airports. Individual products within markets are defined by carrier, nonstop status, and airports traveled between. 
 \pagebreak
-\FloatBarrier
-    \subsection{Nested Logit Model Specification}
-    In this subsection, I estimate a nested logit demand model and then re-conduct the merger simulation. Mathematically, this model is equivalent to estimating the Demand model described in Section \ref{sec:Analysis_Demand} but with the additional constraint that each $\nu$ parameter is assumed equal to zero. As such, individual consumer deviations from the mean utility of a given product are determined solely by the random error term $\epsilon_{ijt}$. The results of this exercise are presented in Table \ref{tab:DemandEst_NestedLogit}. The estimated demand coefficients are broadly similar to the coefficients presented in Table \ref{tab:DemandEst}, but it is worth noting that the estimated elasticities are lower (higher)  in the pre-pandemic (post-pandemic) period for the nested-logit estimates than for the random coefficient nested logit estimates. 
-
-    Following the re-estimation of demand, I once more simulate the JetBlue-Spirit merger across the three scenarios described in Section \ref{sec:Analysis_Merger}. The key results for these simulations are described within Tables \ref{tab:Simulation_Price_NestedLogit} and \ref{tab:MinimumPrice_NestedLogit}. The results are consistent with the results presented within the main text.  
-
-    \begin{table}
-        \caption{Demand Estimation Results - Nested Logit}
-        \label{tab:DemandEst_NestedLogit}
-        \vspace{-15mm}
-        \begin{center}
-        \include{06.Tables/NestedLogitResults}   
-        \end{center}
-        \vspace{-5mm}
-                \footnotesize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$ Products are defined as a Carrier-Nonstop pair within an Origin-Destination-Year-Quarter market. Origin Service Ratio is the fraction of direct routes out of the originating airport operated by the carrier divided by the total number of direct routes originating from that airport. Extra Miles is the average additional miles flown with a connecting itinerary minus the minimum miles flown within a market.  A tourist product has at least one endpoint in either the Las Vegas or Florida.}
-    \end{table}
-
-      \begin{table}
-        \caption{Simulated Price Effects of Merger - Joint Markets, Nested Logit Demand}
-        \label{tab:Simulation_Price_NestedLogit}
-                \vspace{-15mm}
-        \begin{center}
-         \include{06.Tables/NestedLogit_Merger_Results}
-        \end{center}
-        \vspace{-5mm}
-        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. Corresponding results for demand estimated using a random coefficient nested logit model are included as Table \ref{tab:Simulation_Price} within the main text.}
-
-     \end{table}
-
- \begin{table}
-        \caption{Change in Minimum Fare Available in Market (2017 USD), Nested Logit Demand}
-        \label{tab:MinimumPrice_NestedLogit}
-                \vspace{-15mm}
-        \begin{center}
-            \include{06.Tables/NestedLogit_MinimumFareChange}
-        \end{center}
-        \vspace{-5mm}
-        \footnotesize{Products from markets without both JetBlue and Spirit present are excluded. The best case merger scenario is one in which the combined firm inherits the minimum average cost and greatest unobservables of each firm, the average case merger scenario has the combined JetBlue-Spirit inherit the average of the two firms' product characteristics, and the worst case scenario has the combined JetBlue-Spirit inherit the greatest marginal cost and lowest unobservables. Prices are in 2017 dollars. Corresponding results for demand estimated using a random coefficient nested logit model are included as Table \ref{tab:Simulation_Price} within the main text.}
-    \end{table}    
-\FloatBarrier
-
-
 
 \end{appendices}
 	
 \end{document}
+
+% Removed Material Starts Here
+
+     \begin{table}
+        \caption{Market Level Summary Statistics (By Market Structure)}
+        \label{fig:Market_Type_Summary}
+                  \vspace{-15mm}
+        \begin{center}
+        \include{06.Tables/SummaryStatistics_MarketTypes}
+        \end{center}
+    \end{table}
