@@ -251,8 +251,11 @@ minimum_fare_increase_table <- function(merger_data.post = "03.Output/Adv_Merger
                                         merger_data.pre =  "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
                                         observed.pre = "02.Intermediate/prepandemic.rds",
                                         table_out = "06.Tables/MinimumFareChange.tex",
-                                        mode = 0){
-  period_table_make <- function(real, merger, mode){
+                                        mode = 0,
+                                        buckets = c("$<$ 0", "0-20", "20-40", "40-60",
+                                                    "60-80", "80 $<$"),
+                                        break_points = c(-Inf, 0, 20, 40, 60, 80, Inf)){
+  period_table_make <- function(real, merger, mode, buckets, break_points){
     real <- readRDS(real); merger <- readRDS(merger)
     
     real[, Spirit_Prescence := max(Spirit_Prescence), by = c("Year", "Quarter", "Origin",
@@ -295,9 +298,6 @@ minimum_fare_increase_table <- function(merger_data.post = "03.Output/Adv_Merger
     out[, Worst := round(100*(Worst.Min - Prices.Real), digits = 2)]
     
     # Group fare increases into $20 increment categories
-    buckets <- c("$<$ 0", "0-20", "20-40", "40-60",
-                 "60-80", "80 $<$")
-    break_points <- c(-Inf, 0, 20, 40, 60, 80, Inf)
     out[, bucket.Best := cut(Best,
                              breaks = break_points,
                              labels = buckets)]
@@ -328,8 +328,8 @@ minimum_fare_increase_table <- function(merger_data.post = "03.Output/Adv_Merger
     return(out)
   }
   
-  postPandemic <- period_table_make(real = observed.post, merger = merger_data.post, mode)
-  prePandemic <- period_table_make(real = observed.pre, merger = merger_data.pre, mode)
+  postPandemic <- period_table_make(real = observed.post, merger = merger_data.post, mode, buckets, break_points)
+  prePandemic <- period_table_make(real = observed.pre, merger = merger_data.pre, mode, buckets, break_points)
   
   colnames(postPandemic) <- c("Bucket", paste("Post.", colnames(postPandemic)[2:4], sep = ""))
   colnames(prePandemic) <- c("Bucket", paste("Pre.", colnames(prePandemic)[2:4], sep = ""))
@@ -347,13 +347,18 @@ minimum_fare_increase_table <- function(merger_data.post = "03.Output/Adv_Merger
     save_kable(file = table_out)
 }
 
+
+
 minimum_fare_percent_increase_table <- function(merger_data.post = "03.Output/Adv_Merger_Sim_Data.rds",
                                         observed.post = "02.Intermediate/Product_Data.rds",
                                         merger_data.pre =  "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
                                         observed.pre = "02.Intermediate/prepandemic.rds",
                                         table_out = "06.Tables/MinimumFareChange_Percent.tex",
-                                        mode = 0){
-  period_table_make <- function(real, merger){
+                                        mode = 0,
+                                        buckets = c("$<$ 0", "0-20", "20-40", "40-60",
+                                                    "60-80", "80 $<$"),
+                                        break_points = c(-Inf, 0, 20, 40, 60, 80, Inf)){
+  period_table_make <- function(real, merger, buckets, break_points){
     real <- readRDS(real); merger <- readRDS(merger)
     
     real[, Spirit_Prescence := max(Spirit_Prescence), by = c("Year", "Quarter", "Origin",
@@ -392,21 +397,19 @@ minimum_fare_percent_increase_table <- function(merger_data.post = "03.Output/Ad
     
     out <- as.data.table(merge(real, merger, by = "market_ids"))
     out[, Best := round(100*(Best.Min - Prices.Real)/Prices.Real, digits = 2)]
-    out[, Average := round(100*(Avg.Min - Prices.Real/Prices.Real), digits = 2)]
-    out[, Worst := round(100*(Worst.Min - Prices.Real/Prices.Real), digits = 2)]
+    out[, Average := round(100*(Avg.Min - Prices.Real)/Prices.Real, digits = 2)]
+    out[, Worst := round(100*(Worst.Min - Prices.Real)/Prices.Real, digits = 2)]
     
+
     out[, bucket.Best := cut(Best,
-                             breaks = c(-Inf, 0, 20, 40, 60, 80, Inf),
-                             labels = c("$<$ 0", "0-20", "20-40", "40-60",
-                                        "60-80", "80 $<$"))]
+                             breaks = break_points,
+                             labels = buckets)]
     out[, bucket.Average := cut(Average,
-                                breaks = c(-Inf, 0, 20, 40, 60, 80, Inf),
-                                labels = c("$<$ 0", "0-20", "20-40", "40-60",
-                                           "60-80", "80 $<$"))]
+                                breaks = break_points,
+                                labels = buckets)]
     out[, bucket.Worst := cut(Worst,
-                              breaks = c(-Inf, 0, 20, 40, 60, 80, Inf),
-                              labels = c("$<$ 0", "0-20", "20-40", "40-60",
-                                         "60-80", "80 $<$"))]
+                              breaks = break_points,
+                              labels = buckets)]
     best <- out[, .N, by = bucket.Best]; average <- out[, .N, by = bucket.Average];
     worst <- out[, .N, by = bucket.Worst]
     
@@ -416,11 +419,20 @@ minimum_fare_percent_increase_table <- function(merger_data.post = "03.Output/Ad
     out <- merge(best, average, by = "Bucket")
     out <- merge(out, worst, by = "Bucket")
     
+    #Re-Order Rows, Fix Missing Rows
+    re_order_frame <- data.table(Bucket = buckets, Val = rep(0, times = length(buckets)))
+    out <- merge(re_order_frame, out, all.x = TRUE, all.y = TRUE)
+    out$Val <- NULL
+    
+    # Correct Any NA Values created by Merging to be 0's
+    col_correct <- c("Best", "Average", "Worst")
+    setDT(out)[, (col_correct) := lapply(.SD, replace_na, 0), .SDcols = col_correct]
+    
     return(out)
   }
   
-  postPandemic <- period_table_make(real = observed.post, merger = merger_data.post)
-  prePandemic <- period_table_make(real = observed.pre, merger = merger_data.pre)
+  postPandemic <- period_table_make(real = observed.post, merger = merger_data.post, buckets, break_points)
+  prePandemic <- period_table_make(real = observed.pre, merger = merger_data.pre, buckets, break_points)
   
   colnames(postPandemic) <- c("Bucket", paste("Post.", colnames(postPandemic)[2:4], sep = ""))
   colnames(prePandemic) <- c("Bucket", paste("Pre.", colnames(prePandemic)[2:4], sep = ""))
@@ -569,11 +581,11 @@ merger_simulation_hhi_change <- function(merger_post = "03.Output/Adv_Merger_Sim
   
 }
 
-merger_simulation_cs_change_percent <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rds",
-                                        observed_post = "02.Intermediate/Product_Data.rds",
-                                        merger_pre = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
-                                        observed_pre = "02.Intermediate/prepandemic.rds",
-                                        table_out = "06.Tables/Merger_CS_Percent_Change.tex"){
+merger_simulation_cs_table <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rds",
+                                                observed_post = "02.Intermediate/Product_Data.rds",
+                                                merger_pre = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
+                                                observed_pre = "02.Intermediate/prepandemic.rds",
+                                                table_out = "06.Tables/Merger_CS_Results.tex"){
   output_rows <- function(merger_in, observed_in){
     merger <- readRDS(merger_in)
     observed <- readRDS(observed_in)
@@ -591,9 +603,9 @@ merger_simulation_cs_change_percent <- function(merger_post = "03.Output/Adv_Mer
     merger <- merger %>% select(market_ids, CS_Best, CS_Avg, CS_Worst, ConsumerSurplus_Observed) %>%
       unique()
     
-    merger[, CS_Best_Change := (CS_Best - ConsumerSurplus_Observed)/ConsumerSurplus_Observed * 100]
-    merger[, CS_Average_Change := (CS_Avg - ConsumerSurplus_Observed)/ConsumerSurplus_Observed * 100]
-    merger[, CS_Worst_Change := (CS_Worst - ConsumerSurplus_Observed)/ConsumerSurplus_Observed * 100]
+    merger[, CS_Best_Change := (CS_Best - ConsumerSurplus_Observed)]
+    merger[, CS_Average_Change := (CS_Avg - ConsumerSurplus_Observed)]
+    merger[, CS_Worst_Change := (CS_Worst - ConsumerSurplus_Observed)]
     
     # Cluster 1: Consumer Surplus Change 
     cs.best <- five_statistic_row_make("Best Case", merger$CS_Best_Change)
@@ -602,7 +614,29 @@ merger_simulation_cs_change_percent <- function(merger_post = "03.Output/Adv_Mer
     
     obs_row <- c("N Markets", nrow(merger), "", "", "", "")
     
-    table <- rbind(cs.best, cs.avg, cs.worst, obs_row)
+  
+    # Report Change in Consumer Surplus Estimates
+    # current_cs <- sum(merger$ConsumerSurplus_Observed) * 100;
+    # best_cs <- sum(merger$CS_Best) * 100;
+    # avg_cs <- sum(merger$CS_Avg) * 100;
+    # worst_cs <- sum(merger$CS_Worst) * 100
+    
+    # total_row <- c("Total:", round(current_cs,0), rep("", times = 4))
+    # best_total <- c("Best Case Total:", round(best_cs,0), rep("", times = 4))
+    # average_total <- c("Average Case Total:", round(avg_cs,0), rep("", times = 4))
+    # worst_total <- c("Worst Case Total:", round(worst_cs,0), rep("", times = 4))
+    
+    best_cs <- sum(merger$CS_Best_Change)
+    avg_cs <- sum(merger$CS_Average_Change)
+    worst_cs <- sum(merger$CS_Worst_Change)
+    
+    total_row <- c("Total Change:", rep("", times = 5))
+    best_total <- c("Best Case:", round(best_cs,0), rep("", times = 4))
+    average_total <- c("Average Case:", round(avg_cs,0), rep("", times = 4))
+    worst_total <- c("Worst Case:", round(worst_cs,0), rep("", times = 4))
+    
+    
+    table <- rbind(cs.best, cs.avg, cs.worst, total_row, best_total, average_total, worst_total, obs_row)
     rownames(table) <- NULL
     return(table)
   }
@@ -610,88 +644,19 @@ merger_simulation_cs_change_percent <- function(merger_post = "03.Output/Adv_Mer
   pre_rows <- output_rows(merger_in = merger_pre, observed_pre)
   post_rows <- output_rows(merger_in = merger_post, observed_post)
   
-  
   table <- rbind(pre_rows, post_rows); rownames(table) <- NULL
   title_row <- c("", "Mean", "(SD)", "Minimum", "Median", "Maximum")
   
   kbl(table,
       format = "latex", col.names = title_row,
       escape = TRUE, booktabs = TRUE) %>%
-    pack_rows(group_label = "Pre-Pandemic", 1, 4) %>%
-    pack_rows(group_label = "Post-Pandemic", 5, 8) %>%
+    pack_rows(group_label = "Pre-Pandemic", 1, 8) %>%
+    pack_rows(group_label = "Market Level Consumer Surplus", 1, 3) %>%
+    pack_rows(group_label = "Post-Pandemic", 9, 16) %>%
+    pack_rows(group_label = "Market Level Consumer Surplus", 9, 11) %>%
     row_spec(row = 3, hline_after = TRUE) %>%
-    row_spec(row = 4, hline_after = TRUE) %>%
-    row_spec(row = 7, hline_after = TRUE) %>%
-    save_kable(file = table_out)
-}
-
-merger_simulation_cs_change <- function(merger_post = "03.Output/Adv_Merger_Sim_Data.rds",
-                                                observed_post = "02.Intermediate/Product_Data.rds",
-                                                merger_pre = "03.Output/PrePandemic_Adv_Merger_Sim_Data.rds",
-                                                observed_pre = "02.Intermediate/prepandemic.rds",
-                                                table_out = "06.Tables/Merger_CS_Results.tex"){
-  output_rows <- function(merger_in, observed_in, period_name = NULL){
-    merger <- readRDS(merger_in)
-    observed <- readRDS(observed_in)
-    
-    # Identify markets which merger impacted
-    impactedMarkets <- observed %>% group_by(market_ids) %>%
-      summarize(Spirit = max(Spirit),
-                JetBlue = max(JetBlue)) %>% 
-      filter(Spirit == 1, JetBlue == 1); impactedMarkets <- impactedMarkets$market_ids
-    
-    # Restrict
-    merger <- merger[market_ids %in% impactedMarkets,]
-    
-    # Calculate Change in Market Consumer Surplus
-    merger <- merger %>% select(market_ids, CS_Best, CS_Avg, CS_Worst, ConsumerSurplus_Observed) %>%
-      unique()
-    
-    # Prices are in Hundreds of Dollars, This Adjusts to be in Single Dollars
-    merger[, CS_Best_Change := (CS_Best - ConsumerSurplus_Observed) * 100]
-    merger[, CS_Average_Change := (CS_Avg - ConsumerSurplus_Observed) * 100]
-    merger[, CS_Worst_Change := (CS_Worst - ConsumerSurplus_Observed) * 100]
-    
-    # Cluster 1: Consumer Surplus Change 
-    cs.best <- five_statistic_row_make("Best Case", merger$CS_Best_Change)
-    cs.avg <- five_statistic_row_make("Average Case", merger$CS_Average_Change)
-    cs.worst <- five_statistic_row_make("Worst Case", merger$CS_Worst_Change)
-    
-    obs_row <- c("N Markets", nrow(merger), "", "", "", "")
-    
-    if(!is.null(period_name)){
-      # Report Change in Consumer Surplus Estimates
-      current_cs <- sum(merger$ConsumerSurplus_Observed) * 100;
-      best_cs <- sum(merger$CS_Best) * 100;
-      avg_cs <- sum(merger$CS_Avg) * 100;
-      worst_cs <- sum(merger$CS_Worst) * 100
-      
-      print(paste("Current Period:", period_name));
-      print(paste("Current Consumer Surplus (2017 USD):", current_cs))
-      print(paste("Best Case Consumer Surplus (2017 USD):", best_cs))
-      print(paste("Average Case Consumer Surplus (2017 USD):", avg_cs))
-      print(paste("Worst Case Consumer Surplus (2017 USD):", worst_cs))
-    }
-    
-    table <- rbind(cs.best, cs.avg, cs.worst, obs_row)
-    rownames(table) <- NULL
-    return(table)
-  }
-  
-  pre_rows <- output_rows(merger_in = merger_pre, observed_pre, period_name = "Pre-Pandemic")
-  post_rows <- output_rows(merger_in = merger_post, observed_post, period_name = "Post-Pandemic")
-  
-  table <- rbind(pre_rows, post_rows); rownames(table) <- NULL
-  title_row <- c("", "Mean", "(SD)", "Minimum", "Median", "Maximum")
-  
-  kbl(table,
-      format = "latex", col.names = title_row,
-      escape = TRUE, booktabs = TRUE) %>%
-    pack_rows(group_label = "Pre-Pandemic", 1, 4) %>%
-    pack_rows(group_label = "Post-Pandemic", 5, 8) %>%
-    row_spec(row = 3, hline_after = TRUE) %>%
-    row_spec(row = 4, hline_after = TRUE) %>%
-    row_spec(row = 7, hline_after = TRUE) %>%
+    row_spec(row = 8, hline_after = TRUE) %>%
+    row_spec(row = 11, hline_after = TRUE) %>%
     save_kable(file = table_out)
 }
 
