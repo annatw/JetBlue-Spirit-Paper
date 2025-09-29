@@ -364,7 +364,7 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
                                                  specification_options = dict("seed" = 97L)))
  original_markets <- as.numeric(original_problem$unique_market_ids)
  
-  cs_observed <- model$compute_consumer_surpluses()
+  cs_observed <- model$compute_consumer_surpluses() * 100
   original_cs <- data.table(market_ids = original_markets, ConsumerSurplus_Observed_Normalized = as.numeric(cs_observed))
 
   data.new <- data %>% group_by(merger_carrier, Origin, Dest, Year,
@@ -548,9 +548,9 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
 
   # Add each markets Consumer Surplus
   markets <- as.numeric(simulation.best$unique_market_ids)
-  cs.best <- as.numeric(simulation.min$compute_consumer_surpluses())
-  cs.avg <- as.numeric(simulation.mean$compute_consumer_surpluses())
-  cs.worst <- as.numeric(simulation.max$compute_consumer_surpluses())
+  cs.best <- as.numeric(simulation.min$compute_consumer_surpluses()) * 100
+  cs.avg <- as.numeric(simulation.mean$compute_consumer_surpluses()) * 100
+  cs.worst <- as.numeric(simulation.max$compute_consumer_surpluses()) * 100
 
   cs_table <- data.table(market_ids = markets,
                          CS_Best_Normalized = cs.best,

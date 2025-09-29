@@ -52,7 +52,7 @@ spirit_mc_adjust_graph <- function(data_source = "02.Intermediate/Product_Data_C
                                    percent_graph_out = "05.Figures/Fee_Fix_MC_Graph_Percent.pdf",
                                    JB_restrict = FALSE,
                                    dollar_xlim = c(0, 325), 
-                                   percent_xlim = c(0, 415)){
+                                   percent_xlim = c(0, 130)){
   product_data <- readRDS(data_source)
   
   product_data <- product_data[Carrier == "Spirit Air Lines"]
@@ -86,6 +86,9 @@ spirit_mc_adjust_graph <- function(data_source = "02.Intermediate/Product_Data_C
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           legend.position = "bottom") + labs(x = "Change (%)", y = "Product Count")
   ggsave(percent_graph_out, units = "in", width = 7, height = 3)
+  
+  mean_increase <- mean(product_data$MC_Percent);
+  print(paste("Mean Increase:", mean_increase, "percent"))
 }
 
 

@@ -66,14 +66,14 @@ passenger_map <- function(airlines, years, data, filename){
   if(length(airlines) == 2 & length(years) == 2){
     
   } else if(length(airlines) == 1 & length(years) == 2){
-    T100_freq <- T100 %>% group_by(Origin_Numeric, Year) %>% 
-      select(Origin_Numeric, Year) %>%
-      unique() %>% group_by(Origin_Numeric) %>%
+    T100_freq <- T100 %>% group_by(Origin_Alpha, Year) %>% 
+      select(Origin_Alpha, Year) %>%
+      unique() %>% group_by(Origin_Alpha) %>%
       summarize(N = n())
     
     T100 <- merge(T100, T100_freq, 
-                  by.x = c("Origin_Numeric"),
-                  by.y = c("Origin_Numeric"),
+                  by.x = c("Origin_Alpha"),
+                  by.y = c("Origin_Alpha"),
                   all.x = TRUE)
     
     T100 <- T100 %>% mutate(Incidence = paste(Year, N))
@@ -119,14 +119,14 @@ passenger_map <- function(airlines, years, data, filename){
     
     
   } else if(length(years) == 1 & length(airlines) == 2){
-    T100_freq <- T100 %>% group_by(Origin_Numeric, Carrier_Entity) %>%
-      select(Origin_Numeric, Carrier_Entity) %>%
-      unique() %>% group_by(Origin_Numeric) %>%
+    T100_freq <- T100 %>% group_by(Origin_Alpha, Carrier_Entity) %>%
+      select(Origin_Alpha, Carrier_Entity) %>%
+      unique() %>% group_by(Origin_Alpha) %>%
       summarize(N = n())
     
     T100 <- merge(T100, T100_freq, 
-                  by.x = c("Origin_Numeric"),
-                  by.y = c("Origin_Numeric"),
+                  by.x = c("Origin_Alpha"),
+                  by.y = c("Origin_Alpha"),
                   all.x = TRUE)
     
     T100 <- T100 %>% mutate(Incidence = paste(Carrier_Entity, N))
@@ -142,7 +142,8 @@ passenger_map <- function(airlines, years, data, filename){
     
     ggplot(data = state_data.mainland) + 
       geom_sf(fill = "white") + 
-      geom_point(T100.Mainland, mapping = aes(x = Origin_lon, y = Origin_lat, color = `Operating Firms`), size = 0.5) +
+      geom_point(T100.Mainland, mapping = aes(x = Origin_lon, y = Origin_lat, color = `Operating Firms`,
+                                              shape = `Operating Firms`), size = 1.5) +
      scale_color_manual(values = c("black", "cornflowerblue", "burlywood")) + 
       labs(x = "", y = "") +
       theme(axis.text.x=element_blank(),

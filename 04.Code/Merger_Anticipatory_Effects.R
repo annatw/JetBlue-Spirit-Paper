@@ -107,7 +107,7 @@ merger_anticipatory_analysis <- function(input = "02.Intermediate/Merger_Panel_D
                                          table_output = "06.Tables/Merger_Antipate_Regression.tex",
                                          figure_output = "05.Figures/Merger_Anticipate_Figure.pdf"){
   panel_data <- readRDS(input)
-  panel_data[, Period := relevel(Period, ref = "0")]
+  panel_data[, Period := relevel(Period, ref = "-1")]
 
   # Differences in Differences
   regression_did <- lm_robust(formula = 
@@ -124,7 +124,7 @@ merger_anticipatory_analysis <- function(input = "02.Intermediate/Merger_Panel_D
        SP_JB_Market:Period_M8 + 
        SP_JB_Market:Period_M7 + SP_JB_Market:Period_M6 +  SP_JB_Market:Period_M5 + 
        SP_JB_Market:Period_M4 + SP_JB_Market:Period_M3 + SP_JB_Market:Period_M2 +
-       SP_JB_Market:Period_M1 +
+       SP_JB_Market:Period_M0 +
        SP_JB_Market:Period_P1 + SP_JB_Market:Period_P2 + SP_JB_Market:Period_P3 + 
        SP_JB_Market:Period_P4,
                            fixed_effects = ~ Route + Carrier,

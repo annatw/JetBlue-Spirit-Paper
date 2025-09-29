@@ -249,6 +249,65 @@ carrier_shares_graph <- function(data_in = "02.Intermediate/DB1B_With_Controls.R
   ggsave(graph_out, units = "in", width = 7, height = 3)
 }
 
+spirit_jetblue_ridership_graph <- function(db1b_in = "02.Intermediate/Construct_DB1B/DB1B_Condensed.rds",
+                                           graph_out = "05.Figures/Spirit_JetBlue_Ridership.pdf"){
+  db1b <- readRDS(db1b_in)
+  
+  db1b[, Month := -1]
+  db1b[Quarter == 1, Month := 2]
+  db1b[Quarter == 2, Month := 5]
+  db1b[Quarter == 3, Month := 8]
+  db1b[Quarter == 4, Month := 11]
+  db1b[, Date := my(paste(Month, Year))]
+  
+  
+  graph_data <- db1b %>% filter(Carrier %in% c("JetBlue Airways", "Spirit Air Lines")) %>%
+    group_by(Carrier, Date) %>%
+    summarize(Passengers = sum(Passengers.Product) / 1000000)
+  
+  ggplot(graph_data, aes(x = Date, y = Passengers, linetype = Carrier)) +
+    geom_rect(aes(xmin = my("January 2020"), xmax = my("April 2021"), ymin = -Inf, ymax = Inf), 
+              fill = "grey") +
+    geom_line() +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") +
+    scale_y_continuous(expand = c(0,0), limits = c(0, 11)) +
+    labs(x = "Time", y = "Passengers, Millions")
+  
+    ggsave(graph_out, units = "in", width = 7, height = 3)
+}
+
+spirit_jetblue_yields_over_time <- function(db1b_in = "02.Intermediate/Construct_DB1B/DB1B_Condensed.rds",
+                                            graph_out = "05.Figures/JetBlue_Spirit_Yields.pdf"){
+  db1b <- readRDS(db1b_in)
+  db1b[, Month := -1]
+  db1b[Quarter == 1, Month := 2]
+  db1b[Quarter == 2, Month := 5]
+  db1b[Quarter == 3, Month := 8]
+  db1b[Quarter == 4, Month := 11]
+  db1b[, Date := my(paste(Month, Year))]
+  
+  graph_data <- db1b %>% filter(Carrier %in% c("JetBlue Airways", "Spirit Air Lines")) %>%
+    group_by(Carrier, Date) %>%
+    summarize(Avg_Yield = sum(Passengers.Product * Avg.Fare / MktMilesFlown) / sum(Passengers.Product))
+  
+  ggplot(graph_data, aes(x = Date, y = Avg_Yield, linetype = Carrier)) +
+    geom_rect(aes(xmin = my("January 2020"), xmax = my("April 2021"), ymin = -Inf, ymax = Inf), 
+              fill = "grey") +
+    geom_line() +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom")  +
+   scale_y_continuous(expand = c(0,0), limits = c(0, 0.27)) +
+   labs(x = "Time", y = "Average Yield")
+  
+  ggsave(graph_out, units = "in", width = 7, height = 3)
+  
+}
+
 quarterly_ridership_graph <- function(db1b_in = "02.Intermediate/Construct_DB1B/DB1B_Condensed.rds",
                                       graph_out = "05.Figures/Quarterly_DB1B_Itineraries.pdf"){
   db1b <- readRDS(db1b_in)

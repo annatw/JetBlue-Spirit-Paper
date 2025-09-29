@@ -341,7 +341,6 @@ change_average_fare <- function(merger_data.basic = "02.Intermediate/Basic_Sim_P
   result_internalized[, Difference := Prices - MeanPrice]
   result_internalized <- result_internalized[, .(market_ids, Difference)] %>% unique()
   
-  
   result <- result[, .(market_ids, `Low Cost Merge`, `Mean Cost Merge` , `High Cost Merge`)] %>% unique()
   
   result.melt <- melt(result, id.vars = c("market_ids")) %>% data.table()
@@ -454,6 +453,11 @@ change_average_fare_dist <- function(merger_data.adv = "03.Output/Adv_Merger_Sim
   
   result.raw <- result[, .(market_ids, `Low Cost Merge`, `Mean Cost Merge` , `High Cost Merge`)] %>% unique()
   
+  print(paste("Low Cost Mean:", round(mean(result.raw$`Low Cost Merge`), digits = 2)))
+  print(paste("Average Cost Mean:", round(mean(result.raw$`Mean Cost Merge`), digits = 2)))
+  print(paste("High Cost Mean:", round(mean(result.raw$`High Cost Merge`), digits = 2)))
+  
+  
   result.melt <- melt(result.raw, id.vars = c("market_ids")) %>% data.table()
   colnames(result.melt) <- c("Market", "Simulation", "Change")
   result.melt[, Simulation := factor(x = Simulation, levels = c("Low Cost Merge", "Mean Cost Merge",
@@ -500,4 +504,89 @@ change_average_fare_dist <- function(merger_data.adv = "03.Output/Adv_Merger_Sim
       scale_x_continuous(limits = c(-25, 45))
     
     ggsave(graph_out.percent, units = "in", width = 7, height = 3)
+}
+
+
+# Function that Plots Distribution of Carrier Marginal Costs
+# Inputs: Carrier = c(NULL, "JetBlue Airways", "Spirit Air Lines") - Must have Carrier or else Print "No Carrier"
+#         Markets = c("All", "Contested") - Restrict to JB, SP Markets or Not
+marginal_cost_distribution <- function(model_in = "03.Output/random_coeff_nested_logit_results.pickle",
+                                       data_in = "02.Intermediate/Product_Data.rds",
+                                       Carrier_Restrict = NULL,
+                                       Markets = "All",
+                                       graph_out = "05.Figures/Marginal_Cost_Graph.pdf"){
+  gc(); gc(); 
+  
+  if(is.null(Carrier_Restrict)){
+    print("Carrier Unspecified")
+    return(-1);
+  }
+  
+  model <- py_load_object(model_in)
+  data <- readRDS(data_in)
+  
+  # Recover MC
+  data[, marginal_cost := model$compute_costs()]
+  
+  if(Markets == "Contested"){
+    contested_markets <- data %>% 
+      filter(Carrier %in% c("JetBlue Airways", "Spirit Air Lines")) %>%
+      select(Carrier, market_ids) %>%
+      unique() %>% group_by(market_ids) %>%
+      summarize(N = n()) %>%
+      filter(N == 2)
+    data <- data[market_ids %in% contested_markets$market_ids,]
+    
+  }
+  
+  data <- data[Carrier == Carrier_Restrict,]
+  
+  ggplot(data, aes(x = marginal_cost)) +
+    geom_histogram()
+  
+  ggsave(graph_out, units = "in", width = 7, height = 3)
+}
+
+marginal_cost_difference_graph <- function(model_in = "03.Output/random_coeff_nested_logit_results.pickle",
+                                           data_in = "02.Intermediate/Product_Data.rds",
+                                           graph_out = "05.Figures/Marginal_Cost_Postpandemic_Difference_Graph.pdf"){
+  model <- py_load_object(model_in)
+  data <- readRDS(data_in)
+  data[, marginal_cost := model$compute_costs()]
+  remove(model); gc(); gc();
+  
+  # Restrict to JB, SP Observations in Contested Markets
+  data <- data[Carrier %in% c("JetBlue Airways", "Spirit Air Lines")]
+  
+  contested_markets <- data %>% 
+    filter(Carrier %in% c("JetBlue Airways", "Spirit Air Lines")) %>%
+    select(Carrier, market_ids) %>%
+    unique() %>% group_by(market_ids) %>%
+    summarize(N = n()) %>%
+    filter(N == 2)
+  
+  data <- data[market_ids %in% contested_markets$market_ids,]
+  
+  # Need to figure out which products have "Matches", Restrict To them
+  # Then Graph
+  data <- data[, .(market_ids, NonStop, Carrier, marginal_cost)]
+  data.wide <- reshape(data, direction = "wide", 
+                       idvar = c("market_ids","NonStop"),
+                       timevar = c("Carrier")) %>% as.data.table()
+
+  data.wide$JetBlue_Less_Spirit <- 100 * (data.wide$`marginal_cost.JetBlue Airways` - data.wide$`marginal_cost.Spirit Air Lines`)
+  
+  data.wide <- data.wide[!is.na(JetBlue_Less_Spirit)]
+  
+  ggplot(data.wide, aes(x = JetBlue_Less_Spirit)) +
+    geom_histogram() +
+    labs(x = "Difference in Marginal Costs (JetBlue - Spirit)",
+         y = "Number of Products") + 
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") +
+    scale_y_continuous(expand = c(0,0))
+  
+  ggsave(graph_out, units = "in", width = 7, height = 3)
 }

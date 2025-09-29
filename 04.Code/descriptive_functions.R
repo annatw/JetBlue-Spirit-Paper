@@ -738,7 +738,7 @@ spirit_revenue_sources_over_time <- function(input = "01.Input/22.FinancialFilin
                                              "Fare"))
 
   ggplot(data = revenue.melt, aes(x = Year, y = value, fill = Source)) + 
-    geom_col(position = "dodge") + scale_fill_manual(values = c("grey", "black")) +
+    geom_col(position = "dodge") + scale_fill_manual(values = c("darkgrey", "black")) +
     theme(panel.background = element_blank(), 
           axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
           panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
