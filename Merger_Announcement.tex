@@ -1,0 +1,20 @@
+    \section{Merger Announcement Effects}
+    \setcounter{table}{0}
+    \setcounter{figure}{0}
+
+    Historically, airline mergers have had effects on airfares before the completion of the merger. Within this section, I estimate the effects of the announcement of the merger on fares in markets served by both JetBlue and Spirit through a modified version of the event study model used in \citet{goolsbee_how_2008} and \citet{fan_when_2020}. I use an alternative subsample of the data I use within the main text consisting of route-period-carrier level observations of the log average-fare offered by each carrier within two types of markets - those consistently served by both JetBlue and Spirit in the four quarters prior to the merger announcement and markets in which JetBlue and Spirit did not fly within the four quarters prior to the merger announcement. I further restrict this sample to only include markets after the first quarter of 2021. 
+    
+    For carrier $c$ serving unidirectional route $r$ at time $t$, its log-average fare $y_{crq}$ is described by 
+
+    \[y_{crt} = Merge_{r} \sum_{i = - 4, i \neq -1}^{4} \beta_{i}I[t = i]  + \mu_{cr} + \mu_{t} + \epsilon_{crt}\]
+
+    where $I[q = i]$ is $1$ if $q = i$ and zero otherwise, $Merge_{c}$ is a dummy variable which is one if both JetBlue and Spirit operate within the market, $Other_c$ is one if the carrier neither of the merging firms, $\mu_{cr}$ is vector containing fixed effects for both carrier and route, $X_{crq}$ is a vector of controls, and $\epsilon_{crq}$ is a random error term. As the Spirit-JetBlue merger was approved by Spirit's board in the third quarter of 2022, period $0$ is defined as the second quarter of 2022. Furthermore, quarters from the height of the coronavirus pandemic (2020 and the first quarter of 2021) are excluded. 
+
+    As documented in Figure \ref{fig:MergerAnnouncement_Plot}, I fail to find evidence for significant anticipatory effects caused by the JetBlue-Spirit merger. I hypothesize that this may be due to the lower market share of these two firms in comparison to the previous literature which found anticipatory effects caused by the mergers of legacy airlines. 
+
+    \begin{figure}
+    \caption{Merger Announcement Event Study}
+    \label{fig:MergerAnnouncement_Plot}
+    \includegraphics[width = \linewidth]{05.Figures/Merger_Anticipate_Figure.pdf}
+    \end{figure}
+
