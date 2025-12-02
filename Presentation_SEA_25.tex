@@ -43,7 +43,7 @@
 
 \title{Distributional Effects of Mergers}
 \subtitle{Evidence from Low-Cost Carriers}
-\date{October 24, 2025}
+\date{November 22, 2025}
 
 \usetheme{Madrid}
 \definecolor{UFOrange}{HTML}{FA4616}
@@ -79,48 +79,9 @@
             \end{itemize}
         \end{itemize}
     \end{frame}
-    
-	\begin{frame}
-		\frametitle{Presentation Organization}
-		\begin{enumerate}
-				\item Setting
-				\begin{itemize}
-					\item American Aviation Industry
-					\item JetBlue-Spirit Merger
-				\end{itemize}
-				\item Data and Summary Statistics
-				\item Model and Results 
-				\begin{itemize}
-					\item Demand Model
-                    \item Supply Model
-                    \item Merger Simulations
-                    \item Consumer Surplus
-				\end{itemize}
-                \item Conclusion
-			\end{enumerate}
-	\end{frame}
 
-    \section{Setting}
-	\begin{frame}
-		\frametitle{Types of Carrier}
-		\begin{itemize}
-			\item Three Types:
-			\begin{itemize}
-				\item Legacy % (Existed Pre-1978 Deregulation)
-				\item Low-Cost 
-				\begin{itemize}
-					\item Ex: JetBlue, Southwest
-					\item Focus on Direct Flights, Uniform Fleets
-				\end{itemize}
-				\item Ultra-Low Cost
-				\begin{itemize}
-	            \item Model characterized by ``Unbundled Fares" - Traditional Amenities are an extra fare on top of the base price.
-                \item Cheaper base fares, worse quality.
-    			\end{itemize}
-			\end{itemize}
-		\end{itemize}
-	\end{frame}
-	
+
+    \section{Setting}	
     \begin{frame}
         \frametitle{JetBlue}
         \begin{itemize}
@@ -175,7 +136,7 @@
     \begin{frame}
         \frametitle{Airline Industry After Covid-19}
         \begin{itemize}
-        \item Airline Industry Was Dealing with Aftereffects of Covid-19 During Attempted Merger
+        \item Airline Industry Was Dealing with Effects of Covid-19 During Attempted Merger
          \item Consumer Base of Industry Changed
             \begin{itemize}
                 \item Business Travelers Historically Roughly Third of Riders
@@ -213,20 +174,6 @@
         \end{itemize}
     \end{frame}
 
-      \begin{frame}
-        \frametitle{Summary Statistics - Product Level}
-            \resizebox{\linewidth}{!}{%}
-\input{06.Tables/SummaryStatistics_Product_Compare_Slim}
-}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Summary Statistics - Market Level}
-        \centering
-    \resizebox{\linewidth}{!}{%}
-\input{06.Tables/SummaryStatistics_Market_Compare_Slim}
-}
-    \end{frame}
 
     \section{Model and Results}
 
@@ -250,64 +197,17 @@
     
     \subsection{Demand}
     \begin{frame}
-        \frametitle{Demand Model}
+        \frametitle{Demand and Supply Model}
         \begin{itemize}
-            \item Random-Coefficient Nested Logit Model 
-            \begin{itemize}
-                \item Historically, nested logit model or the random-coefficient logit model have been used to estimate airline demand 
-                \item Random coefficient nested-logit model outperforms other model types in simulations at estimating own-price and cross-price elasticities at increased computational costs (\cite{grigolon_nested_2014})
+            \item Standard Random-Coefficient Nested Logit Model 
+            \begin{itemize} 
+                \item All air travel products are in one nest, while the outside good is the other nest. 
             \end{itemize}
-            \item All air travel products are in one nest, while the outside good is the other nest. 
+        \item Identification comes from four sets of instruments - Cost Shifters (Endpoint Hub Interactions), Interactions of Exogenous Regressors, Gandhi-Houde Differentiation Instruments, Number of Products in Each Market
+            \item Supply Model: Assume Bertrand competition with differentiated products following exogenous determination of product offerings
         \end{itemize}
     \end{frame}
     
-    \begin{frame}
-        \frametitle{Demand Model}
-        \begin{itemize}
-        \item  Consumer $i$ in market $t$ has indirect utility from buying product $j$ as defined by 
-\[U_{ijt} = \delta_{jt} + \mu_{ijt} + \epsilon_{ijt}\]
-        \item $\delta_{jt}$ is the mean utility across consumers in market $t$ for product $j$
-		\item $\mu_{ijt}$ is the consumer's deviation from this mean utility
-		\item  $\epsilon_{ijt}$ is an unobserved consumer-level shock such that \[\epsilon_{ijt} = \bar{\epsilon}_{ih(j)t} + (1 - \rho)\bar{\epsilon}_{ijt}\] 
-
-        % WHAT DOES ABOVE MEAN AGAIN?
-        
-		\item $\rho$ is the nesting parameter. 
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Demand Model Parameterization}
-        \[\delta_{jt} = \alpha p_{jt} + x_{j} \beta + F_{jt}\gamma  +  \xi_{jt}\]
-         \vspace{-8mm}
-        \begin{itemize}
-            \item $p_{jt}$ is the price of product $j$ in market $t$
-            \item $x_j$ is product characteristics unresponsive to demand shocks (miles traveled, nonstop status, excess miles flown, tourism market dummy variable, etc.)
-            \item $F_{jt}$ contains fixed effects for carrier and time
-            \item $\xi_{jt}$ is market-level product shocks
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Demand Model Parameterization}
-             \[\mu_{ijt} = \sigma_{p} p_{jt} \nu_{ip} + \sigma_{n} n_{jt} \nu_{in} + \sigma_{m} m_{jt} \nu_{im} \] 
-             \vspace{-8mm}
-            \begin{itemize}
-                \item $p$ the product's price
-                \item $n$ the product's nonstop status
-                \item $m$ the miles flown for the product.
-                \item $\sigma$ is the standard deviation of the distribution of consumer preferences for this product trait. 
-                \item $\nu$ parameters drawn from a standard normal distribution 
-            \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Demand Estimation}
-        \begin{itemize}
-            \item Consumers will purchase the good with the highest utility
-            \item Utility of the outside good is normalized to zero, allowing for integration to recover estimated good shares.
-        \end{itemize}
-    \end{frame}
 
     \begin{frame}
         \frametitle{Demand Model Results - Selected Coefficients}
@@ -319,20 +219,6 @@
 \end{adjustbox}
     \end{frame}
     
-    \subsection{Supply}
-    \begin{frame}
-        \frametitle{Supply Model}
-        \begin{itemize}
-            \item Assume each market operates under Bertrand competition with differentiated products following the exogenous determination of product offerings
-            \item Under this conduct model, firms choose prices such that  \vspace{-4mm} \[P = MC + \Delta^{-1} s\]
-             \vspace{-8mm}
-            \begin{itemize}
-                \item  $\Delta = - \mathcal{H} \cdot \frac{\partial s}{\partial p}^{'}$
-                \item $\mathcal{H}$ is an ownership matrix
-            \end{itemize}
-            \item As such, marginal costs (and markups) can be recovered under this supply assumption. 
-        \end{itemize}
-    \end{frame}
 
     \begin{frame}
         \frametitle{Supply Model Results}
@@ -349,12 +235,16 @@
 		\frametitle{Merger Simulation}
 			\begin{itemize}
             \item Estimate three counterfactuals for each period.
+            \begin{itemize}
+                \item Best Case, Average Case, Worst Case
+                \item Resulting Products Have Lower/Average/Greater Marginal Cost, Unobservables of the Two
+            \end{itemize}
                 \item Like products get combined with like products: Nonstop with Nonstop, Connecting with Connecting
                     \begin{itemize}
                         \item The merged connecting products take the minimum miles flown 
                         \item All products are JetBlue
                     \end{itemize}
-				\item Resulting Products Have Lower/Average/Greater Marginal Cost, Unobservables of the Two
+
         \end{itemize}
 	\end{frame}
 
@@ -391,30 +281,17 @@ $<$ 0 & 256 & 206 & 167 & 389 & 302 & 230\\
     \end{table}
     \end{frame}
 
-    \subsection{Consumer Surplus}
+
     \begin{frame}
         \frametitle{Consumer Surplus}
         \begin{itemize}
             \item Calculating consumer surplus with my data is hindered by the lack of data on ancillary fees.\begin{itemize}
             \item A customer who will pay for checked bags when flying with Spirit will have her change in consumer surplus over-estimated.    
             \end{itemize}
-            \item At the same time, Spirit's marginal costs are liable to be underestimated if they use final consumer-paid prices when setting their markups.
-            \begin{itemize}
-                \item Not a big liability for my merger simulations - JetBlue indicated an intention to retire the Spirit model and adjust acquired airframes to the JetBlue seating configurations.
-                \item Still - not clear which of these effects is stronger for biasing welfare calculations.
-            \end{itemize}
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Consumer Surplus}
-        \begin{itemize}
-            \item To gain a feel for how the lack of data on ancillary fees impacts my estimates (and gain some consumer surplus estimates), I adjust observed prices using data from Spirit's annual 10-K financial filings.
-            \item Spirit reports average fare revenue and non-fare revenue per passenger-segment on financial filings.
-            \item Notably Spirit varies these fees  algorithmically between markets
+            \item To better understand how the lack of data on ancillary fees impacts my estimates, I adjust observed prices using data from Spirit's annual 10-K financial filings.
             \item As such, I scale the average ancillary fee charged by Spirit by overall market fare and add it to the recorded fare.
             \begin{itemize}
-                \item Then, re-estimate model.
+                \item Then re-estimate model.
             \end{itemize}
         \end{itemize}
     \end{frame}
@@ -474,9 +351,10 @@ $<$ 0 & 256 & 206 & 167 & 389 & 302 & 230\\
             \begin{itemize}
                 \item Consumers prefer JetBlue products to Spirit products ceteris paribus.
             \end{itemize}
-            \item However, under a cost-benefit analysis, proper approval of this merger would have depended on how likely the policy maker believes the post-pandemic travel environment is to continue.
+            \item Under a cost-benefit analysis, approval of this merger depends on 
             \begin{itemize}
-                \item Policy makers that believe that consumer demand will return to pre-pandemic norms should always block the merger
+                \item Weight on Low-Income Consumer Welfare
+                \item Belief in Continuation of Post-Coronavirus Dynamics
             \end{itemize}
         \end{itemize}
     \end{frame} 
