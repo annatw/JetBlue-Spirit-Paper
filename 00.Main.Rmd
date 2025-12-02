@@ -61,6 +61,7 @@ source("04.Code/Simulation_Robustness.R")
 source("04.Code/Merger_Simulation_Bootstrap.R")
 source("04.Code/Verbal_Descriptive_Functions.R")
 source("04.Code/Fee_Fix_Outcome_Compare.R")
+source("04.Code/Frontier_Simulations.R")
 
 # Load In Needed Python Package
 # Set HiPerGator Path
@@ -238,6 +239,10 @@ instrument_comparison_table(input_file = "02.Intermediate/prepandemic.rds",
 # Two Period Summary Statistics
 summary_statistics_product_two_period()
 summary_statistics_market_two_period()
+
+# Compare Table for Presentation
+summary_statistics_product_two_period_compare_slim()
+summary_statistics_market_compare_slim()
 
 # 2019
 merger_sim_data_generate(years_allowed = 2019,
@@ -460,6 +465,12 @@ merger_results_table_5_efficiency(merger_post = "03.Output/Auxilary_Scale_Postpa
                                   table_out = "06.Tables/Auxilary_Scale_Results_5Percent_Efficient.tex")
 
 ```
+
+Additional Descriptive Graphs
+```{r}
+airfare_trend_graph()
+```
+
 
 # Compare Marginal Costs Recovered with/without Fee Fix
 ```{r}
@@ -747,3 +758,14 @@ minimum_fare_increase_table(
 
 
 ```
+
+
+```{r}
+frontier_merger_simulation_advanced(); gc(); gc();
+frontier_merger_simulation_advanced(model_in = "03.Output/prepandemic_random_coeff_nested_logit.pickle",
+                                    data_in = "02.Intermediate/prepandemic.rds",
+                                    data_out = "03.Output/Frontier_Prepandemic_Merger_Sim_Data.rds")
+frontier_merger_results_table()
+frontier_minimum_fare_percent_increase_table()
+```
+
