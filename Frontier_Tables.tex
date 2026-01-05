@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage{setspace}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{lscape}
+\usepackage{graphicx}
+\usepackage{silence}
+\usepackage{forest}
+\usepackage{hyperref}
+\usepackage{xr}
+\usepackage{placeins}
+\usepackage{textcomp} % Needed on Windows in Office
+\usepackage{adjustbox}
+\usepackage{xcolor}
+\usepackage[letterpaper, margin=1in]{geometry}
+
+\usepackage[toc,page]{appendix}
+
+
+\let\Oldsubsection\subsection
+% \renewcommand{\subsection}{\FloatBarrier\Oldsubsection}
+\newcommand{\comment}[1]{}
+
+\author{Ann Atwater\footnote{Corresponding Author. Department of Economics, University of Florida. annatwater@ufl.edu}}
+
+\title{Preliminary Frontier Counterfactual Tables \footnote{This is a preliminary draft. All errors belong to the author. The author thanks the members of her advisory committee, the participants of the University of Florida Applied Microeconomics working group, and members of the Southern Economics Association 2024 conference for helpful feedback. Furthermore, the author thanks Brad Shrago for alerting her to the reliance on usage fees by ultra-low cost carriers.}}
+
+\graphicspath{{05.Figures/}}
+
+\begin{document}
+	\maketitle
+
+\begin{table}
+\caption{Frontier Merger Results}
+\begin{center}
+        \include{06.Tables/Frontier_Merger_Results}
+\end{center}
+\end{table}
+
+\begin{table}
+    \caption{Frontier Minimum Fare Changes}
+    \begin{center}
+\include{06.Tables/Frontier_MinimumFareChange_Percent}
+\end{center}
+\end{table}
+\end{document}
