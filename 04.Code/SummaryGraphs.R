@@ -34,3 +34,29 @@ lcc_market_graph <- function(post_pandemic_in = "02.Intermediate/Product_Data.rd
   
   ggsave(output, units = "in", width = 7, height = 3)
 }
+
+airfare_trend_graph <- function(input = "02.Intermediate/Construct_DB1B/DB1B_Condensed.rds",
+                                output_graph = "05.Figures/Fare_Per_Mile_Graph.tex"){
+  db1b_data <- readRDS(input)
+  
+  db1b_data[, Month := 0]
+  db1b_data[Quarter == 1, Month := 2]
+  db1b_data[Quarter == 2, Month := 5]
+  db1b_data[Quarter == 3, Month := 8]
+  db1b_data[Quarter == 4, Month := 11]
+  db1b_data[, Date := my(paste(Month, Year))]
+  
+  year_quarter_evolution <- db1b_data %>%
+    group_by(Date) %>%
+    summarize(Fare_Per_Mile = sum(Avg.Fare / MktMilesFlown * Passengers.Product) / sum(Passengers.Product))
+  
+  ggplot(year_quarter_evolution, aes(x = Date, y = Fare_Per_Mile)) +
+    geom_line() + theme(panel.background = element_blank(), 
+        axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        legend.position = "bottom") +
+    labs(x = "Date", y = "Fare Per Mile (Nominal Prices)")
+    
+  ggsave(output_graph, units = "in", width = 7, height = 3)
+}
+

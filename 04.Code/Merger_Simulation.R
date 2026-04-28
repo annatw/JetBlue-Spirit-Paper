@@ -531,18 +531,18 @@ merger_simulation_advanced <- function(model_in = "03.Output/random_coeff_nested
   data.new[, Shares.WithinMarket.MinCost.90 := Shares.MinCost.Sim.90 / sum(Shares.MinCost.Sim.90),
            by = c("market_ids")]
   
-  data.new[, Shares.WithinMarket.MeanCost := Shares.MeanCost.Sim / sum(Shares.MinCost.Sim),
+  data.new[, Shares.WithinMarket.MeanCost := Shares.MeanCost.Sim / sum(Shares.MeanCost.Sim),
            by = c("market_ids")]
-  data.new[, Shares.WithinMarket.MeanCost.95 := Shares.MeanCost.Sim.95 / sum(Shares.MinCost.Sim.95),
+  data.new[, Shares.WithinMarket.MeanCost.95 := Shares.MeanCost.Sim.95 / sum(Shares.MeanCost.Sim.95),
            by = c("market_ids")]
-  data.new[, Shares.WithinMarket.MeanCost.90 := Shares.MeanCost.Sim.90 / sum(Shares.MinCost.Sim.90),
+  data.new[, Shares.WithinMarket.MeanCost.90 := Shares.MeanCost.Sim.90 / sum(Shares.MeanCost.Sim.90),
            by = c("market_ids")]
   
-  data.new[, Shares.WithinMarket.MaxCost := Shares.MaxCost.Sim / sum(Shares.MinCost.Sim),
+  data.new[, Shares.WithinMarket.MaxCost := Shares.MaxCost.Sim / sum(Shares.MaxCost.Sim),
            by = c("market_ids")]
-  data.new[, Shares.WithinMarket.MaxCost.95 := Shares.MaxCost.Sim.95 / sum(Shares.MinCost.Sim.95),
+  data.new[, Shares.WithinMarket.MaxCost.95 := Shares.MaxCost.Sim.95 / sum(Shares.MaxCost.Sim.95),
            by = c("market_ids")]
-  data.new[, Shares.WithinMarket.MaxCost.90 := Shares.MaxCost.Sim.90 / sum(Shares.MinCost.Sim.90),
+  data.new[, Shares.WithinMarket.MaxCost.90 := Shares.MaxCost.Sim.90 / sum(Shares.MaxCost.Sim.90),
            by = c("market_ids")]
   
 

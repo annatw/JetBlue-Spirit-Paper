@@ -256,8 +256,44 @@ jb_sp_planes <- function(input = "02.Intermediate/Fleet_Compilation.rds"){
                     output = "05.Figures/Both_Planes.pdf")
 }
 
+
+ulcc_fleet_graph <- function(input = "02.Intermediate/Fleet_Compilation.rds",
+                             seat_count = "05.Figures/ULCC_Seats_Graph.pdf",
+                             plane_count = "05.Figures/ULCC_Planes_Graph.pdf"){
+  fleet_data <- readRDS(input)
+  
+  fleet_summary <- fleet_data %>% 
+    filter(Carrier %in% c("Spirit Air Lines",
+                          "Allegiant Air",
+                          "Frontier Airlines Inc.")) %>%
+    group_by(Carrier, Year) %>%
+    summarize(Seats = sum(NumberSeats),
+              Planes = n())
+  
+  ggplot(fleet_summary, aes(x = Year, y = Seats, color = Carrier)) +
+    geom_line() +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") + labs(x = "Year", y = "Plane Seats") +
+    scale_y_continuous(expand = c(0, 0), lim = c(0, 42000))
+
+  ggsave(seat_count, units = "in", width = 6, height = 3)
+  
+  ggplot(fleet_summary, aes(x = Year, y = Planes, color = Carrier)) +
+    geom_line() +
+    theme(panel.background = element_blank(), 
+          axis.line = element_line(linewidth = 0.25, colour = "black", linetype=1),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          legend.position = "bottom") + labs(x = "Year", y = "Plane Inventory") +
+    scale_y_continuous(expand = c(0, 0), lim = c(0, 250))
+  
+  ggsave(plane_count, units = "in", width = 6, height = 3)
+  }
+
 plane_graphs <- function(){
   planes_by_class(); gc();
   jb_sp_planes(); gc();
   plane_types(); gc()
-}
+  ulcc_fleet_graph(); gc()
+  }

@@ -867,9 +867,10 @@ summary_statistics_product_two_period_compare <- function(post_pandemic_in = "02
   jetblue <- compare_row_make(name = "JetBlue", pre$Carrier == "JetBlue Airways", post$Carrier == "JetBlue Airways")
   spirit <- compare_row_make(name = "Spirit", pre$Carrier == "Spirit Air Lines", post$Carrier == "Spirit Air Lines")
   minor_carrier <- compare_row_make(name = "Other Carrier", pre$Carrier == "Minor Carrier", post$Carrier == "Minor Carrier")
-  obs_row <- c("Observations", nrow(pre), "", nrow(post), "", "")
+  obs_row <- c("Observations", nrow(pre), "", nrow(post), "", "", "")
   
-  title_row <- c("", "Mean", "(SD)", "Mean", "(SD)", "t-Statistic")
+  title_row <- c("", "Mean", "(SD)", "Mean", "(SD)", 
+                 "Difference", "t-Statistic")
 
   output_table <- rbind(price_row, passengers_row,
                         mktMiles_row, exMiles_row, nonstop_row,
@@ -880,11 +881,51 @@ summary_statistics_product_two_period_compare <- function(post_pandemic_in = "02
   
   kbl(output_table,
       format = "latex", col.names = title_row,
-      escape = TRUE, booktabs = TRUE) %>%
+      escape = TRUE, booktabs = TRUE,
+      linesep = "") %>%
+    add_header_above(c(" " = 1, "Pre-Pandemic" = 2, "Post-Pandemic" = 2, " " = 2)) %>%
     save_kable(file = output)
 }
 
-
+summary_statistics_product_two_period_compare_slim <- function(post_pandemic_in = "02.Intermediate/Product_Data.rds",
+                                                          pre_pandemic_in = "02.Intermediate/prepandemic.rds",
+                                                          output = "06.Tables/SummaryStatistics_Product_Compare_Slim.tex"){
+  pre <- readRDS(pre_pandemic_in);
+  post <- readRDS(post_pandemic_in);
+  
+  price_row <- compare_row_make(name = "Price (2017 USD)", pre$prices * 100,
+                                post$prices * 100)
+  passengers_row <- compare_row_make(name = "Passengers", pre$Passengers.Product,
+                                     post$Passengers.Product)
+  mktMiles_row <- compare_row_make(name = "Distance (1000s)", pre$MktMilesFlown,
+                                   post$MktMilesFlown)
+  exMiles_row <- compare_row_make(name = "Extra Distance", pre$Extra_Miles,
+                                  post$Extra_Miles)
+  nonstop_row <- compare_row_make(name = "Nonstop", pre$NonStop,
+                                  post$NonStop)
+  origin_dest <- compare_row_make(name = "Origin Destinations",
+                                  pre$Origin_Firm_Destinations,
+                                  post$Origin_Firm_Destinations)
+  origin_prescence <- compare_row_make(name = "Origin Presence (%)",
+                                       pre$Origin_Firm_Service_Ratio,
+                                       post$Origin_Firm_Service_Ratio)
+  obs_row <- c("Observations", nrow(pre), "", nrow(post), "", "", "")
+  
+  title_row <- c("", "Mean", "(SD)", "Mean", "(SD)", 
+                 "Change", "t-Statistic")
+  
+  output_table <- rbind(price_row, passengers_row,
+                        mktMiles_row, exMiles_row, nonstop_row,
+                        origin_dest, origin_prescence, obs_row)
+  rownames(output_table) <- NULL
+  
+  kbl(output_table,
+      format = "latex", col.names = title_row,
+      escape = TRUE, booktabs = TRUE,
+      linesep = "") %>%
+    add_header_above(c(" " = 1, "Pre-Pandemic" = 2, "Post-Pandemic" = 2, " " = 2)) %>%
+    save_kable(file = output)
+}
 summary_statistics_market_level <- function(input = "02.Intermediate/Product_Data.rds",
                                             output = "06.Tables/SummaryStatistics_Market.tex"){
   data <- read_rds(input)
@@ -1357,6 +1398,60 @@ summary_statistics_market_two_period <- function(post_pandemic_in = "02.Intermed
     row_spec(row = 8, hline_after = TRUE) %>%
     row_spec(row = 14, hline_after = TRUE) %>%
     save_kable(file = output)
+}
+
+summary_statistics_market_compare_slim <- function(post_pandemic_in = "02.Intermediate/Product_Data.rds",
+                                                   pre_pandemic_in = "02.Intermediate/prepandemic.rds",
+                                                   output = "06.Tables/SummaryStatistics_Market_Compare_Slim.tex"){
+  pre <- readRDS(pre_pandemic_in);
+  post <- readRDS(post_pandemic_in);
+  
+  market_pre <- pre %>% group_by(market_ids) %>%
+    summarize(Spirit = max(Spirit_Prescence),
+              JetBlue = max(JetBlue_Prescence),
+              MinMiles = min(MktMilesFlown), 
+              AvgMiles = sum(MktMilesFlown * Passengers.Product) / sum(Passengers.Product), 
+              Firms = mean(Num_Firms_In_Market),
+              Products = mean(Num_Products_In_Market),
+              Customers = sum(Passengers.Product),
+              HHI = mean(Market_HHI)) %>%
+    mutate(Spirit_JetBlue = Spirit * JetBlue)
+  
+  market_post <- post %>% group_by(market_ids) %>%
+    summarize(Spirit = max(Spirit_Prescence),
+              JetBlue = max(JetBlue_Prescence),
+              MinMiles = min(MktMilesFlown), 
+              AvgMiles = sum(MktMilesFlown * Passengers.Product) / sum(Passengers.Product), 
+              Firms = mean(Num_Firms_In_Market),
+              Products = mean(Num_Products_In_Market),
+              Customers = sum(Passengers.Product),
+              HHI = mean(Market_HHI)) %>%
+    mutate(Spirit_JetBlue = Spirit * JetBlue)
+  
+  min_miles_row <- compare_row_make(name = "Minimum Miles", market_pre$MinMiles * 1000,
+                                market_post$MinMiles * 1000)
+  mean_miles_row <- compare_row_make(name = "Mean Miles", market_pre$AvgMiles * 1000,
+                                    market_post$AvgMiles * 1000)
+  firm_count_row <- compare_row_make(name = "Number of Firms", market_pre$Firms, market_post$Firms)
+  product_count_row <- compare_row_make(name = "Number of Products", market_pre$Products, market_post$Products)
+  passenger_count_row <- compare_row_make(name = "Number of Customers", market_pre$Customers,
+                                          market_post$Customers)
+  hhi_row <- compare_row_make(name = "HHI", market_pre$HHI, market_post$HHI)
+  number_of_markets <- c("Number of Markets", nrow(market_pre), "", nrow(market_post), "", "", "")
+  title_row <- c("", "Mean", "(SD)", "Mean", "(SD)",  "Change", "t-Statistic")
+  
+  output_table <- rbind(min_miles_row, mean_miles_row, firm_count_row, 
+                        product_count_row, passenger_count_row, hhi_row,
+                        number_of_markets)
+  rownames(output_table) <- NULL
+  
+  kbl(output_table,
+      format = "latex", col.names = title_row,
+      escape = TRUE, booktabs = TRUE,
+      linesep = "") %>%
+    add_header_above(c(" " = 1, "Pre-Pandemic" = 2, "Post-Pandemic" = 2, " " = 2)) %>%
+    save_kable(file = output)
+  
 }
 
 summary_statistics_market_type <- function(post_pandemic_in = "02.Intermediate/Product_Data.rds",
@@ -2292,3 +2387,4 @@ summary_market_focus_firms <-  function(input = "02.Intermediate/Product_Data.rd
     row_spec(row = 25, hline_after = T) %>%
     save_kable(output)
 }
+

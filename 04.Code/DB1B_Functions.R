@@ -786,11 +786,6 @@ round_trip_fix <- function(ticket_input = "02.Intermediate/Compile_DB1B_Ticket.r
   market_data[, ItinID := as.double(ItinID)]
   market_data[, IDOrigin := paste(ItinID, OriginAirportID)];   gc();
  
-  # market_data[, True_Origin := IDOrigin %in% ticket_data$IDOrigin]; gc(); 
- 
-   # Keep only the True Origin + Destination of Round Trip Flights
-  # market_data <- market_data[True_Origin == TRUE]; gc();
-  
   ticket_data <- ticket_data[IDOrigin %in% market_data$IDOrigin,]; gc(); 
   colnames(ticket_data) <- c("ItinID", "OriginAirportID", "IDOrigin", "RoundTrip",
                              "Ticket_ItinFare", "Ticket_MilesFlown", "Ticket_Distance",
@@ -801,9 +796,6 @@ round_trip_fix <- function(ticket_input = "02.Intermediate/Compile_DB1B_Ticket.r
   remove(ticket_data); gc(); gc(); 
   
   # Now, restrict to only round trips
-  # market_data <- market_data[RoundTrip == TRUE,]; gc();
-  
-  
   write_rds(market_data, output_target)
 }
 

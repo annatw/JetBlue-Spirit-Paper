@@ -109,7 +109,7 @@ blp_rcl <- function(input_file = "02.Intermediate/Product_Data.rds",
   
   if(is.null(linear)){
     linear <- pyblp$Formulation('1 + prices + MktMilesFlown + MktMilesFlown_Sq + NonStop + Origin_Firm_Service_Ratio',
-                                absorb = "C(market_ids) + C(Carrier)",
+                                absorb = "C(market_ids)",
                                 absorb_method = "lsmr")
     nonlinear <- pyblp$Formulation("1 + prices + MktMilesFlown + MktMilesFlown_Sq + NonStop + Origin_Firm_Service_Ratio")
   }

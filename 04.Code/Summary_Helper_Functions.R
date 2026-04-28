@@ -44,11 +44,13 @@ starmake <- function(coeff, se){
 
 
 compare_row_make <- function(name, vec1, vec2){
+  test <- t.test(vec1, vec2)
   new_row <- c(name, round(mean(vec1, na.rm = TRUE), digits = 2),
                paste("(", round(sd(vec1, na.rm = TRUE), digits = 2), ")", sep = ""),
                round(mean(vec2, na.rm = TRUE), digits = 2),
                paste("(", round(sd(vec2, na.rm = TRUE), digits = 2), ")", sep = ""),
-               paste(round(as.numeric(t.test(vec1, vec2)$statistic), digits = 2),
+               round(-mean(vec1, na.rm = TRUE) + mean(vec2, na.rm = TRUE), digits = 2),
+               paste(round(as.numeric(test$statistic), digits = 2),
                      star_get(test$p.value), sep = ""))
   
   return(new_row)

@@ -482,11 +482,11 @@ merger_simulation_hhi_change <- function(merger_post = "03.Output/Adv_Merger_Sim
     merger[, ownShare.Max := Shares.MaxCost.Sim / totalShare.Max * 100]
     merger[, ownRevShare.Max := Prices.MaxCost.Sim * Shares.MaxCost.Sim / totalRevShare.Max * 100]
     merger[, totalShare.Avg := sum(Shares.MeanCost.Sim), by = c("market_ids")]
-    merger[, totalRevShare.Avg := sum(Shares.MeanCost.Sim * Prices.MaxCost.Sim), by = c("market_ids")]
+    merger[, totalRevShare.Avg := sum(Shares.MeanCost.Sim * Prices.MeanCost.Sim), by = c("market_ids")]
     merger[, ownShare.Avg := Shares.MeanCost.Sim / totalShare.Avg * 100]
     merger[, ownRevShare.Avg := Prices.MeanCost.Sim * Shares.MeanCost.Sim / totalRevShare.Avg * 100]
     merger[, totalShare.Min := sum(Shares.MinCost.Sim), by = c("market_ids")]
-    merger[, totalRevShare.Min := sum(Shares.MinCost.Sim * Prices.MaxCost.Sim), by = c("market_ids")]
+    merger[, totalRevShare.Min := sum(Shares.MinCost.Sim * Prices.MinCost.Sim), by = c("market_ids")]
     merger[, ownShare.Min := Shares.MinCost.Sim / totalShare.Min * 100]
     merger[, ownRevShare.Min := Prices.MinCost.Sim * Shares.MinCost.Sim / totalRevShare.Min * 100]
     
